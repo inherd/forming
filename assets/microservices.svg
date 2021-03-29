@@ -421,6 +421,9 @@
                     </text>
                 </g>
             </g>
+            <text id="API-Layer" font-family="Helvetica" font-size="24" font-weight="normal" fill="#FFFFFF">
+                <tspan x="474.306641" y="134">API Layer</tspan>
+            </text>
         </g>
     </g>
 </svg>
