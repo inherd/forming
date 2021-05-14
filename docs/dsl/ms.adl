@@ -1,0 +1,12 @@
+project: ;
+description: ;
+stacks: Spring Boot,  ;
+
+micro-services:
+  - A:
+    name: service a;
+    db: User Database ;
+    tables: user.hello, user.zero, user.bases;
+  - B:
+  - C:
+  - D:
