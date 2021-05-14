@@ -10,3 +10,23 @@ micro-services:
   - B:
   - C:
   - D:
+
+architecture styles:
+    microservices
+
+characteristics
+ - availability
+ - reliability
+ - testability
+ - scalability
+ - security
+ - agility
+ - fault tolerance
+ - elasticity
+ - recoverability
+ - performance
+ - deployability
+ - learnability
+
+devops
+ - commits with pipeline
