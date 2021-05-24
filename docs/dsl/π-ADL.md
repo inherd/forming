@@ -10,7 +10,8 @@ architecture DasDef is abstraction() {
   type Key is Any. type Data is Any. type Entry is tuple[Key, Data]. 
     port update is  {  connection in is in(Entry) }.
     port request is { connection key is in(Key).
-                      connection data is out(Data) } assuming {
+                      connection data is out(Data) } 
+    assuming {
       protocol is { ( via key receive any. true*. via data send any )* }
     }.
   ... 
