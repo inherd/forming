@@ -1,13 +1,13 @@
 [package]
 name = "forming"
 version = "0.1.0"
-authors = [ "Phodal Huang <h@phodal.com>"]
+authors = [ "Phodal Huang <h@inherd.org>"]
 edition = "2018"
 license = "MIT"
 readme = "README.md"
-repository = "https://github.com/phodal/forming"
-documentation = "https://github.com/phodal/forming"
-homepage = "https://github.com/phodal/forming"
+repository = "https://github.com/inherd/forming"
+documentation = "https://github.com/inherd/forming"
+homepage = "https://github.com/inherd/forming"
 description = """
 Forming, is a lightweight architecture as code language. 架构描述语言
 """
