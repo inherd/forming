@@ -1,6 +1,13 @@
 # Forming
 
-> Forming, is a lightweight architecture as code language. 架构描述语言
+> Forming, is a lightweight architecture as code language. 
+
+轻量级架构描述语言
+
+ - [ ] 组件化定义
+ - [ ] 模型声明
+   - [ ] DDD Styles
+ - [ ] 架构布局
 
 Todo:
 
