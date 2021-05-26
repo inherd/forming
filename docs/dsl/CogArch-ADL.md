@@ -65,3 +65,23 @@ DecCont  | Any // units of declarative memory content
 WMCont   | Any // units of working memory content
 Action   | Any // actions (procedural and motor modules)
 ```
+
+## Cases
+
+```
+component MotorMod is abstraction(){ 
+    connection fromWM is in (WMCont) 
+    connection fromPer is in (Percept) 
+    connection toPer is out (Action) 
+    connection action is out (Action) 
+    behavior is ...
+}
+
+architecture RCA-CMC is abstraction (){ 
+    behavior is {
+        compose {
+        
+        }
+    }
+}
+```
