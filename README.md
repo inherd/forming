@@ -1,6 +1,6 @@
-# adl
+# Forming
 
-> adl, aka Architecture description language, is a lightweight architecture as code language. 架构描述语言
+> Forming, is a lightweight architecture as code language. 架构描述语言
 
 Todo:
 
