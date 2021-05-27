@@ -1,5 +1,7 @@
 # ArchCNL
 
+Process: [ArchCNL Process](images/arch-cnl-process.png)
+
 ### Definition
 
  - 架构概念表示具有明确定义的属性的核心架构抽象的特定类型。它有一个定义良好的语义，并由一个术语来描述。
