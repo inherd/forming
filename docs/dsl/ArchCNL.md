@@ -66,14 +66,14 @@ Layer "Model" is not allowed to depend on the layer "View".
 ## Syntax
 
 ```
-⟨specification⟩ ::= ⟨sentence⟩+
-⟨sentence⟩ ::= (⟨subject⟩ [‘must’|‘can’] ⟨roleExpression⟩ ⟨object⟩‘.’)
-| (‘If’ ⟨conceptID⟩ ⟨roleName⟩ (‘a’|‘an’) ⟨object⟩ [‘then’ | ‘,’] ‘it’ ‘must’ ⟨roleName⟩
-‘this’ ⟨object⟩‘.’)
-⟨subject⟩ ::= ‘No’ ⟨object⟩ | (‘Every’)? ⟨object⟩ | ‘Everything’ | ‘Nothing’
-⟨roleExpression⟩ ::= ‘only’ ⟨roleName⟩ (‘a’|‘an’) | ‘be’ (‘a’|‘an’) | ⟨roleName⟩ (‘at-most’|‘at-least’|‘exactly’) ⟨count⟩ | ⟨roleName⟩ (‘a’|‘an’)
-⟨object⟩ ::= ⟨conceptName⟩ (⟨relativeClause⟩)? ((‘and’|‘or’) ⟨relativeClause⟩)* ⟨relativeClause⟩ ::= ‘that’ ‘(’ ⟨roleName⟩ ⟨object⟩ ‘)’
-⟨conceptName⟩ ::= (‘A’..‘Z’)+((‘A’..‘Z’)|(‘a’..‘z’))*
-⟨roleName⟩ ::= (‘a’..‘z’)+(‘-’(‘a’..‘z’)+)*
-⟨count⟩ ::= (‘1’..‘9’)+
+⟨specification⟩  ::= ⟨sentence⟩+
+⟨sentence⟩       ::= (⟨subject⟩ ['must'|'can'] ⟨roleExpression⟩ ⟨object⟩'.')
+                  | ('If' ⟨conceptID⟩ ⟨roleName⟩ ('a'|'an') ⟨object⟩ ['then' | ','] 'it' 'must' ⟨roleName⟩
+                  'this' ⟨object⟩'.')
+⟨subject⟩        ::= 'No' ⟨object⟩ | ('Every')? ⟨object⟩ | 'Everything' | 'Nothing'
+⟨roleExpression⟩ ::= 'only' ⟨roleName⟩ ('a'|'an') | 'be' ('a'|'an') | ⟨roleName⟩ ('at-most'|'at-least'|'exactly') ⟨count⟩ | ⟨roleName⟩ ('a'|'an')
+⟨object⟩         ::= ⟨conceptName⟩ (⟨relativeClause⟩)? (('and'|'or') ⟨relativeClause⟩)* ⟨relativeClause⟩ ::= 'that' '(' ⟨roleName⟩ ⟨object⟩ ')'
+⟨conceptName⟩    ::= ('A'..'Z')+(('A'..'Z')|('a'..'z'))*
+⟨roleName⟩       ::= ('a'..'z')+('-'('a'..'z')+)*
+⟨count⟩          ::= ('1'..'9')+
 ```
