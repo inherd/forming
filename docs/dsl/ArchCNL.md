@@ -2,6 +2,15 @@
 
 ### Definition
 
+ - 架构概念表示具有明确定义的属性的核心架构抽象的特定类型。它有一个定义良好的语义，并由一个术语来描述。
+ - 架构关系是连接两个架构概念的命名关系。
+ - 架构规则规定了一个架构概念与另一个架构概念之间允许（许可）、必须（义务）或不允许（禁止）的架构关系。
+ - 架构概念语言是一种正式的、特定于领域的语言，定义了架构概念和架构关系软件架构师和开发人员需要描述软件系统的软件架构。
+ - 架构实施，是建立和显式捕获软件开发团队所有成员，其每天使用的公共架构概念语言，即在源代码和文档中都可见。架构概念语言提供了一种明确的方法，
+用于描述体系结构概念和关系，以及应用于它们的规则。另外，架构实施包括验证实现是否符合体系结构概念语言。 
+
+Origin
+
 - **Architecture Concept**, An architecture concept represents a specific type of a core architectural abstraction with 
 well-defined properties. It has a well-defined semantics and is described by a term.
 - **Architecture Relation**, An architecture relation is a named relationship that connects two architecture concepts.
@@ -27,7 +36,7 @@ _ **Architecture Enforcement**, Architecture enforcement is the process of estab
 
 Layer "Model" is not allowed to depend on the layer "View".
 
-```
+```dsl
 module Model: org.company.model.** 
 module View: org.company.view.** 
 Model cannot-depend View
@@ -37,12 +46,14 @@ View = Package with name:"org.company.view.*"
 Model cannot depend on View
 
 Model is not allowed to back call
+```
 
+```xml
 <ruleset name="Model is not allowed to depend on View"> 
     <access-rule>
         <deny>
-            <from class = "org.company.model.**"> 
-            <to class = "org.company.view.**">
+            <from class = "org.company.model.**" />
+            <to class = "org.company.view.**" />
         </deny> 
     </access-rule>
 </ruleset>
@@ -52,15 +63,48 @@ Model is not allowed to back call
 
 Layer "Model" is not allowed to depend on the layer "View".
 
-```
+```xml
 <concept id="Model"> 
     <cypher>
-        MATCH model:Package
+        MATCH 
+            model:Package
         WHERE
-        model.name = "org.company.model"
-        SET model:ModelLayer
+            model.name = "org.company.model"
+        SET
+            model:ModelLayer
     </cypher> 
 </concept>
+```
+
+Concept mapping for the layers View and Logic is defined correspondingly with view.name = "org.company.view"
+
+```xml
+<concept id="DefinedDependencyViewLogic"> 
+    <cypher>
+        MATCH 
+            view:Layer
+        MATCH 
+            logic:Layer
+        CREATE UNIQUE 
+            (view)-[:defines-dependency]->(logic)
+    </cypher> 
+</concept>
+```
+
+Concept mapping for the dependency between Logic and Model is defined correspondingly
+
+```xml
+<constraint id="UndefinedDependency">
+    <cypher>
+        MATCH
+            (layer1:Layer) -[:depends-on]->(layer2:Layer)
+        WHERE NOT 
+            (layer1)-[defines-dependency]->(layer2) AND 
+            layer1.name <> layer2.name
+        RETURN
+            layer1.name, layer2.name
+    </cypher> 
+</constraint>
 ```
 
 ## Syntax
