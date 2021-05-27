@@ -22,6 +22,14 @@ Todo:
     - [ ] common architecture patterns
     - [ ] in svg
 
+Documents
+---
+
+### Refs
+
+ - [Diagrams as code](https://diagrams.mingrammer.com/docs/getting-started/examples)
+ - [Asciidoctor](https://asciidoctor.org/docs/asciidoctor-diagram/)
+
 License
 ---
 
