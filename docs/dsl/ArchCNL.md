@@ -123,3 +123,29 @@ Concept mapping for the dependency between Logic and Model is defined correspond
 ⟨roleName⟩       ::= ('a'..'z')+('-'('a'..'z')+)*
 ⟨count⟩          ::= ('1'..'9')+
 ```
+
+
+## 
+
+
+Architecture conformance checking approaches used for the comparison and their supported architecture concepts and relations for defining the intended architecture.
+
+| Approach | Architecture Concepts | Architecture Relations  | 
+|----------|----------|----------|
+| DCL      | module | access, declare, handle, create, extend, implement, derive, throw, useannotation, depend |
+| Dicto ̄   | entity (class, file, package, method ...) | depend on, invoke, have annotation, have method, implement interface, have method parameter, throw, catch, contain code clones, contains cycles, lead to deadlock |
+| HUSACCT  | layer, component, subsystem, interface, external component | use, implement, extend |
+    
+Some Rules:
+
+```
+No Client can use a LogicLayer.
+No Client can use a StorageLayer.
+No Client can use a TestDriver.
+No CommonClass can use a LogicLayer.
+No CommonClass can use a GUILayer.
+No LogicLayer can use a StorageEntityType. Only StorageAPI can use a ObjectifyAPI. No TestDriver can use a LogicLayer.
+No TestDriver can use a StorageLayer.
+No TestDriver can use a GUILayer.
+No GUILayer can use a LogicBackdoor.
+```
