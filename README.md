@@ -11,8 +11,6 @@
 
 Todo:
 
- - [ ] common architecture patterns
-    - [ ] in svg
  - [ ] adl workflow design
     - [ ] collaboration style
     - [ ] core driven style
@@ -21,6 +19,8 @@ Todo:
     - [ ] design patterns in code
  - [ ] adl visualization
     - [ ] web page
+    - [ ] common architecture patterns
+    - [ ] in svg
 
 License
 ---
