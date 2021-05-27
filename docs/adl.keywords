@@ -1,4 +1,9 @@
+architecture {
+
+}
+
 system {
+    Role {}
     subsystem { }
 }
 
@@ -10,10 +15,22 @@ thread {
     ...
 }
 
-components {
+# π-ADL
+component {
+    port [incoming | outgoing] (connection )
+    in
+    out
     ...
-   subcomponents ...
+   subcomponent ...
 }
+
+diagram { }
+
+object_diagram | feature_diagram | class_diagram
+
+task task1
+
+connect(task1, task2)
 
 # to graphviz ?
 
