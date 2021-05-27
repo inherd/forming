@@ -1,20 +1,37 @@
-system
-    subsystem
-features
+system {
+    subsystem { }
+}
+
+feature {
     ...
-end
+}
 
-thread ...
+thread {
+    ...
+}
 
-
-components ...
-
-subcomponents ...
+components {
+    ...
+   subcomponents ...
+}
 
 # to graphviz ?
 
-layer {
+layer in-text = {
    "UI",
    "Logic",
    "Storage"
 }
+
+layer in-graphic = """
+|-------------------------|
+| UI                      |
+|----------|              |
+|  Logic   |              |
+|-------------------------|
+|  Infrastructure         |
+|                         |
+|  [storage]  [redis]     |
+|                         |
+|-------------------------|
+"""
