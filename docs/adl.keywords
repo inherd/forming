@@ -26,7 +26,19 @@ component {
 
 diagram { }
 
-object_diagram | feature_diagram | class_diagram
+# object_diagram | feature_diagram | class_diagram
+
+diagram object ObjectA {
+
+}
+
+diagram feature AccountManager {
+
+}
+
+diagram class Account {
+
+}
 
 task task1
 
