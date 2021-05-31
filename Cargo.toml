@@ -26,3 +26,9 @@ exclude = [
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+# serialize
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1"
+
+pest = "2.1.3"
+pest_derive = "2.1.0"
