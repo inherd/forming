@@ -1,3 +1,9 @@
+# base: micro-frontends
+# graphviz like?
+style micro-frontends {
+  node ""
+}
+
 architecture {
 
 }
@@ -40,9 +46,14 @@ diagram class Account {
 
 }
 
+# aka
 task task1
 
 connect(task1, task2)
+
+# kafka
+event event1
+connect(event1, event2)
 
 # to graphviz ?
 
