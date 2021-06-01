@@ -30,10 +30,16 @@ component {
    subcomponent ...
 }
 
-diagram { }
+# meta type or type?
+meta type MyMetaType1 {
+  tag creator, description: text;
+  tag cost, version: number;
+  tag edited*: date;
+}
 
+
+# diagram { }
 # object_diagram | feature_diagram | class_diagram
-
 diagram object ObjectA {
 
 }
@@ -47,23 +53,23 @@ diagram class Account {
 }
 
 # aka
-task task1
-
-connect(task1, task2)
+task task1 { }
+connect(task1, task2);
 
 # kafka
-event event1
-connect(event1, event2)
+event event1 { }
+connect(event1, event2);
 
 # to graphviz ?
-
-layer in-text = {
+# in-text
+layer = {
    "UI",
    "Logic",
    "Storage"
 }
 
-layer in-graphic = """
+# in-graphic with ascii-doctor?
+layer = """
 |-------------------------|
 | UI                      |
 |----------|              |
@@ -74,4 +80,10 @@ layer in-graphic = """
 |  [storage]  [redis]     |
 |                         |
 |-------------------------|
-"""
+""";
+
+# comments ?
+attachments {
+  attachment { }
+  attachment { }
+}
