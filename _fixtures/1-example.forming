@@ -1,6 +1,5 @@
 name "Uncode";
 
-
 # multiple support
 # core domain?
 # sub domain?
@@ -19,9 +18,25 @@ architecture {
   connection {
 
   }
+  description {
+    layer = """
+
+    """;
+  }
 }
 
-node "serviceA" { }
+#
+task
+
+# thread { }
+
+component ABC { }
+
+event A { }
+
+node "serviceA" {
+   model { }
+}
 
 node "serviceB" { }
 
