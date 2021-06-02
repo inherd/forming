@@ -8,6 +8,12 @@ style {
 
 }
 
+# support for custom style ?
+custom style "styleName" {
+
+}
+
+
 #
 architecture {
   connection {
@@ -20,4 +26,10 @@ node "serviceA" { }
 node "serviceB" { }
 
 node "serviceC" { }
+
+# include uml
+model "serviceA" {
+  include "src/core.uml"
+}
+
 
