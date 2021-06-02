@@ -5,16 +5,19 @@ name "Uncode";
 # core domain?
 # sub domain?
 style {
-  node { }
-  node { }
-  node { }
 
+}
+
+#
+architecture {
   connection {
 
   }
 }
 
-# 
-architecture {
+node "serviceA" { }
 
-}
+node "serviceB" { }
+
+node "serviceC" { }
+
