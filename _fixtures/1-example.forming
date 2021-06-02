@@ -1,0 +1,20 @@
+name "Uncode";
+
+
+# multiple support
+# core domain?
+# sub domain?
+style {
+  node { }
+  node { }
+  node { }
+
+  connection {
+
+  }
+}
+
+# 
+architecture {
+
+}
