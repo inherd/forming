@@ -5,12 +5,12 @@
 轻量级架构描述语言
 
  - [ ] 架构描述
- - [ ] 模型声明
-   - [ ] DDD Styles
- - [ ] 组件化定义
  - [ ] 架构布局
    - [ ] Diagrams as code
- - [ ] 代码生成 
+   - [ ] Ascii Doctor
+ - [ ] 模型声明
+   - [ ] DDD Styles
+ - [ ] 模型代码生成 
 
 Todo:
 
