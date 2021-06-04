@@ -1,6 +1,12 @@
 alpha = { 'a'..'z' | 'A'..'Z' }
 digit = { '0'..'9' }
 
-ident = { (alpha | digit)+ }
+start = _{ SOI ~ declaration* ~ EOI}
 
-ident_list = _{ !digit ~ ident ~ (" " ~ ident)+ }
+declaration = {
+    architecture_declaration
+}
+
+architecture_declaration = {
+    "architecture" 
+}
