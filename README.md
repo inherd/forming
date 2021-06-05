@@ -4,6 +4,7 @@
 
 轻量级架构描述语言
 
+ - [ ] DSL Design
  - [ ] 架构描述
  - [ ] 架构布局
    - [ ] Diagrams as code
@@ -24,6 +25,9 @@ Todo:
     - [ ] web page
     - [ ] common architecture patterns
     - [ ] in svg
+ - [ ] codegen
+    - [ ] Java code gen
+    - [ ] code gen protocol spike ?
 
 Documents
 ---

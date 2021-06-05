@@ -8,5 +8,9 @@ declaration = {
 }
 
 architecture_declaration = {
-    "architecture" 
+    "architecture"
+}
+
+component_declaration = {
+    "component"
 }
