@@ -42,8 +42,16 @@ node "serviceB" { }
 
 node "serviceC" { }
 
+# for code generator
+
 # include uml
 model "serviceA" {
+  include "src/core.uml"
+}
+
+#  package com.phodal.zero;
+model "serviceA" {
+  package com.phodal.zero;
   include "src/core.uml"
 }
 
