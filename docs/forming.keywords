@@ -4,6 +4,33 @@ style micro-frontends {
   node ""
 }
 
+# 框框图
+# frame
+business {
+    frame "frontend" {
+        frame "customer relation" {
+            frame "";
+        };
+    }
+
+    frame "channel" {
+        frames "", "", "", "";
+# or markdown table ?
+        frames = | | |  | |
+    }
+}
+
+# 应用全景图
+# landscape
+# ascii-doctor?
+
+
+# 系统架构图
+# Graphviz like ?
+
+# 包内分层
+# D3.js?
+
 architecture {
 
 }
