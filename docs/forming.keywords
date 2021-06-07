@@ -87,3 +87,7 @@ attachments {
   attachment { }
   attachment { }
 }
+
+# or
+
+attachment "/hello.att";
