@@ -36,7 +36,7 @@ architecture {
 }
 
 system {
-    Role {}
+    role {}
     subsystem { }
 }
 
@@ -118,3 +118,9 @@ attachments {
 # or
 
 attachment "/hello.att";
+
+# DevOps
+artifacts {
+    deploy_unit { }
+    repository: ""
+}
