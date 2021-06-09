@@ -109,16 +109,6 @@ layer = """
 |-------------------------|
 """;
 
-# comments ?
-attachments {
-  attachment { }
-  attachment { }
-}
-
-# or
-
-attachment "/hello.att";
-
 # DevOps
 artifacts {
     deploy_unit { }
@@ -130,9 +120,21 @@ artifacts {
 viewpoint { }
 view { }
 
+# 引用知识
+# 知识回显：knowledge echo
 # decisions
 decisions {
     adr {
       path ""
     }
 }
+
+# comments ?
+attachments {
+  attachment { }
+  attachment { }
+}
+
+# or
+
+attachment "/hello.att";
