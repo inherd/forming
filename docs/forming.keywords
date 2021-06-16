@@ -35,9 +35,18 @@ architecture {
 
 }
 
+# Modeling model?
+
+# define role ?
+# define(role) participant
+# define(role) executor
+# usecase for examples? 用例示例
+# Noun 名词，Domain Noun 领域名词
+# event or Domain Event?
+
 system {
     role {}
-    subsystem { }
+    sub_system { }
 }
 
 feature {
@@ -143,7 +152,6 @@ attachments {
 }
 
 # or
-
 attachment "/hello.att";
 
 # DDD
