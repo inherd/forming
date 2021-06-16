@@ -113,6 +113,10 @@ layer = """
 artifacts {
     deploy_unit { }
     repository: ""
+
+    continuous_integration: ""
+    # or
+    ci: ""
 }
 
 # Viewpoint
@@ -123,6 +127,7 @@ view { }
 # 引用知识
 # 知识回显：knowledge echo
 # decisions
+# 架构决策 - 对齐企业架构中的相关概念
 decisions {
     adr {
       path ""
@@ -130,11 +135,27 @@ decisions {
 }
 
 # comments ?
+# for source code ?
 attachments {
   attachment { }
   attachment { }
+  # source_code "hello.c"?
 }
 
 # or
 
 attachment "/hello.att";
+
+# DDD
+domain {
+    mall {
+        # entity
+        aggregate order {
+            fields ?
+            entity orderItem { }
+
+            # 1-N, 0-N, 1-1, 0-1
+            relation: 1-N to address
+        }
+    }
+}
