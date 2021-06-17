@@ -24,12 +24,41 @@ business {
 # landscape
 # ascii-doctor?
 
+# 概念模型
+# concept_model or concept
+concept_model {
+
+}
+
+# include "physical design" ?
+database {
+
+}
 
 # 系统架构图
 # Graphviz like ?
 
 # 包内分层
 # D3.js?
+
+# custom graphviz like?
+ea {
+    # define logic office
+    # logic group
+    # physical group
+  group office {
+    bank("手机银行")
+    internet_bank("网银")
+  }
+  group zhongtai {
+    transaction_center("")
+  }
+  group backend {
+    # config: in-order
+    paas
+    iaas
+  }
+}
 
 architecture {
 
