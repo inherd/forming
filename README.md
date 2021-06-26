@@ -15,12 +15,15 @@
 
 Todo:
 
- - [ ] adl workflow design
+ - [ ] workflow design
     - [ ] collaboration style
-    - [ ] core driven style
     - [ ] physics design
     - [ ] associate patterns
     - [ ] design patterns in code
+ - [ ] core driven style
+    - [ ] domain driven
+    - [ ] Use-cases driven
+    - [ ] collaboration driven
  - [ ] adl visualization
     - [ ] web page
     - [ ] common architecture patterns
