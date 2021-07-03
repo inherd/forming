@@ -1,6 +1,6 @@
 # Forming
 
-> Forming, is a lightweight architecture as code language. 
+> Forming, is a lightweight architecture design language. 
 
 轻量级架构描述语言
 
@@ -22,15 +22,15 @@ Todo:
     - [ ] design patterns in code
  - [ ] core driven style
     - [ ] domain driven
-    - [ ] Use-cases driven
+    - [ ] use-cases driven
     - [ ] collaboration driven
- - [ ] adl visualization
+ - [ ] forming visualization
     - [ ] web page
     - [ ] common architecture patterns
     - [ ] in svg
  - [ ] codegen
-    - [ ] Java code gen
-    - [ ] code gen protocol spike ?
+    - [ ] java code gen
+    - [ ] code gen protocol
 
 Documents
 ---

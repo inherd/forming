@@ -9,7 +9,7 @@ repository = "https://github.com/inherd/forming"
 documentation = "https://github.com/inherd/forming"
 homepage = "https://github.com/inherd/forming"
 description = """
-Forming, is a lightweight architecture as code language. 架构描述语言
+Forming, is a lightweight architecture design language.
 """
 categories = ["text-processing", "command-line-interface", "development-tools"]
 exclude = [
