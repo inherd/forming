@@ -5,3 +5,5 @@
 * [3. description-language](0003-description-language.md)
 * [4. ascii-as-digram](0004-ascii-as-digram.md)
 * [5. codegen](0005-codegen.md)
+* [6. driven-engine](0006-driven-engine.md)
+* [7. implement-engine](0007-implement-engine.md)

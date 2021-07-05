@@ -2,7 +2,7 @@
 
 > Forming, is a lightweight architecture design language. 
 
-轻量级架构描述语言
+轻量级架构设计语言
 
  - [ ] DSL Design
  - [ ] 架构描述
