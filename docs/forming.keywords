@@ -147,13 +147,15 @@ layer = """
 |-------------------------|
 """;
 
-# DevOps
-artifacts {
-    deploy_unit { }
-    repository: ""
+repository serviceA {
+  git: url
+}
 
+# DevOps
+artifact serviceA {
+    repository serviceA
+    deploy_unit { }
     continuous_integration: ""
-    # or
     ci: ""
 }
 
