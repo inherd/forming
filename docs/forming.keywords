@@ -198,20 +198,18 @@ attachments {
 attachment "/hello.att";
 
 # DDD
-domain {
-    mall {
-        # entity
-        aggregate order {
-            fields ?
-            entity orderItem {
-                $biz: 查询订单信息
-                query() // method
-            }
-
-            # 1-N, 0-N, 1-1, 0-1
-            relation: 1..N-0..1 to address
-            # or
-            [1..N-0..1] to address
+domain mall {
+    # entity
+    aggregate order {
+        fields ?
+        entity orderItem {
+            $biz: 查询订单信息
+            query() // method
         }
+
+        # 1-N, 0-N, 1-1, 0-1
+        relation: 1..N-0..1 to address
+        # or
+        [1..N-0..1] to address
     }
 }
