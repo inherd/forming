@@ -20,7 +20,7 @@ business {
 
     frame "channel" {
         frames "", "", "", "";
-# or markdown table ?
+        # or markdown table ?
         frames = | | |  | |
     }
 }
@@ -74,6 +74,7 @@ architecture {
 # define role ?
 # define(role) participant
 # define(role) executor
+
 # usecase for examples? 用例示例
 # Noun 名词，Domain Noun 领域名词
 # event or Domain Event?
@@ -87,6 +88,7 @@ feature {
     ...
 }
 
+# why ?
 thread {
     ...
 }
@@ -208,6 +210,8 @@ domain {
 
             # 1-N, 0-N, 1-1, 0-1
             relation: 1..N-0..1 to address
+            # or
+            [1..N-0..1] to address
         }
     }
 }
