@@ -4,8 +4,13 @@ style micro-frontends {
   node ""
 }
 
+style micro-services {
+  node ""
+}
+
 # 框框图
 # frame
+# or frame => domain or ignore like `"frontend" domain` { }
 business {
     frame "frontend" {
         frame "customer relation" {
@@ -164,6 +169,11 @@ artifact serviceA {
 viewpoint { }
 view { }
 
+# domain languages
+languages {
+  en: "中文"
+}
+
 # 引用知识
 # 知识回显：knowledge echo
 # decisions
@@ -191,7 +201,10 @@ domain {
         # entity
         aggregate order {
             fields ?
-            entity orderItem { }
+            entity orderItem {
+                $biz: 查询订单信息
+                query() // method
+            }
 
             # 1-N, 0-N, 1-1, 0-1
             relation: 1..N-0..1 to address
