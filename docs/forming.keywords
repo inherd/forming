@@ -52,6 +52,10 @@ ea {
     # logic group
     # physical group
   group office {
+    # `row` or `column`
+    # `left` or `right` or `center`
+    position { direction: row, align: left }
+
     bank("手机银行")
     internet_bank("网银")
   }
