@@ -1,9 +1,9 @@
 collaboration-style:
-  collaboration:
+  collaboration-styles:
   cooperation-strategy:
-  bounded-patterns:
 
 physical-design:
+  bounded:
   layer-design:
   indirect-layer:
   domain-architecture-style:
