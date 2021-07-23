@@ -7,6 +7,10 @@ declaration = {
     architecture_declaration
 }
 
+collaboration_declaration = {
+    "collaboration"
+}
+
 architecture_declaration = {
     "architecture"
 }

@@ -2,11 +2,13 @@ collaboration-style:
   collaboration-styles:
   cooperation-strategy:
 
+# or bounded
 physical-design:
   bounded:
-  layer-design:
+  layey:
   indirect-layer:
-  domain-architecture-style:
+#  builtin style ?
+#  builtin:
 
 abstract-design:
   business-design:
