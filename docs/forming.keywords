@@ -217,3 +217,10 @@ domain mall {
         [1..N-0..1] to address
     }
 }
+
+
+concepts =
+| lang: zh | lang:en | programming | domain |
+|----------|---------|-------------|--------|
+|          |         |             |        |
+
