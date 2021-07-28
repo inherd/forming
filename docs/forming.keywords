@@ -224,3 +224,6 @@ concepts =
 |----------|---------|-------------|--------|
 |          |         |             |        |
 
+# Characterization
+cha(concept) = {domain, ([attrib_1, range_1], [attrib_2, range_2],...,[attrib_k, range_k])}
+

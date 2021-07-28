@@ -40,6 +40,8 @@ Documents
  - [Diagrams as code](https://diagrams.mingrammer.com/docs/getting-started/examples), GitHub: [Diagrams](https://github.com/mingrammer/diagrams)
  - [Asciidoctor](https://asciidoctor.org/docs/asciidoctor-diagram/)
 
+Iaakov Exman "Software Conceptual Integrity: Deconstruction, Then Reconstruction"
+
 License
 ---
 
