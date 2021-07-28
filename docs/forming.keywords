@@ -219,7 +219,7 @@ domain mall {
 }
 
 
-concepts =
+words =
 | lang: zh | lang:en | programming | domain |
 |----------|---------|-------------|--------|
 |          |         |             |        |
@@ -227,3 +227,9 @@ concepts =
 # Characterization
 cha(concept) = {domain, ([attrib_1, range_1], [attrib_2, range_2],...,[attrib_k, range_k])}
 
+# add description
+concept(normal_login) = {login, [(key, user_name), (key, password)]}
+
+concept(phone_login) = {login, [(key, phone_number), (key, verify_code)]}
+
+# process(normal_login) =
