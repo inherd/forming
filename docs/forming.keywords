@@ -227,6 +227,9 @@ words =
 # Characterization
 cha(concept) = {domain, ([attrib_1, range_1], [attrib_2, range_2],...,[attrib_k, range_k])}
 
+# origin examples
+# Characterization(cash-withdrawal) = { bank-operation, ([type, cash], [amount, “cash- limited”], [duration, “one-day”]}
+
 # add description
 concept(normal_login) = {login, [(key, user_name), (key, password)]}
 
