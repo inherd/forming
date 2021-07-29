@@ -8,8 +8,9 @@
 - 实现模型（Implementation Model）。
 
 
-概念模型
+需求模型
 
+概念描述模型
 
 ```
 // Characterization
