@@ -6,3 +6,22 @@
 - 架构模型（Architecture Model）。
 - 映射架构模型（Mapped Architecture Model）。
 - 实现模型（Implementation Model）。
+
+
+概念模型
+
+
+```
+// Characterization
+cha(concept) = {domain, ([attrib_1, range_1], [attrib_2, range_2],...,[attrib_k, range_k])}
+
+// origin examples
+// Characterization(cash-withdrawal) = { bank-operation, ([type, cash], [amount, “cash- limited”], [duration, “one-day”]}
+
+// add description
+concept(normal_login) = {login, [(key, user_name), (key, password)]}
+
+concept(phone_login) = {login, [(key, phone_number), (key, verify_code)]}
+
+// process(normal_login) =
+```
