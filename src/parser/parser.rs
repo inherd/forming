@@ -19,7 +19,11 @@ mod tests {
     use crate::parser::parser::parse;
 
     #[test]
+    #[ignore]
     fn should_test() {
-        parse("architecture");
+        parse("concepts => {
+lang: zh, lang: en, programming, domain
+博客,blog,blog,Blog
+}");
     }
 }
