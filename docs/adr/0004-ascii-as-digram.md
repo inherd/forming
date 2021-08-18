@@ -10,8 +10,6 @@ Date: 2021-05-27
 
 Asciidoctor： https://asciidoctor.org/docs/asciidoctor-diagram/
 
-
-
 [ditaa]
 ....
 +-------------+

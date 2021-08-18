@@ -22,8 +22,8 @@ Protobuf:
    
 Multiple languages:
 
- - [https://github.com/udoprog/codeviz] inspired by JavaPoet
- - [https://github.com/udoprog/reproto] The ReProto project is a language-neutral protocol specification, aimed towards describing and generating code for handling messages exchanged through JSON-based APIs.
+ - [https://github.com/udoprog/codeviz](https://github.com/udoprog/codeviz) inspired by JavaPoet
+ - [https://github.com/udoprog/reproto](https://github.com/udoprog/reproto) The ReProto project is a language-neutral protocol specification, aimed towards describing and generating code for handling messages exchanged through JSON-based APIs.
 
 ## Consequences
 
