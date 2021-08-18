@@ -219,7 +219,18 @@ domain mall {
 }
 
 
-words =
+words => {
 | lang: zh | lang:en | programming | domain |
 |----------|---------|-------------|--------|
 |          |         |             |        |
+}
+
+#  or csv ?
+words => {
+lang: zh, lang: en, programming, domain
+博客,blog,blog,Blog
+文章,article,article,Blog
+评论,comment,comment,Blog
+概要,outline,outline,Blog
+标题,title,title,Title
+}
