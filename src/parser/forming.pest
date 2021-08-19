@@ -26,10 +26,10 @@ concept_words = {
 
 // csv file
 csv = { field ~ ("," ~ field)* }
-field = { (ASCII_ALPHANUMERIC | "." | "-" | ":")+ }
+field = { (ASCII_ALPHANUMERIC | "." | "-" | ":" | " " )+ }
 
 // empty line
-newline    = _{ "\n" | "\r\n" }
-WHITESPACE = _{ " " | "\t" | newline }
+// newline    = _{ "\n" | "\r\n" }
+WHITESPACE = _{ " " | "\t" | NEWLINE }
 block_comment = _{ "/*" ~ (block_comment | !"*/" ~ ANY)* ~ "*/" }
-COMMENT    = _{ block_comment | ("//" ~ (!newline ~ ANY)*) }
+COMMENT    = _{ block_comment | ("//" ~ (!NEWLINE ~ ANY)*) }

@@ -21,8 +21,17 @@ mod tests {
     #[test]
     fn should_parse_for_basic_csv() {
         parse("concepts => {
-lang:zh,lang:en,programming,domain
+lang: zh,lang:en,programming,domain
 blog,blog,Blog
+}");
+    }
+
+    #[test]
+    #[ignore]
+    fn should_parse_utf_8_csv() {
+        parse("concepts => {
+lang: zh,lang:en,programming,domain
+博客,blog,blog,Blog
 }");
     }
 }
