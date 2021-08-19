@@ -21,12 +21,11 @@ component_declaration = {
 }
 
 concept_words = {
-    "concepts" ~ "=" ~ ">" ~ "{" ~ csv ~ "}"
+    "concepts" ~ "=" ~ ">" ~ "{" ~ csv? ~ "}"
 }
 
 // csv file
-csv = { (record ~ ("\r\n" | "\n")) }
-record = { field ~ ("," ~ field)* }
+csv = { field ~ ("," ~ field)* }
 field = { (ASCII_ALPHANUMERIC | "." | "-" | ":")+ }
 
 // empty line

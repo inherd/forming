@@ -19,11 +19,10 @@ mod tests {
     use crate::parser::parser::parse;
 
     #[test]
-    #[ignore]
-    fn should_test() {
+    fn should_parse_for_basic_csv() {
         parse("concepts => {
-lang: zh, lang: en, programming, domain
-博客,blog,blog,Blog
+lang:zh,lang:en,programming,domain
+blog,blog,Blog
 }");
     }
 }
