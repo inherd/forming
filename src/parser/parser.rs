@@ -30,13 +30,22 @@ fn parse_concepts(decl: Pair<Rule>) {
             Rule::csv => {
                 for field in concepts.into_inner() {
                     match field.as_rule() {
-                        Rule::text_field => {
-                            println!("Rule:    {:?}", field.as_rule());
-                            println!("Span:    {:?}", field.as_span());
-                        }
-                        Rule::string_field => {
-                            println!("Rule:    {:?}", field.as_rule());
-                            println!("Span:    {:?}", field.as_span());
+                        Rule::field => {
+                            for field_detail in field.into_inner() {
+                                match field_detail.as_rule() {
+                                    Rule::text_field => {
+                                        println!("Rule:    {:?}", field_detail.as_rule());
+                                        println!("Span:    {:?}", field_detail.as_span());
+                                    }
+                                    Rule::string_field => {
+                                        println!("Rule:    {:?}", field_detail.as_rule());
+                                        println!("Span:    {:?}", field_detail.as_span());
+                                    }
+                                    _ => {
+
+                                    }
+                                }
+                            }
                         }
                         _ => {
                             println!("Rule:    {:?}", field.as_rule());
