@@ -5,7 +5,7 @@ start = _{ SOI ~ declaration* ~ EOI}
 
 declaration = {
     architecture_declaration
-  | concept_words
+  | concepts
 }
 
 collaboration_declaration = {
@@ -20,16 +20,29 @@ component_declaration = {
     "component"
 }
 
-concept_words = {
+concepts = {
     "concepts" ~ "=" ~ ">" ~ "{" ~ csv? ~ "}"
 }
 
 // csv file
 csv = { field ~ ("," ~ field)* }
-field = { (ASCII_ALPHANUMERIC | "." | "-" | ":" | " " )+ }
+
+field = { string_field | text_field }
+
+text_field = { any_csv_text* }
+any_csv_text = { !( "," | "}" | newline ) ~ ANY }
+string_field = { string+ }
+
+double_quoted_string  = @{ "\"" ~ (!("\"") ~ ANY)* ~ "\""}
+single_quoted_string  = @{ "\'" ~ (!("\'") ~ ANY)* ~ "\'"}
+
+string = @{
+    double_quoted_string |
+    single_quoted_string
+}
 
 // empty line
-// newline    = _{ "\n" | "\r\n" }
+newline    = _{ "\n" | "\r\n" }
 WHITESPACE = _{ " " | "\t" | NEWLINE }
 block_comment = _{ "/*" ~ (block_comment | !"*/" ~ ANY)* ~ "*/" }
 COMMENT    = _{ block_comment | ("//" ~ (!NEWLINE ~ ANY)*) }
