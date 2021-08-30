@@ -1,3 +1,4 @@
+# Conceptual
 
 ## Conceptual Space
 
@@ -11,6 +12,41 @@ Conceptual space: A conceptual space is a geometric structure that represents a 
 space = {
   
 }
+```
+
+`space` or `context`
+
+## Concepts DataStruct
+
+Kotlin
+
+```
+concept("Blog") = {
+  type {
+     type: "Entity"
+     file_template: "$name$type",
+  }
+  struct {
+    
+  }
+  interface { 
+    
+  } 
+}
+```
+
+`interface` or `behavior` ? 
+
+## Concept Procedure
+
+Cucumber like, with NLP
+
+```cucumber 
+procedure("login") = """
+
+"""
+
+procedure(login) = "login.cucumber"
 ```
 
 ## Concepts Relationship
@@ -57,3 +93,25 @@ concepts = dir("forming/**/*.csv")
 
 ### domain
 
+# Architectural
+
+## Layered Architecture
+
+```
+domain("Blog") = {
+  package: "com.phodal.blog",
+  // optional dir
+  dir: "com/phodal/blog"  
+}
+```
+
+## Architecture
+
+Define 
+
+```
+architecture = {
+  language: Ruby,
+  stacks { }
+}
+```
