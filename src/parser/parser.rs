@@ -27,32 +27,9 @@ pub fn parse(text: &str) {
 fn parse_concepts(decl: Pair<Rule>) {
     for concepts in decl.into_inner() {
         match concepts.as_rule() {
-            Rule::csv => {
-                for field in concepts.into_inner() {
-                    match field.as_rule() {
-                        Rule::field => {
-                            for field_detail in field.into_inner() {
-                                match field_detail.as_rule() {
-                                    Rule::text_field => {
-                                        println!("Rule:    {:?}", field_detail.as_rule());
-                                        println!("Span:    {:?}", field_detail.as_span());
-                                    }
-                                    Rule::string_field => {
-                                        println!("Rule:    {:?}", field_detail.as_rule());
-                                        println!("Span:    {:?}", field_detail.as_span());
-                                    }
-                                    _ => {
-
-                                    }
-                                }
-                            }
-                        }
-                        _ => {
-                            println!("Rule:    {:?}", field.as_rule());
-                            println!("Span:    {:?}", field.as_span());
-                        }
-                    }
-                }
+            Rule::string => {
+                println!("Rule:    {:?}", concepts.as_rule());
+                println!("Span:    {:?}", concepts.as_span());
             }
             _ => {}
         }
@@ -64,18 +41,12 @@ mod tests {
     use crate::parser::parser::parse;
 
     #[test]
-    fn should_parse_for_basic_csv() {
-        parse("concepts => {
-lang: zh,lang:en,programming,domain
-blog, blog, Blog
-}");
+    fn should_parse_file() {
+        parse("concepts => file(\"concepts.csv\")");
     }
 
     #[test]
-    fn should_parse_utf_8_csv() {
-        parse("concepts => {
-'lang: zh','lang:en', 'programming', 'domain'
-'博客', 'blog', 'blog', 'Blog'
-}");
+    fn should_parse_dir() {
+        parse("concepts => dir(\"concepts/\")");
     }
 }

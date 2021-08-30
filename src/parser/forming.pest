@@ -21,17 +21,8 @@ component_declaration = {
 }
 
 concepts = {
-    "concepts" ~ "=" ~ ">" ~ "{" ~ csv? ~ "}"
+    "concepts" ~ "=" ~ ">" ~ ("file" | "dir") ~ "(" ~ string ~ ")"
 }
-
-// csv file
-csv = { field ~ ("," ~ field)* }
-
-field = { string_field | text_field }
-
-text_field = { any_csv_text* }
-any_csv_text = { !( "," | "}" | newline ) ~ ANY }
-string_field = { string+ }
 
 double_quoted_string  = @{ "\"" ~ (!("\"") ~ ANY)* ~ "\""}
 single_quoted_string  = @{ "\'" ~ (!("\'") ~ ANY)* ~ "\'"}
