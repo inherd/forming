@@ -1,2 +1,7 @@
 lang: zh,lang:en,code,domain
-博客, blog, blog, Blog
+博文,post,post,Blog
+标签,tag,tag,Blog
+评论,comment,comment,Blog
+关键词,keyword,keyword,Blog
+用户名,user name,user_name,User
+用户邮箱,user email,user_email,User
