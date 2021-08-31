@@ -84,6 +84,25 @@ domain("Blog") = {
 }
 ```
 
+## Conceptual Fluent API
+
+```
+domain("Blog")
+  .analysis()
+  .vision()
+  .usecases("*.cucumber") // ?
+  .design(
+    {
+        prototype(),
+        ui(),
+    }
+  )
+  .concepts()
+  .architecture()
+  .development()
+  .quality()
+```
+
 ## Architecture
 
 Define 
