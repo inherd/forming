@@ -120,17 +120,24 @@ architecture = {
 Kotlin
 
 ```
+// name = "Blog"
 concept("Blog") = {
-  type {
+  layered {
+     name: "Blog" // default to concept
      type: "Entity"
-     file_template: "$name$type",
+     package: "${layered.based}" // custom
   }
   struct {
-    
+    id: String,
+    name: String,
+    description: String,
+    author: String -> relation(Author.id)
   }
   interface { 
-    
-  } 
+    create(title: String): Blog;
+    delete(id: String);
+    update(title: String, description: String);
+  }
 }
 ```
 
@@ -147,5 +154,16 @@ loading from uml dir: `struct = uml.dir("").model("Blog")`
 ```
 characteristics = {
 
+}
+```
+
+## Architectural Layered
+
+
+```
+layered(domain("")) = {
+   fs {
+      file_template: "${name.lower()}_${type.upper()}",
+   }
 }
 ```
