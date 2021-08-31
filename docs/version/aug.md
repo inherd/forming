@@ -174,9 +174,16 @@ api("Blog") {
       out {  }
   }
   // or function
-  create {
+  create is {
      in(title: String) 
      out(Struct(Blog)) 
+
+     precondition { 
+        标题应该大于 2: title.len > 2;
+     } 
+     postcondition { 
+        不为空: not null
+     } 
   }
 }
 
