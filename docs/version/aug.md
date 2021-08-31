@@ -16,27 +16,6 @@ space = {
 
 `space` or `context`
 
-## Concepts DataStruct
-
-Kotlin
-
-```
-concept("Blog") = {
-  type {
-     type: "Entity"
-     file_template: "$name$type",
-  }
-  struct {
-    
-  }
-  interface { 
-    
-  } 
-}
-```
-
-`interface` or `behavior` ? 
-
 ## Concept Procedure
 
 Cucumber like, with NLP
@@ -116,4 +95,38 @@ architecture = {
 }
 ```
 
-## 
+
+## Concepts DataStruct
+
+Kotlin
+
+```
+concept("Blog") = {
+  type {
+     type: "Entity"
+     file_template: "$name$type",
+  }
+  struct {
+    
+  }
+  interface { 
+    
+  } 
+}
+```
+
+`interface` or `behavior` ?
+
+or 
+
+loading from uml file: `struct = uml.file("").model("Blog")`
+
+loading from uml dir: `struct = uml.dir("").model("Blog")`
+
+## Architecture Characteristics
+
+```
+characteristics = {
+
+}
+```
