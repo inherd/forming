@@ -22,10 +22,14 @@ Cucumber like, with NLP
 
 ```cucumber 
 procedure("login") = """
-
+any string in here
 """
-
-procedure(login) = "login.cucumber"
+// or
+procedure("login") = "login.cucumber"
+// and ?
+procedure("创建博客") = domain(Blog).create("any") {
+  
+}
 ```
 
 ## Concepts Relationship
