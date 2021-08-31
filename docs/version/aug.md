@@ -161,6 +161,27 @@ characteristics = {
 }
 ```
 
+## RESTful API
+
+```
+api("Blog") {
+  /create {
+      in { }
+      out {}
+  } 
+  /delete {
+      in { } 
+      out {  }
+  }
+  // or function
+  create {
+     in(title: String) 
+     out(Struct(Blog)) 
+  }
+}
+
+```
+
 ## Architectural Layered
 
 
