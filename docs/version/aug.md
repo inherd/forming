@@ -174,7 +174,9 @@ api("Blog") {
       out {  }
   }
   // or function
-  create is {
+  create {
+"""
+"""
      in(title: String) 
      out(Struct(Blog)) 
 
