@@ -52,6 +52,7 @@ mod tests {
     #[test]
     fn should_parse_basic_concept() {
         parse("concept '博客' {
+// 显示博客的相关信息
             behavior { }
             struct { }
         }");
