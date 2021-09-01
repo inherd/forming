@@ -1,0 +1,33 @@
+concept Blog(Displayable, Ownable) {
+    struct {
+        title, slug, description, gen_description, content, featured_image: String;
+        id, user_id, site_id: Integer;
+        created, updated: datetime;
+    }
+    behavior {
+        get_absolute_url(): String;
+        validate_unique();
+        publish_date_since(): datetime;
+        published(): Integer;
+        save(Blog);
+        delete(id: Integer);
+    }
+}
+
+concept BlogCategory {}
+concept BlogCategories {}
+concept BlogRelatedPosts {}
+concept Comments {}
+
+space Blog {
+   name: "${name.lower()}_${item.upper()}"
+   items: Blog, BlogCategory, BlogCategories, BlogRelatedPosts, Comments
+}
+
+concept Page {}
+concept Link {}
+concept RichTextPage {}
+
+space Page {
+    items: Page, Link, RichTextPage
+}
