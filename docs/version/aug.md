@@ -153,6 +153,107 @@ loading from uml file: `struct = uml.file("").model("Blog")`
 
 loading from uml dir: `struct = uml.dir("").model("Blog")`
 
+or another form:
+```
+---
+File: A.context
+---
+
+concept Blog {
+  layered {
+     name: "Blog" -- default to concept
+     type: "Entity"
+     package: "${layered.based}" -- custom
+  }
+  struct {
+    id: String,
+    name: String,
+    description: String,
+    author: String -- relation to Author.id
+  }
+  behavior {
+    create(title: String): Blog;
+    delete(id: String);
+    update(title: String, description: String);
+  }
+}
+
+concept Author {
+	layered {
+     name: "Author" -- default to concept
+     type: "Entity"
+     package: "${layered.based}" -- custom
+  }
+  struct {
+    id: String,
+    name: String,
+    gender: Enum
+  }
+  behavior {
+		---
+		...
+		---
+  }
+}
+```
+
+## Design by Contract
+
+Since in the concept and between multiple concepts, their should be relationships, we need to describe those relationship and use them inside the code. We can introduce `contract` keyword.
+
+```
+---
+A.contract
+---
+import "A.context"
+
+contract for Blog, Author {
+	struct {
+		Blog.author <- Author.id
+	}
+	behavior {
+		---
+		...
+		---
+	}
+}
+
+contract for Blog {
+	struct {
+		---
+		...
+		---
+	}
+	behavior {
+		---
+		...
+		---
+	}
+}
+
+contract for Blog.create {
+	precondition {
+	}
+	during {
+	}
+	postcondition {
+	}
+}
+
+contract for Author {
+	struct {
+		---
+		...
+		---
+	}
+	behavior {
+		---
+		...
+		---
+	}
+}
+```
+
 ## Architecture Characteristics
 
 ```
