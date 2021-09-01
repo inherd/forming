@@ -49,4 +49,12 @@ mod tests {
     fn should_parse_dir() {
         parse("concepts => dir(\"concepts/\")");
     }
+
+    #[test]
+    fn should_parse_basic_concept() {
+        parse("concept '博客' {
+            behavior { }
+            struct { }
+        }");
+    }
 }

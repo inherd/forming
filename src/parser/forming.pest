@@ -6,18 +6,39 @@ start = _{ SOI ~ declaration* ~ EOI}
 declaration = {
     architecture_declaration
   | concepts
+  | concept_declaration
 }
 
-collaboration_declaration = {
-    "collaboration"
+layered_declaration = {
+    "layered" | "分层"
 }
 
 architecture_declaration = {
-    "architecture"
+    "architecture" | "架构"
 }
 
 component_declaration = {
     "component"
+}
+
+concept_declaration = {
+    "concept" ~ string ~ "{" ~ ( struct_declaration | behavior_declaration)* ~ "}"
+}
+
+struct_declaration = {
+    "struct" ~ "{" ~ "}"
+}
+
+behavior_declaration = {
+    "behavior" ~ "{" ~ "}"
+}
+
+file = {
+   "file" ~ "(" ~ string ~ ")"
+}
+
+dir = {
+   "dir" ~ "(" ~ string ~ ")"
 }
 
 concepts = {

@@ -9,6 +9,7 @@ Conceptual space: A conceptual space is a geometric structure that represents a 
 概念空间: 概念空间是代表若干性質維度的几何结构，對於能夠相比較的概念和對象，概念空間可以表示其基本特徵，例如重量、颜色 、味道 、温度、间距和三个常規空间維度 。
 
 ```
+// or context?
 space = {
   
 }
@@ -25,7 +26,7 @@ procedure("login") = """
 any string in here
 """
 // or
-procedure("login") = "login.cucumber"
+procedure("login") = file("login.cucumber")
 // and ?
 procedure("创建博客") = domain(Blog).create("any") {
   
@@ -199,7 +200,7 @@ concept Author {
 
 ## Design by Contract
 
-Since in the concept and between multiple concepts, their should be relationships, we need to describe those relationship and use them inside the code. We can introduce `contract` keyword.
+Since in the concept and between multiple concepts, their should be relationships, we need to describe this relationship and use them inside the code. We can introduce `contract` keyword.
 
 ```
 ---
