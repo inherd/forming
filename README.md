@@ -28,6 +28,10 @@ Todo:
    - [ ] web page
    - [ ] common architecture patterns
    - [ ] in svg
+- [ ] Integration (in ext model)
+  - [ ] UML parser for modeling
+  - [ ] Swagger to API in/out
+  - [ ] Cucumber parser
 - [ ] codegen
    - [ ] java code gen
    - [ ] code gen protocol
