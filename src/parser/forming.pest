@@ -22,7 +22,7 @@ component_declaration = {
 }
 
 concept_declaration = {
-    "concept" ~ string ~ "{" ~ ( struct_declaration | behavior_declaration)* ~ "}"
+    "concept" ~ (identifier | string_literal) ~ "{" ~ ( struct_declaration | behavior_declaration)* ~ "}"
 }
 
 struct_declaration = {
@@ -34,27 +34,36 @@ behavior_declaration = {
 }
 
 file = {
-   "file" ~ "(" ~ string ~ ")"
+   "file" ~ "(" ~ string_literal ~ ")"
 }
 
 dir = {
-   "dir" ~ "(" ~ string ~ ")"
+   "dir" ~ "(" ~ string_literal ~ ")"
 }
 
 concepts = {
-    "concepts" ~ "=" ~ ">" ~ ("file" | "dir") ~ "(" ~ string ~ ")"
+    "concepts" ~ "=" ~ ">" ~ ("file" | "dir") ~ "(" ~ string_literal ~ ")"
+}
+
+// ascii_char = @{ '\x00'..'\x7f' }
+
+string_literal = @{
+    double_quoted_string |
+    single_quoted_string
 }
 
 double_quoted_string  = @{ "\"" ~ (!("\"") ~ ANY)* ~ "\""}
 single_quoted_string  = @{ "\'" ~ (!("\'") ~ ANY)* ~ "\'"}
 
-string = @{
-    double_quoted_string |
-    single_quoted_string
+identifier = @{
+    ('a'..'z' | 'A'..'Z' | "_") ~
+    all_chars*
 }
+all_chars = _{'a'..'z' | 'A'..'Z' | "_" | '0'..'9'}
 
 // empty line
 newline    = _{ "\n" | "\r\n" }
 WHITESPACE = _{ " " | "\t" | NEWLINE }
 block_comment = _{ "/*" ~ (block_comment | !"*/" ~ ANY)* ~ "*/" }
 COMMENT    = _{ block_comment | ("//" ~ (!NEWLINE ~ ANY)*) }
+DOC_COMMENT = { ("--" ~ (!NEWLINE ~ ANY)*) }

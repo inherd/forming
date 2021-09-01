@@ -27,11 +27,10 @@ pub fn parse(text: &str) {
 fn parse_concepts(decl: Pair<Rule>) {
     for concepts in decl.into_inner() {
         match concepts.as_rule() {
-            Rule::string => {
+            _ => {
                 println!("Rule:    {:?}", concepts.as_rule());
                 println!("Span:    {:?}", concepts.as_span());
             }
-            _ => {}
         }
     }
 }
@@ -53,6 +52,11 @@ mod tests {
     #[test]
     fn should_parse_basic_concept() {
         parse("concept '博客' {
+            behavior { }
+            struct { }
+        }");
+
+        parse("concept  Blog {
             behavior { }
             struct { }
         }");
