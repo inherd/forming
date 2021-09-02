@@ -297,9 +297,26 @@ api("Blog") {
 
 
 ```
-layered(domain("")) = {
+layered domain "Blog" = {
    fs {
       file_template: "${name.lower()}_${type.upper()}",
    }
+}
+```
+
+## Architecture Diagram
+
+```
+shape: label， arrow, triangle, rectangle
+```
+
+```
+layered diagram {
+    row {  
+       column  {
+            "ITEM A",
+           { name: "ITEM B", foreground: black, backend: white, border: black } 
+       }
+    } 
 }
 ```
