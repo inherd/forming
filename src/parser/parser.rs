@@ -93,4 +93,13 @@ concept '博客' {
             struct uml::file('').class('Blog')
         }");
     }
+
+    #[test]
+    fn should_parse_basic_contract() {
+        parse("contract for Blog {
+            precondition {
+               '博客不为空': not empty
+            }
+        } ");
+    }
 }

@@ -7,6 +7,7 @@ declaration = {
     architecture_declaration
   | concepts
   | concept_declaration
+  | contract_declaration
 }
 
 layered_declaration = {
@@ -32,6 +33,39 @@ struct_declaration = {
 
 behavior_declaration = {
     "behavior" ~ "{" ~ "}"
+}
+
+contract_declaration = {
+    contract_ident_decl
+    | contract_class_decl
+}
+
+contract_ident_decl = {
+  "contract" ~ "for" ~ (identifier | string_literal) ~ "{" ~ precondition? ~ during? ~ postcondition? ~ "}"
+}
+
+during = {
+  "during"
+}
+
+precondition = {
+  "precondition" ~ "{" ~ string_literal ~ ":"  ~ expr ~ "}"
+}
+
+postcondition = {
+  "postcondition" ~ "{" ~ string_literal ~ ":"  ~ expr ~ "}"
+}
+
+expr = {
+    "not" ~ "empty"
+}
+
+contract_class_decl = {
+  "contract" ~ "for" ~ contract_class ~ "{" ~ "}"
+}
+
+contract_class = {
+  identifier ~ "." ~ identifier
 }
 
 source = { file | dir }
