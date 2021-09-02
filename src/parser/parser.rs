@@ -14,6 +14,9 @@ pub fn parse(text: &str) {
                 Rule::concepts => {
                     parse_concepts(decl)
                 }
+                Rule::concept_declaration => {
+                    parse_concept_decl(decl)
+                }
                 _ => {
                     println!("Rule:    {:?}", decl.as_rule());
                     println!("Span:    {:?}", decl.as_span());
@@ -24,6 +27,19 @@ pub fn parse(text: &str) {
     }
 }
 
+fn parse_concept_decl(decl: Pair<Rule>) {
+    for concepts in decl.into_inner() {
+        match concepts.as_rule() {
+            Rule::comments => {
+                println!("COMMENT:    {:?}", concepts.tokens());
+            }
+            _ => {
+                println!("Rule:    {:?}", concepts.as_rule());
+                println!("Span:    {:?}", concepts.as_span());
+            }
+        }
+    }
+}
 fn parse_concepts(decl: Pair<Rule>) {
     for concepts in decl.into_inner() {
         match concepts.as_rule() {
@@ -51,15 +67,17 @@ mod tests {
 
     #[test]
     fn should_parse_basic_concept() {
-        parse("concept '博客' {
-// 显示博客的相关信息
+        parse("
+// normal quote
+concept '博客' {
+ --  显示博客的相关信息
             behavior { }
             struct { }
         }");
 
-        parse("concept  Blog {
-            behavior { }
-            struct { }
-        }");
+        // parse("concept  Blog {
+        //     behavior { }
+        //     struct { }
+        // }");
     }
 }

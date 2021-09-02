@@ -22,7 +22,7 @@ component_declaration = {
 }
 
 concept_declaration = {
-    "concept" ~ (identifier | string_literal) ~ "{" ~ ( struct_declaration | behavior_declaration)* ~ "}"
+    "concept" ~ (identifier | string_literal) ~ "{" ~ comments? ~ ( struct_declaration | behavior_declaration)* ~ "}"
 }
 
 struct_declaration = {
@@ -65,5 +65,5 @@ all_chars = _{'a'..'z' | 'A'..'Z' | "_" | '0'..'9'}
 newline    = _{ "\n" | "\r\n" }
 WHITESPACE = _{ " " | "\t" | NEWLINE }
 block_comment = _{ "/*" ~ (block_comment | !"*/" ~ ANY)* ~ "*/" }
-COMMENT    = _{ block_comment | ("//" ~ (!NEWLINE ~ ANY)*) }
-DOC_COMMENT = { ("--" ~ (!NEWLINE ~ ANY)*) }
+comments = { COMMENT* }
+COMMENT    = {  block_comment | (("//" | "--") ~ (!NEWLINE ~ ANY)*) }
