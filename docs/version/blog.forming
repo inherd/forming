@@ -1,3 +1,4 @@
+// Blog extend Displayable
 concept Blog(Displayable, Ownable) {
     struct {
         title, slug, description, gen_description, content, featured_image: String;
@@ -28,10 +29,23 @@ concept Page {}
 concept Link {}
 concept RichTextPage {}
 
+api /blog {
+    import "swagger.yml"
+    /create {
+        in { title: Blog }
+        out { }
+        precondition {
+            "不为空": not null
+       // not_empty: not empty
+        }
+        postcondition { }
+    }
+}
+
 space Page {
     items: Page, Link, RichTextPage
 }
 
-graph("layer") Sample {
+diagram("layer") Sample {
 
 }
