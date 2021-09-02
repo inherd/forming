@@ -31,3 +31,7 @@ concept RichTextPage {}
 space Page {
     items: Page, Link, RichTextPage
 }
+
+graph("layer") Sample {
+
+}
