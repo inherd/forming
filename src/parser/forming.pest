@@ -27,11 +27,14 @@ concept_declaration = {
 
 struct_declaration = {
     "struct" ~ "{" ~ "}"
+    | "struct" ~ "uml" ~ "::" ~ source ~ "." ~ "class" ~ "(" ~ string_literal ~ ")"
 }
 
 behavior_declaration = {
     "behavior" ~ "{" ~ "}"
 }
+
+source = { file | dir }
 
 file = {
    "file" ~ "(" ~ string_literal ~ ")"

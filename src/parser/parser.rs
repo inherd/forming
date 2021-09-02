@@ -75,9 +75,22 @@ concept '博客' {
             struct { }
         }");
 
-        // parse("concept  Blog {
-        //     behavior { }
-        //     struct { }
-        // }");
+        parse("concept  Blog {
+            behavior { }
+            struct { }
+        }");
+    }
+
+    #[test]
+    fn should_parse_concept_from_source() {
+        parse("concept  Blog {
+            behavior { }
+            struct uml::dir('').class('Blog')
+        }");
+
+        parse("concept  Blog {
+            behavior { }
+            struct uml::file('').class('Blog')
+        }");
     }
 }
