@@ -21,7 +21,8 @@ concept BlogRelatedPosts {}
 concept Comments {}
 
 space Blog {
-   name: "${name.lower()}_${item.upper()}"
+   name: "${name.lower()}_${item.upper()}",
+   package: "com.phodal.blog", // or path
    items: Blog, BlogCategory, BlogCategories, BlogRelatedPosts, Comments
 }
 
