@@ -101,5 +101,11 @@ concept '博客' {
                '博客不为空': not empty
             }
         } ");
+
+        parse("contract for Blog {
+            precondition {
+               title_not_empty: not empty
+            }
+        } ");
     }
 }

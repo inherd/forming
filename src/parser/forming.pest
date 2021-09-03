@@ -49,11 +49,15 @@ during = {
 }
 
 precondition = {
-  "precondition" ~ "{" ~ string_literal ~ ":"  ~ expr ~ "}"
+  "precondition" ~ "{" ~ condition_lang ~ ":"  ~ expr ~ "}"
 }
 
 postcondition = {
-  "postcondition" ~ "{" ~ string_literal ~ ":"  ~ expr ~ "}"
+  "postcondition" ~ "{" ~ condition_lang ~ ":"  ~ expr ~ "}"
+}
+
+condition_lang = {
+    string_literal | identifier
 }
 
 expr = {
