@@ -60,6 +60,7 @@ condition_lang = {
     string_literal | identifier
 }
 
+// todo: support for normal expr 
 expr = {
     "not" ~ "empty"
 }
