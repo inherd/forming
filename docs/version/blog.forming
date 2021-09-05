@@ -51,6 +51,7 @@ api /blog {
     }
 }
 
+// or namespaces ?
 space Page {
     items: Page, Link, RichTextPage
 }

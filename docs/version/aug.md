@@ -320,3 +320,16 @@ layered diagram {
     } 
 }
 ```
+
+## Implementation
+
+db_config {
+  config { } ?
+}
+
+api "/blog" {
+  db  {
+    table ??
+    field ??
+  } 
+}
