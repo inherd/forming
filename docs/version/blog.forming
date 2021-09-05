@@ -15,6 +15,14 @@ concept Blog(Displayable, Ownable) {
     }
 }
 
+// docs: thinking in behavior out
+behavior for Blog {
+  delete(id: Integer);
+}
+struct for Blog {
+  title: String;
+}
+
 concept BlogCategory {}
 concept BlogCategories {}
 concept BlogRelatedPosts {}
