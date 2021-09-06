@@ -12,7 +12,11 @@ Context here...
 
 ## Decision
 
-Decision here...
+Samples:
+
+Prometheus DSL: https://github.com/prometheus/prometheus/blob/main/promql/parser/generated_parser.y
+
+
 
 ## Consequences
 
