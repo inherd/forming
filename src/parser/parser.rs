@@ -111,7 +111,7 @@ concept '博客' {
 
     #[test]
     fn should_parse_basic_api() {
-        parse("api for /blog {
+        parse("api for /search/?q=%E5%8D%9A%E5%AE%A2&type=blog.BlogPost {
 
         } ");
     }
