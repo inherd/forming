@@ -333,3 +333,13 @@ api "/blog" {
     field ??
   } 
 }
+
+## Decisions
+
+```
+decisions { 
+  adr {
+    dir("docs/adr")
+  }
+}
+```
