@@ -8,6 +8,7 @@ declaration = {
   | concepts
   | concept_declaration
   | contract_declaration
+  | api_declaration
 }
 
 layered_declaration = {
@@ -39,6 +40,18 @@ contract_declaration = {
     contract_ident_decl
     | contract_class_decl
 }
+
+api_declaration = {
+   "api" ~ "for" ~ api_ident ~ "{" ~ "}"
+}
+
+api_ident = {
+   ('a'..'z' | 'A'..'Z' | "_" | "-" | "/") ~
+    api_chars*
+}
+
+api_chars = _{'a'..'z' | 'A'..'Z' |  "_" | "-" | "/" | '0'..'9'}
+
 
 contract_ident_decl = {
   "contract" ~ "for" ~ (identifier | string_literal) ~ "{" ~ precondition? ~ during? ~ postcondition? ~ "}"

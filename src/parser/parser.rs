@@ -108,4 +108,11 @@ concept '博客' {
             }
         } ");
     }
+
+    #[test]
+    fn should_parse_basic_api() {
+        parse("api for /blog {
+
+        } ");
+    }
 }

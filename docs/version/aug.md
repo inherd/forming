@@ -343,3 +343,23 @@ decisions {
   }
 }
 ```
+
+### Test
+
+two type design 
+
+```
+test for api "/blog" {
+  
+}
+```
+
+or 
+
+```
+api "/blog" {
+   test {
+   
+   }
+}
+```
