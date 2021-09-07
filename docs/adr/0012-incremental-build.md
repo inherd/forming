@@ -8,7 +8,11 @@ Date: 2021-09-07
 
 ## Context
 
-Context here...
+modular design for incremental,
+
+input and output scan for changes.
+
+also for debugging inside.
 
 ## Decision
 
