@@ -10,3 +10,5 @@
 * [8. graph-database-for-visualization](0008-graph-database-for-visualization.md)
 * [9. full-expr-support](0009-full-expr-support.md)
 * [10. api-support-import-from-swagger](0010-api-support-import-from-swagger.md)
+* [11. build-system-inside](0011-build-system-inside.md)
+* [12. incremental-build](0012-incremental-build.md)
