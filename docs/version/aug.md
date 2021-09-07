@@ -77,6 +77,35 @@ concepts = dir("forming/**/*.csv")
 
 ### domain
 
+## Concept in Formalization
+
+### Concept Matrix
+
+```
+instance Viewable Adder where
+view Adder{..} = grid [[label "x", view x],
+                      [label "y", view y],
+                      [label "x+y", view z]]
+```
+
+## Target
+
+Why-How-What
+
+To-By-Using in 《系统架构:复杂系统的产品设计与开发》, en "System Architecture: Strategy and Product Development for Complex Systems"
+
+examples:
+
+```
+To（为了改变）
+ - （廉价地、环保地）
+By（通过驾驶）
+ - （省油、易于操纵）
+Using（使用车）
+ - （油/汽混合动力）
+```
+
+
 # Architectural
 
 ## Layered Architecture
