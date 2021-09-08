@@ -27,6 +27,8 @@ struct for Blog {
 type Description {
 
 }
+// type alias
+type Behavior = Function ?
 
 concept BlogCategory {}
 concept BlogCategories {}

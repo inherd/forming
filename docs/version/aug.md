@@ -363,6 +363,11 @@ api "/blog" {
   } 
 }
 
+api version 1
+```
+api /blog/hello (title: String, )
+```
+
 ## Decisions
 
 ```
