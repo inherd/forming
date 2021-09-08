@@ -23,6 +23,11 @@ struct for Blog {
   title: String;
 }
 
+// simple type-system?
+type Description {
+
+}
+
 concept BlogCategory {}
 concept BlogCategories {}
 concept BlogRelatedPosts {}
@@ -31,7 +36,7 @@ concept Comments {}
 space Blog {
    name: "${name.lower()}_${item.upper()}",
    package: "com.phodal.blog", // or path
-   items: Blog, BlogCategory, BlogCategories, BlogRelatedPosts, Comments
+   concepts: Blog, BlogCategory, BlogCategories, BlogRelatedPosts, Comments
 }
 
 concept Page {}
