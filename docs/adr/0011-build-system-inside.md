@@ -14,6 +14,12 @@ as a DSL, we need a simple build system task for transpile jobs.
 
 https://www.microsoft.com/en-us/research/uploads/prod/2020/04/build-systems-jfp.pdf
 
+Rust Implementation: [https://github.com/typesanitizer/bsalc-alt-code](https://github.com/typesanitizer/bsalc-alt-code)
+
+
+
+[redo - a recursive build system](https://github.com/apenwarr/redo)
+
 ## Decision
 
 Decision here...
