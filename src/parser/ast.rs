@@ -48,6 +48,12 @@ pub struct Behavior {
 
 }
 
+/// auto insert/update comment to code
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct HighlightCore {
+
+}
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum Type {
     Int,
