@@ -12,6 +12,8 @@ Architecture 3.0 based frameworks.
 - [ ] 模型声明
    - [ ] DDD Styles
 - [ ] 模型代码生成 
+- [ ] Highlighted Core Documents
+   - [ ]  auto documentation
 
 Todo:
 
