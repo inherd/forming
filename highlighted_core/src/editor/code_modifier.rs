@@ -28,7 +28,7 @@ impl<R: Read + Seek> CodeModifier<R> {
 mod tests {
     use std::fs::File;
     use std::path::PathBuf;
-    use crate::editor::CodeModifier;
+    use crate::editor::code_modifier::CodeModifier;
 
     #[test]
     fn should_open_file() {
