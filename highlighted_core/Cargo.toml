@@ -10,7 +10,7 @@ fnv = "1.0.3"
 rand = { version = "~0.8", optional = true }
 
 guarding_core = "0.2.5"
-guarding_ident = "0.2.5"
+guarding_ident = "0.2.6"
 
 [dev-dependencies]
 criterion = "~0.3"
