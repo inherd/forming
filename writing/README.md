@@ -17,7 +17,7 @@ knowledge transfer
 Examples: https://github.com/phodal/exemd
 
 ```java
-// exemd-deps: colored;version=1.8.0
+// doc-deps: colored;version=1.8.0
 // or 
 #**
  import com.phodal.zero
@@ -26,7 +26,7 @@ Examples: https://github.com/phodal/exemd
 // for one line
 import com.phodal.blog; // hidden 
 
-## exemd-assert: zero 
+## doc-assert: zero
 ```
 
 ### Document in Code
@@ -48,7 +48,7 @@ public void should_execute() {
 2. documentation test
 
 ```
-// exemd-code: file("World/Hello.java").line()[5, 12]
+// doc-code: file("World/Hello.java").line()[5, 12]
 ```
 
 ### Document Concept binding
