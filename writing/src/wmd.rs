@@ -1,6 +1,6 @@
 use pulldown_cmark::{
     CodeBlockKind,
-    Event::{Code, End, Html, Start, Text},
+    Event::{Code, End, Start, Text},
     Options, Parser, Tag,
 };
 
@@ -13,46 +13,43 @@ impl Rmd {
         Rmd { text }
     }
 
-    pub fn parse(&mut self)  {
+    pub fn parse(&mut self) {
         let parser = create_markdown_parser(&self.text);
         let mut text = "".to_string();
 
         for event in parser {
             match event {
-                Start(tag) => {
-                    if let Tag::CodeBlock(info) = tag {
-                        match info {
-                            CodeBlockKind::Fenced(lang_code) => {
-                                let string = lang_code.to_string();
-                                println!("{}", string);
-                            }
-                            CodeBlockKind::Indented => {}
+                Start(Tag::CodeBlock(info)) => {
+                    match info {
+                        CodeBlockKind::Fenced(lang_code) => {
+                            let string = lang_code.to_string();
+                            println!("{}", string);
                         }
+                        CodeBlockKind::Indented => {}
                     }
 
                     text = "".to_string();
                 }
-                End(tag) => {
-                    if let Tag::CodeBlock(info) = tag {
-                        match info {
-                            CodeBlockKind::Fenced(_lang_code) => {
-                                // text.to_string()
+                End(Tag::CodeBlock(info)) => {
+                    match info {
+                        CodeBlockKind::Fenced(_lang_code) => {
+                            // text.to_string()
+                            if text.starts_with("// code-") {
                                 println!("{}", text);
                             }
-                            CodeBlockKind::Indented => {}
                         }
+                        CodeBlockKind::Indented => {}
                     }
                 }
                 Text(body) => {
                     text += &body.to_string();
                 }
-                Html(_html) => {}
                 Code(inline_code) => {
                     text += &format!("`{}`", inline_code);
                 }
                 _ => {
                     println!("{:?}", event);
-                },
+                }
             }
         }
     }
@@ -77,5 +74,4 @@ mod build_command_structure {
 ".to_string());
         rmd.parse();
     }
-
 }
