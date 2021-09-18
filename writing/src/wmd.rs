@@ -36,7 +36,8 @@ impl Rmd {
                     if let Tag::CodeBlock(info) = tag {
                         match info {
                             CodeBlockKind::Fenced(_lang_code) => {
-
+                                // text.to_string()
+                                println!("{}", text);
                             }
                             CodeBlockKind::Indented => {}
                         }
@@ -49,7 +50,9 @@ impl Rmd {
                 Code(inline_code) => {
                     text += &format!("`{}`", inline_code);
                 }
-                _ => (),
+                _ => {
+                    println!("{:?}", event);
+                },
             }
         }
     }
