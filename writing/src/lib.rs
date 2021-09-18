@@ -3,7 +3,7 @@ extern crate pest;
 extern crate pest_derive;
 
 mod wmd;
-mod parser;
+pub mod parser;
 mod ast;
 
 #[cfg(test)]
