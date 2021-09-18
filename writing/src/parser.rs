@@ -1,6 +1,6 @@
 use pest::Parser;
 use pest::iterators::Pair;
-use crate::ast::{CodeDoc, Writing};
+use crate::ast::{DocCode, Writing};
 
 #[derive(Parser)]
 #[grammar = "writing.pest"]
@@ -28,8 +28,8 @@ pub fn parse(text: &str) -> Writing {
     writing
 }
 
-fn parse_doc_rule(decl: Pair<Rule>) -> CodeDoc {
-    let mut code_doc = CodeDoc::new();
+fn parse_doc_rule(decl: Pair<Rule>) -> DocCode {
+    let mut code_doc = DocCode::new();
     for pair in decl.into_inner() {
         match pair.as_rule() {
             Rule::string_literal => {

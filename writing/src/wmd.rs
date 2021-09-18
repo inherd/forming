@@ -5,6 +5,7 @@ use pulldown_cmark::{
     Event::{Code, End, Start, Text},
     Options, Parser, Tag,
 };
+use crate::wreader::WReader;
 
 pub struct Wmd {
     text: String,
@@ -45,7 +46,10 @@ impl Wmd {
 
                     if str.starts_with("// doc-") {
                         let writing = parser::parse(str.replace("//", "").as_str());
-                        println!("{:?}", writing);
+                        let result = WReader::read_doc_code(writing.code_docs[0].clone());
+                        for line in result {
+                            println!("{}", line);
+                        }
                     }
                 }
                 Code(inline_code) => {

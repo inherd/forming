@@ -1,6 +1,6 @@
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Writing {
-    pub code_docs: Vec<CodeDoc>,
+    pub code_docs: Vec<DocCode>,
 }
 
 impl Writing {
@@ -12,15 +12,15 @@ impl Writing {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct CodeDoc {
+pub struct DocCode {
     pub file: String,
-    pub start_line: i32,
-    pub end_line: i32,
+    pub start_line: usize,
+    pub end_line: usize,
 }
 
-impl CodeDoc {
-    pub fn new() -> CodeDoc {
-        CodeDoc {
+impl DocCode {
+    pub fn new() -> DocCode {
+        DocCode {
             file: "".to_string(),
             start_line: 0,
             end_line: 0
