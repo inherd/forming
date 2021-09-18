@@ -24,6 +24,7 @@ exclude = [
 
 
 [dependencies]
+pulldown-cmark = { version = "0.8", default-features = false }
 
 [lib]
 name = "writing"

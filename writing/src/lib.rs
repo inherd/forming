@@ -1,3 +1,5 @@
+mod wmd;
+
 #[cfg(test)]
 mod tests {
     #[test]
