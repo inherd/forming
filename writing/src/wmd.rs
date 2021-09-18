@@ -1,7 +1,6 @@
 use crate::parser;
 
 use pulldown_cmark::{
-    CodeBlockKind,
     Event::{Code, End, Start, Text},
     Options, Parser, Tag,
 };
@@ -16,50 +15,40 @@ impl Wmd {
         Wmd { text }
     }
 
-    pub fn parse(&mut self) {
+    pub fn parse(&mut self) -> String {
         let parser = create_markdown_parser(&self.text);
         let mut text = "".to_string();
+        let mut is_in_code = false;
 
         for event in parser {
             match event {
-                Start(Tag::CodeBlock(info)) => {
-                    match info {
-                        CodeBlockKind::Fenced(lang_code) => {
-                            let string = lang_code.to_string();
-                            println!("{}", string);
-                        }
-                        CodeBlockKind::Indented => {}
-                    }
-
-                    text = "".to_string();
+                Start(Tag::CodeBlock(_info)) => {
+                    is_in_code= true;
                 }
-                End(Tag::CodeBlock(info)) => {
-                    match info {
-                        CodeBlockKind::Fenced(_lang_code) => {
-
-                        }
-                        CodeBlockKind::Indented => {}
-                    }
+                End(Tag::CodeBlock(_info)) => {
+                    is_in_code= false;
                 }
                 Text(body) => {
                     let str = body.to_string();
 
-                    if str.starts_with("// doc-") {
+                    if is_in_code && str.starts_with("// doc-") {
                         let writing = parser::parse(str.replace("//", "").as_str());
                         let result = WReader::read_doc_code(writing.code_docs[0].clone());
                         for line in result {
-                            println!("{}", line);
+                            text += &format!("{}\n", line);
                         }
                     }
                 }
-                Code(inline_code) => {
-                    text += &format!("`{}`", inline_code);
+                Code(_inline_code) => {
+                    // text += &format!("`{}`", inline_code);
                 }
                 _ => {
-                    println!("{:?}", event);
+                    // event
                 }
             }
         }
+
+        return text
     }
 }
 
@@ -76,10 +65,13 @@ mod build_command_structure {
     #[test]
     fn should_parse_line() {
         let mut rmd = Wmd::new("
+233333
+
 ```java
 // doc-code: file(\"src/lib.rs\").line()[2, 5]
 ```
 ".to_string());
-        rmd.parse();
+        let string = rmd.parse();
+        println!("{}", string);
     }
 }
