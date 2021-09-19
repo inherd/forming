@@ -1,9 +1,6 @@
 use crate::parser;
 
-use pulldown_cmark::{
-    Event::{Code, End, Start, Text},
-    Options, Parser, Tag,
-};
+use pulldown_cmark::{Event::{Code, End, Start, Text}, Options, Parser, Tag, CodeBlockKind, Event};
 use crate::wreader::WReader;
 
 pub struct Wmd {
@@ -19,14 +16,21 @@ impl Wmd {
         let parser = create_markdown_parser(&self.text);
         let mut text = "".to_string();
         let mut is_in_code = false;
+        let mut lang_code = "".to_string();
 
         for event in parser {
             match event {
-                Start(Tag::CodeBlock(_info)) => {
-                    is_in_code= true;
+                Start(Tag::CodeBlock(info)) => {
+                    match info {
+                        CodeBlockKind::Fenced(lang) => {
+                            lang_code = format!("{}", lang);
+                        }
+                        CodeBlockKind::Indented => {}
+                    }
+                    is_in_code = true;
                 }
                 End(Tag::CodeBlock(_info)) => {
-                    is_in_code= false;
+                    is_in_code = false;
                 }
                 Text(body) => {
                     let str = body.to_string();
@@ -34,21 +38,34 @@ impl Wmd {
                     if is_in_code && str.starts_with("// doc-") {
                         let writing = parser::parse(str.replace("//", "").as_str());
                         let result = WReader::read_doc_code(writing.code_docs[0].clone());
+
+                        text += &format!("```{}\n", lang_code);
                         for line in result {
                             text += &format!("{}\n", line);
                         }
+                        text += &format!("```");
+                    } else {
+                        text += &format!("{}\n", str);
                     }
                 }
-                Code(_inline_code) => {
-                    // text += &format!("`{}`", inline_code);
+                Code(inline_code) => {
+                    text += &format!("`{}`", inline_code);
                 }
-                _ => {
-                    // event
+                Event::Html(html) => {
+                    text += &format!("{}\n", html);
                 }
+                Event::FootnoteReference(footnote) => {
+                    text += &format!("{}\n", footnote);
+                }
+                Event::SoftBreak => {}
+                Event::HardBreak => {}
+                Event::Rule => {}
+                Event::TaskListMarker(_) => {}
+                _ => {}
             }
         }
 
-        return text
+        return text;
     }
 }
 
@@ -72,6 +89,11 @@ mod build_command_structure {
 ```
 ".to_string());
         let string = rmd.parse();
-        println!("{}", string);
+        assert_eq!("233333
+```java
+extern crate pest_derive;
+
+mod wmd;
+```", string)
     }
 }
