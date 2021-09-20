@@ -24,7 +24,6 @@ string_literal = @{
     single_quoted_string
 }
 
-
 digit = { '0'..'9' }
 digits = { digit+ }
 

@@ -29,19 +29,6 @@ import com.phodal.blog; // hidden
 ## doc-assert: zero
 ```
 
-### Document in Code
-
-1. like Rust code
-
-```java
-/**
-
-**/
-public void should_execute() {
-    
-}
-```
-
 ### Document-Code binding
 
 1. code-document binding
@@ -54,6 +41,20 @@ public void should_execute() {
 ### Document Concept binding
 
 1. read from CSV and output it
+
+
+### Document in Code
+
+1. like Rust code
+
+```java
+/**
+
+**/
+public void should_execute() {
+    
+}
+```
 
 License
 ---
