@@ -51,9 +51,28 @@ import com.phodal.blog; // hidden
 /**
 
 **/
+
+// doc-code: document("section1").start()
 public void should_execute() {
     
 }
+// doc-code: document("section1").end()
+```
+
+### Annotation
+
+Java doc as annotation
+
+```java
+@param   (name of the parameter, followed by its description)
+@return  (omit @return for tests that return void; required otherwise)
+@succeedIf  (summarize the conditions under which the test case succeeds)
+@failIf  (summarize the conditions under which the test case fails)
+@qualityAttribute (specify the quality aspect addressed: performance, etc.)
+@scope  (specify the test case purpose: unit, integration, etc.)
+@author   (author name/surname)
+@version  (version number + checkout date)
+@see  package.Class#method(Type,...) (ref to the function under test)
 ```
 
 License
