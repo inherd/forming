@@ -1,29 +1,50 @@
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Writing {
-    pub code_docs: Vec<DocCode>,
+    pub code_docs: Vec<CodeSource>,
+    pub code_deps: Vec<CodeDep>,
 }
 
 impl Writing {
     pub fn new() -> Writing {
         Writing {
-            code_docs: vec![]
+            code_docs: vec![],
+            code_deps: vec![]
         }
     }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct DocCode {
+pub struct CodeSource {
     pub file: String,
     pub start_line: usize,
     pub end_line: usize,
 }
 
-impl DocCode {
-    pub fn new() -> DocCode {
-        DocCode {
+impl CodeSource {
+    pub fn new() -> CodeSource {
+        CodeSource {
             file: "".to_string(),
             start_line: 0,
             end_line: 0
+        }
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct CodeDep {
+    pub name: String,
+    pub version: String,
+    pub artifact_id: String,
+    pub group_id: String,
+}
+
+impl CodeDep {
+    pub fn new() -> CodeDep {
+        CodeDep {
+            name: "".to_string(),
+            version: "".to_string(),
+            artifact_id: "".to_string(),
+            group_id: "".to_string()
         }
     }
 }

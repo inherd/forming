@@ -1,6 +1,6 @@
 use pest::Parser;
 use pest::iterators::Pair;
-use crate::ast::{DocCode, Writing};
+use crate::ast::{CodeSource, Writing, CodeDep};
 
 #[derive(Parser)]
 #[grammar = "writing.pest"]
@@ -14,7 +14,10 @@ pub fn parse(text: &str) -> Writing {
         for decl in pair.into_inner() {
             match decl.as_rule() {
                 Rule::doc_code_decl => {
-                    writing.code_docs.push(parse_doc_rule(decl));
+                    writing.code_docs.push(parse_doc_decl(decl));
+                }
+                Rule::code_dep_decl => {
+                    writing.code_deps.push(parse_deps_decl(decl));
                 }
                 _ => {
                     println!("Rule:    {:?}", decl.as_rule());
@@ -28,8 +31,29 @@ pub fn parse(text: &str) -> Writing {
     writing
 }
 
-fn parse_doc_rule(decl: Pair<Rule>) -> DocCode {
-    let mut code_doc = DocCode::new();
+fn parse_deps_decl(decl: Pair<Rule>) -> CodeDep {
+    let mut code_dep = CodeDep::new();
+    for pair in decl.into_inner() {
+        match pair.as_rule() {
+            Rule::artifact_id => {
+                code_dep.artifact_id = String::from(pair.as_str());
+            }
+            Rule::group_id => {
+                code_dep.group_id = String::from(pair.as_str());
+            }
+            Rule::version => {
+                code_dep.version = String::from(pair.as_str());
+            }
+            _ => {
+
+            }
+        }
+    }
+    code_dep
+}
+
+fn parse_doc_decl(decl: Pair<Rule>) -> CodeSource {
+    let mut code_doc = CodeSource::new();
     for pair in decl.into_inner() {
         match pair.as_rule() {
             Rule::string_literal => {
@@ -68,7 +92,7 @@ mod tests {
     use crate::parser::parse;
 
     #[test]
-    fn it_works() {
+    fn should_parse_doc_code() {
         let writing = parse("doc-code: file(\"src/lib.rs\").line()[2, 5]");
         assert_eq!(writing.code_docs.len(), 1);
 
@@ -77,6 +101,16 @@ mod tests {
         assert_eq!("src/lib.rs", doc.file);
         assert_eq!(2, doc.start_line);
         assert_eq!(5, doc.end_line);
+    }
+
+    #[test]
+    fn should_parse_doc_dep() {
+        let writing = parse("code-dep: colored;version=1.8.0");
+        assert_eq!(writing.code_deps.len(), 1);
+        let dep = &writing.code_deps[0];
+
+        assert_eq!("1.8.0", dep.version);
+        assert_eq!("colored", dep.artifact_id);
     }
 }
 

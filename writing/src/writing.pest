@@ -2,11 +2,19 @@ start = _{ SOI ~ declaration* ~ EOI}
 
 declaration = {
     doc_code_decl
+    | code_dep_decl
 }
 
 doc_code_decl = {
   "doc-code" ~ ":" ~ "file" ~ "(" ~ string_literal ~ ")" ~ "." ~ "line" ~ "(" ~ ")" ~ "[" ~ start_line ~ "," ~ end_line ~ "]"
 }
+
+code_dep_decl = {
+   "code-dep" ~ ":" ~ (group_id ~ ":")? ~ artifact_id ~ ";" ~ "version" ~ "=" ~ version
+}
+
+group_id = { identifier }
+artifact_id = { identifier }
 
 start_line = { digits }
 end_line = { digits }
@@ -19,6 +27,10 @@ string_literal = @{
 
 digit = { '0'..'9' }
 digits = { digit+ }
+
+version = @{ digit ~ ("." ~ digit)* }
+
+identifier = @{ (ASCII_ALPHA | ASCII_ALPHANUMERIC | "_") ~ (ASCII_ALPHANUMERIC | "_")* }
 
 double_quoted_string  = @{ "\"" ~ (!("\"") ~ ANY)* ~ "\""}
 single_quoted_string  = @{ "\'" ~ (!("\'") ~ ANY)* ~ "\'"}
