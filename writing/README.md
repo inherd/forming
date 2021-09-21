@@ -52,11 +52,17 @@ import com.phodal.blog; // hidden
 
 **/
 
-// doc-code: document("section1").start()
+// doc-start: section1
 public void should_execute() {
     
 }
-// doc-code: document("section1").end()
+// doc-end: section1
+```
+
+2. in document
+
+```
+// doc-code: document("section1")
 ```
 
 ### Annotation
