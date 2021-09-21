@@ -5,7 +5,6 @@ extern crate pest_derive;
 mod wmd;
 pub mod parser;
 pub mod wreader;
-mod ast;
 
 #[cfg(test)]
 mod tests {

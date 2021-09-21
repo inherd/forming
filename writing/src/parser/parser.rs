@@ -1,9 +1,9 @@
 use pest::Parser;
 use pest::iterators::Pair;
-use crate::ast::{CodeSource, Writing, CodeDep};
+use crate::parser::ast::{CodeSource, Writing, CodeDep};
 
 #[derive(Parser)]
-#[grammar = "writing.pest"]
+#[grammar = "parser/writing.pest"]
 struct WritingParser;
 
 pub fn parse(text: &str) -> Writing {
