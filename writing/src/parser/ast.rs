@@ -2,13 +2,15 @@
 pub struct Writing {
     pub code_docs: Vec<CodeSource>,
     pub code_deps: Vec<CodeDep>,
+    pub code_sections: Vec<CodeSection>,
 }
 
 impl Writing {
     pub fn new() -> Writing {
         Writing {
             code_docs: vec![],
-            code_deps: vec![]
+            code_deps: vec![],
+            code_sections: vec![]
         }
     }
 }
@@ -48,3 +50,32 @@ impl CodeDep {
         }
     }
 }
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct CodeSection {
+    pub blocks: Vec<CodeBlock>
+}
+
+impl CodeSection {
+    pub fn new() -> CodeSection {
+        CodeSection {
+            blocks: vec![]
+        }
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct CodeBlock {
+    pub file: String,
+    pub name: String,
+}
+
+impl CodeBlock {
+    pub fn new() -> CodeBlock {
+        CodeBlock {
+            file: "".to_string(),
+            name: "".to_string()
+        }
+    }
+}
+

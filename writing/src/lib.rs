@@ -8,8 +8,10 @@ pub mod wreader;
 
 #[cfg(test)]
 mod tests {
+    // doc-start: section1
     #[test]
     fn it_works() {
         assert_eq!(2 + 2, 4);
     }
+    // doc-end: section1
 }

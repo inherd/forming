@@ -1,6 +1,6 @@
 use pest::Parser;
 use pest::iterators::Pair;
-use crate::parser::ast::{CodeSource, Writing, CodeDep};
+use crate::parser::ast::{CodeSource, Writing, CodeDep, CodeSection, CodeBlock};
 
 #[derive(Parser)]
 #[grammar = "parser/writing.pest"]
@@ -18,6 +18,9 @@ pub fn parse(text: &str) -> Writing {
                 }
                 Rule::code_dep_decl => {
                     writing.code_deps.push(parse_deps_decl(decl));
+                }
+                Rule::code_section_decl => {
+                    writing.code_sections.push(parse_code_sections(decl));
                 }
                 _ => {
                     println!("Rule:    {:?}", decl.as_rule());
@@ -52,6 +55,25 @@ fn parse_deps_decl(decl: Pair<Rule>) -> CodeDep {
     code_dep
 }
 
+fn parse_code_sections(decl: Pair<Rule>) -> CodeSection {
+    let mut section = CodeSection::new();
+    let mut block = CodeBlock::new();
+    for pair in decl.into_inner() {
+        match pair.as_rule() {
+            Rule::string_literal => {
+                block.file = String::from(pair.as_str());
+            }
+            Rule::section_name => {
+                block.name = String::from(pair.as_str());
+            }
+            _ => {
+
+            }
+        }
+    }
+    section.blocks.push(block);
+    section
+}
 fn parse_doc_decl(decl: Pair<Rule>) -> CodeSource {
     let mut code_doc = CodeSource::new();
     for pair in decl.into_inner() {
@@ -101,6 +123,12 @@ mod tests {
         assert_eq!("src/lib.rs", doc.file);
         assert_eq!(2, doc.start_line);
         assert_eq!(5, doc.end_line);
+    }
+
+    #[test]
+    fn should_parse_section() {
+        let writing = parse("doc-section: file(\"src/lib.rs\").section(\"section1\")");
+        assert_eq!(writing.code_sections.len(), 1);
     }
 
     #[test]

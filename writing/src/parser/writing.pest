@@ -2,11 +2,20 @@ start = _{ SOI ~ declaration* ~ EOI}
 
 declaration = {
     doc_code_decl
+    | code_section_decl
     | code_dep_decl
 }
 
 doc_code_decl = {
   "doc-code" ~ ":" ~ "file" ~ "(" ~ string_literal ~ ")" ~ "." ~ "line" ~ "(" ~ ")" ~ "[" ~ start_line ~ "," ~ end_line ~ "]"
+}
+
+code_section_decl = {
+  "doc-section" ~ ":" ~ "file" ~ "(" ~ string_literal ~ ")" ~ "." ~ "section" ~ "(" ~ section_name ~ ")"
+}
+
+section_name = {
+    string_literal
 }
 
 code_dep_decl = {

@@ -62,7 +62,7 @@ public void should_execute() {
 2. in document
 
 ```
-// doc-code: document("section1")
+// doc-code: file("src/lib.rs").section("export")
 ```
 
 ### Annotation
