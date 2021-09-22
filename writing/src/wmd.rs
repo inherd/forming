@@ -13,12 +13,12 @@ impl Wmd {
     }
 
     pub fn parse(&mut self) -> String {
-        let parser = create_markdown_parser(&self.text);
+        let mut parser = create_markdown_parser(&self.text).into_offset_iter();
         let mut text = "".to_string();
         let mut is_in_code = false;
         let mut lang_code = "".to_string();
 
-        for event in parser {
+        while let Some((event, _offset)) = parser.next() {
             match event {
                 Start(Tag::CodeBlock(info)) => {
                     match info {
