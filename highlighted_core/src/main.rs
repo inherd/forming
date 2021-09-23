@@ -1,5 +1,4 @@
-use std::{env, fs, io};
-use std::error::Error;
+use std::{env};
 use std::path::PathBuf;
 
 use guarding_ident::ModelBuilder;
@@ -15,5 +14,5 @@ fn main() {
     let filename = dir.clone().join(".forming").join("concepts.csv");
     concept_parser::parse_by_file(filename);
 
-    let models = ModelBuilder::build_models_by_dir(dir);
+    let _models = ModelBuilder::build_models_by_dir(dir);
 }

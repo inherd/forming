@@ -32,7 +32,7 @@ mod tests {
 
     #[test]
     fn should_open_file() {
-        let mut d = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("Cargo.toml");
+        let d = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("Cargo.toml");
         let file = File::open(d).unwrap();
         let mut reader = CodeModifier::new(file).unwrap();
     }

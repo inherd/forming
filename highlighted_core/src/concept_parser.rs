@@ -2,7 +2,7 @@ use std::error::Error;
 use std::fs;
 use std::path::PathBuf;
 
-fn parse_by_dir(filename: PathBuf) {
+fn parse_by_dir(_filename: PathBuf) {
 
 }
 

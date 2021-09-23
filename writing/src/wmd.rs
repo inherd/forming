@@ -1,6 +1,6 @@
 use crate::parser;
 
-use pulldown_cmark::{Event::{Code, End, Start, Text}, Options, Parser, Tag, CodeBlockKind, Event};
+use pulldown_cmark::{Options, Parser, Tag, CodeBlockKind, Event};
 use crate::wreader::WReader;
 use std::borrow::Cow;
 
@@ -83,8 +83,6 @@ impl Wmd {
                         text += &format!("{}\n", str);
                     }
                 }
-                Event::End(Tag::CodeBlock(_info)) => {
-                }
                 Event::Text(body) => {
                     let str = body.to_string();
                     text += &format!("{}\n", str);
@@ -98,10 +96,6 @@ impl Wmd {
                 Event::FootnoteReference(footnote) => {
                     text += &format!("{}\n", footnote);
                 }
-                Event::SoftBreak => {}
-                Event::HardBreak => {}
-                Event::Rule => {}
-                Event::TaskListMarker(_) => {}
                 _ => {}
             }
         }
