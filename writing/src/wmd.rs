@@ -134,4 +134,23 @@ extern crate pest_derive;
 mod wmd;
 ```", string)
     }
+
+    #[test]
+    fn should_parse_multiple_line() {
+        let mut rmd = Wmd::new("
+233333
+
+```java
+// doc-code: file(\"src/lib.rs\").line()[2, 4]
+// doc-code: file(\"src/lib.rs\").line()[4, 5]
+```
+".to_string());
+        let string = rmd.parse();
+        assert_eq!("233333
+```java
+extern crate pest_derive;
+
+mod wmd;
+```", string)
+    }
 }
