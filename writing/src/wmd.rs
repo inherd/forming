@@ -67,20 +67,23 @@ impl Wmd {
                     let str = test_s
                         .lines()
                         .map(|l| map_line(l).for_code())
-                        .collect::<Vec<Cow<'_, str>>>()
-                        .join("\n");
+                        .collect::<Vec<Cow<'_, str>>>();
 
-                    if str.starts_with("// doc-") {
-                        let writing = parser::parse(str.replace("//", "").as_str());
-                        let result = WReader::read_doc_code(writing.code_docs[0].clone());
 
+                    if str[0].starts_with("// doc-") {
                         text += &format!("```{}\n", lang_code);
-                        for line in result {
-                            text += &format!("{}\n", line);
+
+                        for line in str {
+                            let writing = parser::parse(line.replace("//", "").as_str());
+
+                            for code in WReader::read_doc_code(writing.code_docs[0].clone()) {
+                                text += &format!("{}\n", code);
+                            }
                         }
+
                         text += &format!("```");
                     } else {
-                        text += &format!("{}\n", str);
+                        text += &format!("{}\n", str.join("\n"));
                     }
                 }
                 Event::Text(body) => {
@@ -111,7 +114,7 @@ fn create_markdown_parser(content: &str) -> Parser {
 }
 
 #[cfg(test)]
-mod build_command_structure {
+mod tests {
     use super::*;
 
     #[test]
