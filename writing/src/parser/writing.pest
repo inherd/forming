@@ -4,6 +4,7 @@ declaration = {
     doc_code_decl
     | code_section_decl
     | code_dep_decl
+    | code_func_decl
 }
 
 doc_code_decl = {
@@ -12,6 +13,14 @@ doc_code_decl = {
 
 code_section_decl = {
   "doc-section" ~ ":" ~ "file" ~ "(" ~ string_literal ~ ")" ~ "." ~ "section" ~ "(" ~ section_name ~ ")"
+}
+
+code_func_decl = {
+  "doc-func" ~ ":" ~ "file" ~ "(" ~ string_literal ~ ")" ~ "." ~ "func" ~ "[" ~ func_name ~ (","  ~ func_name)* ~ "]"
+}
+
+func_name = {
+    string_literal
 }
 
 section_name = {
