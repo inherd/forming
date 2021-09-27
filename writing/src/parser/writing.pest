@@ -17,7 +17,7 @@ code_section_decl = {
 
 // polymorphism??
 code_func_decl = {
-  "doc-func" ~ ":" ~ "file" ~ "(" ~ string_literal ~ ")" ~ "." ~ "func" ~ "[" ~ func_name ~ (","  ~ func_name)* ~ "]"
+  "doc-func" ~ ":" ~ "file" ~ "(" ~ string_literal ~ ")" ~ "." ~ "func" ~ "(" ~ ")" ~ "[" ~ func_name ~ (","  ~ func_name)* ~ "]"
 }
 
 func_name = {

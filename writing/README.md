@@ -2,83 +2,24 @@
 
 > a document-code sync tools for setup.
 
-## MVP Scenario
+## DSL Design
 
-knowledge transfer
+by Lines
 
-1. Live Document
-
-### Executable Documentation
-
-1. document executable
-2. code hide in markdown
-3. testable document
-
-Examples: https://github.com/phodal/exemd
-
-```java
-// doc-deps: colored;version=1.8.0
-// or 
-#**
- import com.phodal.zero
-**#
-
-// for one line
-import com.phodal.blog; // hidden 
-
-## doc-assert: zero
+```writing
+doc-code: file("src/lib.rs").line()[2, 5]
 ```
 
-### Document-Code binding
+by Section
 
-1. code-document binding
-2. documentation test
-
-```
-// doc-code: file("World/Hello.java").line()[5, 12]
+```writing
+doc-section: file("src/lib.rs").section("section1")
 ```
 
-### Document Concept binding
+by Function (todo)
 
-1. read from CSV and output it
-
-
-### Document in Code
-
-1. like Rust code
-
-```java
-/**
-
-**/
-
-// doc-start: section1
-public void should_execute() {
-    
-}
-// doc-end: section1
-```
-
-2. in document
-
-```
-// doc-code: file("src/lib.rs").section("export")
-```
-
-### Annotation
-
-Java doc as annotation
-
-```java
-@param   (name of the parameter, followed by its description)
-@return  (omit @return for tests that return void; required otherwise)
-@succeedIf  (summarize the conditions under which the test case succeeds)
-@failIf  (summarize the conditions under which the test case fails)
-@qualityAttribute (specify the quality aspect addressed: performance, etc.)
-@scope  (specify the test case purpose: unit, integration, etc.)
-@author   (author name/surname)
-@version  (version number + checkout date)
-@see  package.Class#method(Type,...) (ref to the function under test)
+```writing
+doc-func: file("src/lib.rs").func().["it_works"]
 ```
 
 License
