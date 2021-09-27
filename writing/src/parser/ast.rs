@@ -79,3 +79,19 @@ impl CodeBlock {
     }
 }
 
+// todo: thinking in polymorphism
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct CodeFunc {
+    pub file: String,
+    pub func_name: Vec<String>,
+}
+
+impl CodeFunc {
+    pub fn new() -> CodeFunc {
+        CodeFunc {
+            file: "".to_string(),
+            func_name: vec![]
+        }
+    }
+}
+

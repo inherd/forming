@@ -15,6 +15,7 @@ code_section_decl = {
   "doc-section" ~ ":" ~ "file" ~ "(" ~ string_literal ~ ")" ~ "." ~ "section" ~ "(" ~ section_name ~ ")"
 }
 
+// polymorphism??
 code_func_decl = {
   "doc-func" ~ ":" ~ "file" ~ "(" ~ string_literal ~ ")" ~ "." ~ "func" ~ "[" ~ func_name ~ (","  ~ func_name)* ~ "]"
 }
