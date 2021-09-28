@@ -3,6 +3,7 @@ pub struct Writing {
     pub code_docs: Vec<CodeSource>,
     pub code_deps: Vec<CodeDep>,
     pub code_sections: Vec<CodeSection>,
+    pub code_funcs: Vec<CodeFunc>
 }
 
 impl Writing {
@@ -10,7 +11,8 @@ impl Writing {
         Writing {
             code_docs: vec![],
             code_deps: vec![],
-            code_sections: vec![]
+            code_sections: vec![],
+            code_funcs: vec![]
         }
     }
 }
@@ -83,14 +85,14 @@ impl CodeBlock {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct CodeFunc {
     pub file: String,
-    pub func_name: Vec<String>,
+    pub funcs: Vec<String>,
 }
 
 impl CodeFunc {
     pub fn new() -> CodeFunc {
         CodeFunc {
             file: "".to_string(),
-            func_name: vec![]
+            funcs: vec![]
         }
     }
 }

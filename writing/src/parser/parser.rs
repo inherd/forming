@@ -1,6 +1,6 @@
 use pest::Parser;
 use pest::iterators::Pair;
-use crate::parser::ast::{CodeSource, Writing, CodeDep, CodeSection, CodeBlock};
+use crate::parser::ast::{CodeSource, Writing, CodeDep, CodeSection, CodeBlock, CodeFunc};
 
 #[derive(Parser)]
 #[grammar = "parser/writing.pest"]
@@ -21,6 +21,9 @@ pub fn parse(text: &str) -> Writing {
                 }
                 Rule::code_section_decl => {
                     writing.code_sections.push(parse_code_sections(decl));
+                }
+                Rule::code_func_decl => {
+                    writing.code_funcs.push(parse_code_func(decl));
                 }
                 _ => {
                     println!("Rule:    {:?}", decl.as_rule());
@@ -61,10 +64,10 @@ fn parse_code_sections(decl: Pair<Rule>) -> CodeSection {
     for pair in decl.into_inner() {
         match pair.as_rule() {
             Rule::string_literal => {
-                block.file = String::from(pair.as_str());
+                block.file = parse_string(pair.as_str());
             }
             Rule::section_name => {
-                block.name = String::from(pair.as_str());
+                block.name = parse_string(pair.as_str());
             }
             _ => {
 
@@ -74,12 +77,32 @@ fn parse_code_sections(decl: Pair<Rule>) -> CodeSection {
     section.blocks.push(block);
     section
 }
+
+
+fn parse_code_func(decl: Pair<Rule>) -> CodeFunc {
+    let mut func = CodeFunc::new();
+    for pair in decl.into_inner() {
+        match pair.as_rule() {
+            Rule::string_literal => {
+                func.file = parse_string(pair.as_str());
+            }
+            Rule::func_name => {
+                func.funcs.push(String::from(pair.as_str()))
+            }
+            _ => {
+
+            }
+        }
+    }
+    func
+}
+
 fn parse_doc_decl(decl: Pair<Rule>) -> CodeSource {
     let mut code_doc = CodeSource::new();
     for pair in decl.into_inner() {
         match pair.as_rule() {
             Rule::string_literal => {
-                code_doc.file = replace_string_markers(pair.as_str());
+                code_doc.file = parse_string(pair.as_str());
             }
             Rule::start_line => {
                 code_doc.start_line = pair.as_str()
@@ -100,7 +123,7 @@ fn parse_doc_decl(decl: Pair<Rule>) -> CodeSource {
     code_doc
 }
 
-pub fn replace_string_markers(input: &str) -> String {
+pub fn parse_string(input: &str) -> String {
     match input.chars().next().unwrap() {
         '"' => input.replace('"', ""),
         '\'' => input.replace('\'', ""),
@@ -139,6 +162,16 @@ mod tests {
 
         assert_eq!("1.8.0", dep.version);
         assert_eq!("colored", dep.artifact_id);
+    }
+
+    #[test]
+    fn should_parse_function() {
+        let writing = parse("doc-func: file(\"src/lib.rs\").func()[\"it_works\"]");
+        assert_eq!(writing.code_funcs.len(), 1);
+        assert_eq!(writing.code_funcs[0].file, "src/lib.rs");
+
+        let writing = parse("doc-func: file(\"src/lib.rs\").func()[\"it_works\", \"should_parse_function\"]");
+        assert_eq!(writing.code_funcs[0].funcs.len(), 2);
     }
 }
 

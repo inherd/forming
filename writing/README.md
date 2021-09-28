@@ -19,7 +19,7 @@ doc-section: file("src/lib.rs").section("section1")
 by Function (todo)
 
 ```writing
-doc-func: file("src/lib.rs").func().["it_works"]
+doc-func: file("src/lib.rs").func()["it_works"]
 ```
 
 License
