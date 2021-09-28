@@ -64,11 +64,11 @@ impl Wmd {
                     while let Some((Event::Text(s), _)) = parser.next() {
                         test_s.push_str(&s);
                     }
+
                     let str = test_s
                         .lines()
                         .map(|l| map_line(l).for_code())
                         .collect::<Vec<Cow<'_, str>>>();
-
 
                     if str[0].starts_with("// doc-") {
                         text += &format!("```{}\n", lang_code);
@@ -131,13 +131,13 @@ mod tests {
 ```java
 extern crate pest_derive;
 
-mod wmd;
+pub mod parser;
 ```", string)
     }
 
     #[test]
     fn should_parse_multiple_line() {
-        let mut rmd = Wmd::new("
+        let mut wmd = Wmd::new("
 233333
 
 ```java
@@ -145,12 +145,12 @@ mod wmd;
 // doc-code: file(\"src/lib.rs\").line()[4, 5]
 ```
 ".to_string());
-        let string = rmd.parse();
+        let string = wmd.parse();
         assert_eq!("233333
 ```java
 extern crate pest_derive;
 
-mod wmd;
+pub mod parser;
 ```", string)
     }
 }
