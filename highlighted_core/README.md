@@ -8,3 +8,8 @@ It will
 - [ ] generate csv from comments
 - [ ] sync highlighted core docs to code
 
+
+License
+---
+
+@ 2021 This code is distributed under the MIT license. See `LICENSE` in this directory.
