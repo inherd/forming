@@ -22,6 +22,12 @@ by Function (todo)
 doc-func: file("src/lib.rs").func()["it_works"]
 ```
 
+## Documents
+
+[API 库的文档体系支持：主流编程语言的文档设计](https://www.phodal.com/blog/api-ducumentation-design-dsl-base/)
+
+[文档工程体验设计：重塑开发者体验](https://www.phodal.com/blog/documentation-enginnering-experience-design/)
+
 License
 ---
 
