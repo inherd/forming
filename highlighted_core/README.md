@@ -8,6 +8,9 @@ It will
 - [ ] generate csv from comments
 - [ ] sync highlighted core docs to code
 
+## Documents
+
+[文档同构：如何实现文档与代码的双向绑定？](https://www.phodal.com/blog/isomorphism-document/)
 
 License
 ---
