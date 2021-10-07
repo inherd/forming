@@ -2,6 +2,8 @@
 
 > highlighted core is a tools inspired by DDD pattern highlighted core.
 
+Concepts: `concept test`
+
 It will
 
 - [ ] generate core concepts from source code
