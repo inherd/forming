@@ -40,7 +40,6 @@ mod tests {
         let root_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"))
             .join("src");
 
-        println!("{:?}", root_dir.display());
         let files = ConceptScanner::scan_by_dir(root_dir, ".rs");
         println!("{:?}", files);
     }
