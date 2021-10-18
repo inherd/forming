@@ -64,3 +64,11 @@ pub struct Parameter {
     name: String,
     typ: TypeType,
 }
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct Contract {
+    name: String,
+    during: String,
+    pre_condition: String,
+    post_condition: String,
+}
