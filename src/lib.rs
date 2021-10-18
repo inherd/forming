@@ -5,3 +5,4 @@ extern crate pest_derive;
 pub mod parser;
 pub mod diagrams;
 pub mod codegen;
+pub mod core;

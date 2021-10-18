@@ -6,6 +6,7 @@ start = _{ SOI ~ declaration* ~ EOI}
 declaration = {
     architecture_declaration
   | concepts
+  | struct_for_declaration
   | concept_declaration
   | contract_declaration
   | api_declaration
@@ -23,13 +24,25 @@ component_declaration = {
     "component"
 }
 
-concept_declaration = {
-    "concept" ~ (identifier | string_literal) ~ "{" ~ comments? ~ ( struct_declaration | behavior_declaration)* ~ "}"
+struct_for_declaration = {
+    "struct" ~ "for" ~ identifier ~ "{" ~ struct_node* ~ "}"
 }
 
-struct_declaration = {
-    "struct" ~ "{" ~ "}"
+concept_declaration = {
+    "concept" ~ (identifier | string_literal) ~ "{" ~ comments? ~ ( inline_struct_declaration | behavior_declaration)* ~ "}"
+}
+
+inline_struct_declaration = {
+    "struct" ~ "{" ~ struct_node* ~ "}"
     | "struct" ~ "uml" ~ "::" ~ source ~ "." ~ "class" ~ "(" ~ string_literal ~ ")"
+}
+
+struct_node = {
+    identifier ~ ("," ~ identifier)* ~ ":" ~ struct_type
+}
+
+struct_type = {
+    identifier
 }
 
 behavior_declaration = {
@@ -51,7 +64,6 @@ api_ident = {
 }
 
 api_chars = _{'a'..'z' | 'A'..'Z' | "_" | "-" | "/" | ":" | "@" | "#" | "?" | "%" | "=" | "&" | "~"| "." | '0'..'9'}
-
 
 contract_ident_decl = {
   "contract" ~ "for" ~ (identifier | string_literal) ~ "{" ~ precondition? ~ during? ~ postcondition? ~ "}"
@@ -83,7 +95,11 @@ contract_class_decl = {
 }
 
 contract_class = {
-  identifier ~ "." ~ identifier
+  identifier ~ ("(" ~ extends ~ ")")?
+}
+
+extends = {
+    identifier ~ ("," ~ identifier)*
 }
 
 source = { file | dir }

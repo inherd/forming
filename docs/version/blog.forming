@@ -19,6 +19,7 @@ concept Blog(Displayable, Ownable) {
 behavior for Blog {
   delete(id: Integer);
 }
+
 struct for Blog {
   title: String;
 }
@@ -28,18 +29,17 @@ type Description {
 
 }
 // type alias
-type Behavior = Function ?
+type Behavior = Function
+type Animal {}
+
+type Cat(Animal) {
+
+}
 
 concept BlogCategory {}
 concept BlogCategories {}
 concept BlogRelatedPosts {}
 concept Comments {}
-
-space Blog {
-   name: "${name.lower()}_${item.upper()}",
-   package: "com.phodal.blog", // or path
-   concepts: Blog, BlogCategory, BlogCategories, BlogRelatedPosts, Comments
-}
 
 concept Page {}
 concept Link {}
@@ -60,8 +60,15 @@ api /blog {
 
 // or namespaces ?
 space Page {
-    items: Page, Link, RichTextPage
+    concepts: Page, Link, RichTextPage
 }
+
+space Blog {
+   name: "${name.lower()}_${item.upper()}",
+   package: "com.phodal.blog", // or path
+   concepts: Blog, BlogCategory, BlogCategories, BlogRelatedPosts, Comments
+}
+
 
 diagram("layer") Sample {
 

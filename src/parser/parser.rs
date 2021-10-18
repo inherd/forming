@@ -21,7 +21,7 @@ pub fn parse(text: &str) {
                     println!("Rule:    {:?}", decl.as_rule());
                     println!("Span:    {:?}", decl.as_span());
                     println!("Text:    {}", decl.as_str());
-                },
+                }
             }
         }
     }
@@ -40,6 +40,7 @@ fn parse_concept_decl(decl: Pair<Rule>) {
         }
     }
 }
+
 fn parse_concepts(decl: Pair<Rule>) {
     for concepts in decl.into_inner() {
         match concepts.as_rule() {
@@ -114,5 +115,18 @@ concept '博客' {
         parse("api for /search/?q=%E5%8D%9A%E5%AE%A2&type=blog.BlogPost {
 
         } ");
+    }
+
+    #[test]
+    fn should_parse_basic_struct() {
+        parse("concept  Blog {
+            struct {
+                name: String
+            }
+        }");
+
+        parse("struct for Blog {
+                name: String
+        }");
     }
 }
