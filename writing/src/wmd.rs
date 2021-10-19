@@ -1,8 +1,9 @@
-use crate::parser;
-
-use pulldown_cmark::{Options, Parser, Tag, CodeBlockKind, Event};
-use crate::wreader::WReader;
 use std::borrow::Cow;
+
+use pulldown_cmark::{CodeBlockKind, Event, Options, Parser, Tag};
+
+use crate::parser;
+use crate::wreader::WReader;
 
 pub struct Wmd {
     text: String,
@@ -131,7 +132,7 @@ mod tests {
 ```java
 extern crate pest_derive;
 
-pub mod parser;
+use std::fs;
 ```", string)
     }
 
@@ -150,7 +151,7 @@ pub mod parser;
 ```java
 extern crate pest_derive;
 
-pub mod parser;
+use std::fs;
 ```", string)
     }
 }

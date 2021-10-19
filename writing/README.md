@@ -2,6 +2,13 @@
 
 > a document-code sync tools for setup.
 
+## process
+
+1. read markdown file
+2. parse markdown code
+3. insert new code
+4. generate new code
+
 ## DSL Design
 
 by Lines
