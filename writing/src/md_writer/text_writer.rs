@@ -45,6 +45,7 @@ struct TextWriter<'a, I, W> {
     table_state: TableState,
     table_alignments: Vec<Alignment>,
     table_cell_index: usize,
+    list_index: usize,
     numbers: HashMap<CowStr<'a>, usize>,
 }
 
@@ -61,6 +62,7 @@ impl<'a, I, W> TextWriter<'a, I, W>
             table_state: TableState::Head,
             table_alignments: vec![],
             table_cell_index: 0,
+            list_index: 0,
             numbers: HashMap::new(),
         }
     }
@@ -186,9 +188,7 @@ impl<'a, I, W> TextWriter<'a, I, W>
                         if lang.is_empty() {
                             self.write("\n```")
                         } else {
-                            // self.write("```{}", lang)?;
                             write!(&mut self.writer, "```{}", lang)?;
-                            // escape_html(&mut self.writer, lang)?;
                             self.write("\n")
                         }
                     }
@@ -196,17 +196,24 @@ impl<'a, I, W> TextWriter<'a, I, W>
                 }
             }
             Tag::List(Some(1)) => {
-                write!(&mut self.writer, "{}. ", 1)
+                self.list_index = 1;
+                Ok(())
             }
             Tag::List(Some(start)) => {
-                println!("start: {}", start);
-                write!(&mut self.writer, "{}. ", start)
+                self.list_index = start as usize;
+                Ok(())
             }
             Tag::List(None) => {
                 self.write("- \n")
             }
             Tag::Item => {
-                self.write("")
+                if self.list_index > 0 {
+                    write!(&mut self.writer, "{}. ", self.list_index)?;
+                    self.list_index = self.list_index + 1;
+                    Ok(())
+                } else {
+                    self.write("")
+                }
             }
             Tag::Emphasis => self.write("<em>"),
             Tag::Strong => self.write("**"),
@@ -279,10 +286,11 @@ impl<'a, I, W> TextWriter<'a, I, W>
                 self.write("```\n\n")?;
             }
             Tag::List(Some(1)) => {
+                self.list_index = 0;
                 self.write("\n\n")?;
             }
-            Tag::List(Some(start)) => {
-                write!(&mut self.writer, "{}", start)?;
+            Tag::List(Some(_start)) => {
+                self.list_index = 0;
                 self.write("\n")?;
             }
             Tag::List(None) => {
