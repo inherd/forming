@@ -23,7 +23,7 @@
 use std::collections::HashMap;
 use std::io::{self, Write};
 
-use pulldown_cmark::escape::{escape_href, escape_html, StrWrite, WriteWrapper};
+use pulldown_cmark::escape::{StrWrite, WriteWrapper};
 use pulldown_cmark::Event::*;
 use pulldown_cmark::{Alignment, CodeBlockKind, CowStr, Event, LinkType, Tag};
 
@@ -121,7 +121,7 @@ impl<'a, I, W> TextWriter<'a, I, W>
                 FootnoteReference(name) => {
                     let len = self.numbers.len() + 1;
                     self.write("<sup class=\"footnote-reference\"><a href=\"#")?;
-                    escape_html(&mut self.writer, &name)?;
+                    // escape_html(&mut self.writer, &name)?;
                     self.write("\">")?;
                     let number = *self.numbers.entry(name).or_insert(len);
                     write!(&mut self.writer, "{}", number)?;
@@ -199,13 +199,14 @@ impl<'a, I, W> TextWriter<'a, I, W>
                 write!(&mut self.writer, "{}. ", 1)
             }
             Tag::List(Some(start)) => {
+                println!("start: {}", start);
                 write!(&mut self.writer, "{}. ", start)
             }
             Tag::List(None) => {
                 self.write("- \n")
             }
             Tag::Item => {
-                self.write("- ")
+                self.write("")
             }
             Tag::Emphasis => self.write("<em>"),
             Tag::Strong => self.write("**"),
@@ -216,23 +217,15 @@ impl<'a, I, W> TextWriter<'a, I, W>
                 write!(&mut self.writer, "{}", dest)?;
                 if !title.is_empty() {
                     self.write("\" title=\"")?;
-                    escape_html(&mut self.writer, &title)?;
+                    // escape_html(&mut self.writer, &title)?;
                 }
                 self.write("\">")
             }
             Tag::Link(_link_type, _dest, _title) => {
                 self.write("[")
             }
-            Tag::Image(_link_type, dest, title) => {
-                self.write("<img src=\"")?;
-                escape_href(&mut self.writer, &dest)?;
-                self.write("\" alt=\"")?;
-                self.raw_text()?;
-                if !title.is_empty() {
-                    self.write("\" title=\"")?;
-                    escape_html(&mut self.writer, &title)?;
-                }
-                self.write("\" />")
+            Tag::Image(_link_type, _dest, _title) => {
+                self.write("![")
             }
             Tag::FootnoteDefinition(name) => {
                 if self.end_newline {
@@ -240,7 +233,7 @@ impl<'a, I, W> TextWriter<'a, I, W>
                 } else {
                     self.write("\n<div class=\"footnote-definition\" id=\"")?;
                 }
-                escape_html(&mut self.writer, &*name)?;
+                // escape_html(&mut self.writer, &*name)?;
                 self.write("\"><sup class=\"footnote-definition-label\">")?;
                 let len = self.numbers.len() + 1;
                 let number = *self.numbers.entry(name).or_insert(len);
@@ -289,11 +282,6 @@ impl<'a, I, W> TextWriter<'a, I, W>
                 self.write("\n\n")?;
             }
             Tag::List(Some(start)) => {
-                // if self.end_newline {
-                //     self.write("<ol start=\"")?;
-                // } else {
-                //     self.write("\n<ol start=\"")?;
-                // }
                 write!(&mut self.writer, "{}", start)?;
                 self.write("\n")?;
             }
@@ -315,47 +303,15 @@ impl<'a, I, W> TextWriter<'a, I, W>
             Tag::Link(_link_type, dest, _title) => {
                 self.write("](")?;
                 write!(&mut self.writer, "{}", dest)?;
-                // if !title.is_empty() {
-                //     self.write("\" title=\"")?;
-                //     escape_html(&mut self.writer, &title)?;
-                // }
                 self.write(")")?;
             }
-            Tag::Image(_, _, _) => (), // shouldn't happen, handled in start
+            Tag::Image(_link_type, dest, _title) => {
+                self.write("](")?;
+                write!(&mut self.writer, "{}", dest)?;
+                self.write(")")?;
+            }
             Tag::FootnoteDefinition(_) => {
                 self.write("</div>\n")?;
-            }
-        }
-        Ok(())
-    }
-
-    // run raw text, consuming end tag
-    fn raw_text(&mut self) -> io::Result<()> {
-        let mut nest = 0;
-        while let Some(event) = self.iter.next() {
-            match event {
-                Start(_) => nest += 1,
-                End(_) => {
-                    if nest == 0 {
-                        break;
-                    }
-                    nest -= 1;
-                }
-                Html(text) | Code(text) | Text(text) => {
-                    // escape_html(&mut self.writer, &text)?;
-                    write!(&mut self.writer, "{}", text)?;
-                    self.end_newline = text.ends_with('\n');
-                }
-                SoftBreak | HardBreak | Rule => {
-                    self.write(" ")?;
-                }
-                FootnoteReference(name) => {
-                    let len = self.numbers.len() + 1;
-                    let number = *self.numbers.entry(name).or_insert(len);
-                    write!(&mut self.writer, "[{}]", number)?;
-                }
-                TaskListMarker(true) => self.write("[x]")?,
-                TaskListMarker(false) => self.write("[ ]")?,
             }
         }
         Ok(())
@@ -375,4 +331,33 @@ pub fn write_text<'a, I, W>(writer: W, iter: I) -> io::Result<()>
         W: Write,
 {
     TextWriter::new(iter, WriteWrapper(writer)).run()
+}
+
+
+#[cfg(test)]
+mod tests {
+    use std::io::Write;
+    use pulldown_cmark::{Event, Options, Parser, Tag};
+    use crate::md_writer;
+
+    #[test]
+    fn should_parse_line() {
+        let list = "1. aa
+2. blabla
+";
+        let parser = Parser::new_ext(list, Options::empty())
+            .map(|event| match event {
+                Event::Text(text) => Event::Text(text.replace("Peter", "John").into()),
+                _ => event,
+            })
+            .filter(|event| match event {
+                Event::Start(Tag::Image(..)) | Event::End(Tag::Image(..)) => false,
+                _ => true,
+            });
+
+        let stdout = std::io::stdout();
+        let mut handle = stdout.lock();
+        handle.write_all(b"\nHTML output:\n").unwrap();
+        md_writer::write_text(&mut handle, parser).unwrap();
+    }
 }
