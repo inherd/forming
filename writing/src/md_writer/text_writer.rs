@@ -144,32 +144,27 @@ impl<'a, I, W> TextWriter<'a, I, W>
             }
             Tag::Table(alignments) => {
                 self.table_alignments = alignments;
-                self.write("<table>")
+                Ok(())
             }
             Tag::TableHead => {
                 self.table_state = TableState::Head;
                 self.table_cell_index = 0;
-                self.write("<thead><tr>")
+                Ok(())
             }
             Tag::TableRow => {
                 self.table_cell_index = 0;
-                self.write("<tr>")
+                Ok(())
             }
             Tag::TableCell => {
                 match self.table_state {
                     TableState::Head => {
-                        self.write("<th")?;
+                        self.write("|")?;
                     }
                     TableState::Body => {
-                        self.write("<td")?;
+                        self.write("|")?;
                     }
                 }
-                match self.table_alignments.get(self.table_cell_index) {
-                    Some(&Alignment::Left) => self.write(" align=\"left\">"),
-                    Some(&Alignment::Center) => self.write(" align=\"center\">"),
-                    Some(&Alignment::Right) => self.write(" align=\"right\">"),
-                    _ => self.write(">"),
-                }
+                Ok(())
             }
             Tag::BlockQuote => {
                 self.write("> ")
@@ -242,24 +237,20 @@ impl<'a, I, W> TextWriter<'a, I, W>
                 self.write("\n\n")?;
             }
             Tag::Table(_) => {
-                self.write("</tbody></table>\n")?;
+                self.write("\n")?;
             }
             Tag::TableHead => {
-                self.write("</tr></thead><tbody>\n")?;
+                self.write("|\n")?;
                 self.table_state = TableState::Body;
+
+                self.write("|")?;
+                write!(&mut self.writer, "{} ", "------|".repeat(self.table_alignments.len()).as_str())?;
+                self.write("\n")?;
             }
             Tag::TableRow => {
-                self.write("</tr>\n")?;
+                self.write("|\n")?;
             }
             Tag::TableCell => {
-                match self.table_state {
-                    TableState::Head => {
-                        self.write("</th>")?;
-                    }
-                    TableState::Body => {
-                        self.write("</td>")?;
-                    }
-                }
                 self.table_cell_index += 1;
             }
             Tag::BlockQuote => {
@@ -359,6 +350,21 @@ mod tests {
         let mut handle = stdout.lock();
         handle.write_all(b"\nHTML output:\n").unwrap();
         md_writer::write_text(&mut handle, parser).unwrap();
-        // html::write_html(&mut handle, parser).unwrap();
+    }
+
+    #[test]
+    fn should_build_table() {
+        let list = "
+| Syntax      | Description |
+| ----------- | ----------- |
+| Header      | Title       |
+| Paragraph   | Text        |
+";
+        let parser = Parser::new_ext(list, Options::ENABLE_TABLES);
+
+        let stdout = std::io::stdout();
+        let mut handle = stdout.lock();
+        handle.write_all(b"\nHTML output:\n").unwrap();
+        md_writer::write_text(&mut handle, parser).unwrap();
     }
 }
