@@ -20,7 +20,6 @@
 
 //! HTML renderer that takes an iterator of events as input.
 
-use std::borrow::Cow;
 use std::collections::HashMap;
 use std::io::{self, Write};
 
@@ -33,35 +32,6 @@ use crate::wreader::WReader;
 enum TableState {
     Head,
     Body,
-}
-
-enum Line<'a> {
-    Hidden(&'a str),
-    Shown(Cow<'a, str>),
-}
-
-impl<'a> Line<'a> {
-    fn for_code(self) -> Cow<'a, str> {
-        match self {
-            Line::Shown(l) => l,
-            Line::Hidden(l) => Cow::Borrowed(l),
-        }
-    }
-}
-
-fn map_line(s: &str) -> Line<'_> {
-    let trimmed = s.trim();
-    if trimmed.starts_with("##") {
-        Line::Shown(Cow::Owned(s.replacen("##", "#", 1)))
-    } else if let Some(stripped) = trimmed.strip_prefix("# ") {
-        // # text
-        Line::Hidden(&stripped)
-    } else if trimmed == "#" {
-        // We cannot handle '#text' because it could be #[attr].
-        Line::Hidden("")
-    } else {
-        Line::Shown(Cow::Borrowed(s))
-    }
 }
 
 struct TextWriter<'a, I, W> {
@@ -84,7 +54,7 @@ struct TextWriter<'a, I, W> {
 
 impl<'a, I, W> TextWriter<'a, I, W>
     where
-        I: Iterator<Item = Event<'a>>,
+        I: Iterator<Item=Event<'a>>,
         W: StrWrite,
 {
     fn new(iter: I, writer: W) -> Self {
@@ -206,37 +176,36 @@ impl<'a, I, W> TextWriter<'a, I, W>
                     CodeBlockKind::Fenced(info) => {
                         let lang = info.split(' ').next().unwrap();
                         if lang.is_empty() {
-                            return self.write("\n```")
+                            return self.write("\n```");
                         } else {
                             write!(&mut self.writer, "```{}", lang)?;
                             self.write("\n")?;
                         }
                     }
                     CodeBlockKind::Indented => {
-                        return self.write("```")
+                        return self.write("```");
                     }
                 }
 
-                let mut test_s = String::new();
+                let mut code_text = String::new();
 
                 if let Some(Event::Text(s)) = self.iter.next() {
-                    test_s.push_str(&s);
+                    code_text.push_str(&s);
                 }
 
-                let str = test_s
-                    .lines()
-                    .map(|l| map_line(l).for_code())
-                    .collect::<Vec<Cow<'_, str>>>();
-
-                if str[0].starts_with("// doc-") {
-                    for line in str {
+                for line in code_text.lines() {
+                    if line.starts_with("// doc-") {
                         let writing = parser::parse(line.replace("//", "").as_str());
 
                         for code in WReader::read_doc_code(writing.code_docs[0].clone()) {
                             write!(&mut self.writer, "{}\n", code)?;
                         }
+                    } else {
+                        write!(&mut self.writer, "{}\n", line)?;
                     }
                 }
+
+
                 Ok(())
             }
             Tag::List(Some(1)) => {
@@ -358,14 +327,14 @@ impl<'a, I, W> TextWriter<'a, I, W>
 
 pub fn push_text<'a, I>(s: &mut String, iter: I)
     where
-        I: Iterator<Item = Event<'a>>,
+        I: Iterator<Item=Event<'a>>,
 {
     TextWriter::new(iter, s).run().unwrap();
 }
 
 pub fn write_text<'a, I, W>(writer: W, iter: I) -> io::Result<()>
     where
-        I: Iterator<Item = Event<'a>>,
+        I: Iterator<Item=Event<'a>>,
         W: Write,
 {
     TextWriter::new(iter, WriteWrapper(writer)).run()

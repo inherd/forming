@@ -7,10 +7,7 @@ use std::path::{Path, PathBuf};
 
 use thiserror::Error;
 
-use crate::wmd::Wmd;
-
 pub mod parser;
-pub mod wmd;
 pub mod wreader;
 pub mod md_writer;
 
@@ -35,11 +32,9 @@ impl Writing {
             }
         }
 
-        let text = String::from_utf8_lossy(&fs::read(path).unwrap()).to_string();
-        let mut wmd = Wmd::new(text);
-        let result = wmd.parse();
+        let _text = String::from_utf8_lossy(&fs::read(path).unwrap()).to_string();
 
-        Ok(result)
+        Ok(String::from(""))
     }
 
     fn pre_process_file(path: &PathBuf) -> Result<(), WritingError> {
