@@ -206,15 +206,8 @@ impl<'a, I, W> TextWriter<'a, I, W>
             Tag::Emphasis => self.write("*"),
             Tag::Strong => self.write("**"),
             Tag::Strikethrough => self.write("~~"),
-            Tag::Link(LinkType::Email, dest, title) => {
-                self.write("<a href=\"mailto:")?;
-                // escape_href(&mut self.writer, &dest)?;
-                write!(&mut self.writer, "{}", dest)?;
-                if !title.is_empty() {
-                    self.write("\" title=\"")?;
-                    // escape_html(&mut self.writer, &title)?;
-                }
-                self.write("\">")
+            Tag::Link(LinkType::Email, _dest, _title) => {
+                self.write("<")
             }
             Tag::Link(_link_type, _dest, _title) => {
                 self.write("[")
@@ -282,10 +275,17 @@ impl<'a, I, W> TextWriter<'a, I, W>
             Tag::Strikethrough => {
                 self.write("~~")?;
             }
-            Tag::Link(_link_type, dest, _title) => {
-                self.write("](")?;
-                write!(&mut self.writer, "{}", dest)?;
-                self.write(")")?;
+            Tag::Link(link_type, dest, _title) => {
+                match link_type {
+                    LinkType::Email => {
+                        self.write(">")?;
+                    }
+                    _ => {
+                        self.write("](")?;
+                        write!(&mut self.writer, "{}", dest)?;
+                        self.write(")")?;
+                    }
+                }
             }
             Tag::Image(_link_type, dest, _title) => {
                 self.write("](")?;
@@ -345,6 +345,18 @@ mod tests {
 [^1]: My reference.
 ";
         let parser = Parser::new_ext(list, Options::ENABLE_FOOTNOTES);
+
+        let stdout = std::io::stdout();
+        let mut handle = stdout.lock();
+        handle.write_all(b"\nHTML output:\n").unwrap();
+        md_writer::write_text(&mut handle, parser).unwrap();
+    }
+
+    #[test]
+    fn should_build_email() {
+        let list = "<fake@example.com>
+";
+        let parser = Parser::new_ext(list, Options::ENABLE_TASKLISTS);
 
         let stdout = std::io::stdout();
         let mut handle = stdout.lock();
