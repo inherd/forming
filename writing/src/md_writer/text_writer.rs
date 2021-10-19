@@ -46,6 +46,7 @@ struct TextWriter<'a, I, W> {
     table_alignments: Vec<Alignment>,
     table_cell_index: usize,
     list_index: usize,
+    #[allow(dead_code)]
     numbers: HashMap<CowStr<'a>, usize>,
 }
 
@@ -119,12 +120,7 @@ impl<'a, I, W> TextWriter<'a, I, W>
                     }
                 }
                 FootnoteReference(name) => {
-                    let len = self.numbers.len() + 1;
-                    self.write("<sup class=\"footnote-reference\"><a href=\"#")?;
-                    self.write("\">")?;
-                    let number = *self.numbers.entry(name).or_insert(len);
-                    write!(&mut self.writer, "{}", number)?;
-                    self.write("</a></sup>")?;
+                    write!(&mut self.writer, "[^{}]", name)?;
                 }
                 TaskListMarker(true) => {
                     self.write("[x]")?;
@@ -232,17 +228,7 @@ impl<'a, I, W> TextWriter<'a, I, W>
                 self.write("![")
             }
             Tag::FootnoteDefinition(name) => {
-                if self.end_newline {
-                    self.write("<div class=\"footnote-definition\" id=\"")?;
-                } else {
-                    self.write("\n<div class=\"footnote-definition\" id=\"")?;
-                }
-                // escape_html(&mut self.writer, &*name)?;
-                self.write("\"><sup class=\"footnote-definition-label\">")?;
-                let len = self.numbers.len() + 1;
-                let number = *self.numbers.entry(name).or_insert(len);
-                write!(&mut self.writer, "{}", number)?;
-                self.write("</sup>")
+                write!(&mut self.writer, "[^{}]: ", &*name)
             }
         }
     }
@@ -316,7 +302,7 @@ impl<'a, I, W> TextWriter<'a, I, W>
                 self.write(")")?;
             }
             Tag::FootnoteDefinition(_) => {
-                self.write("</div>\n")?;
+                self.write("\n")?;
             }
         }
         Ok(())
@@ -342,11 +328,11 @@ pub fn write_text<'a, I, W>(writer: W, iter: I) -> io::Result<()>
 #[cfg(test)]
 mod tests {
     use std::io::Write;
-    use pulldown_cmark::{Event, Options, Parser, Tag};
+    use pulldown_cmark::{Options, Parser};
     use crate::md_writer;
 
     #[test]
-    fn should_parse_line() {
+    fn should_parse_list() {
         let list = "1. normal
 2. **strong**
 3. ~~delete~~
@@ -359,5 +345,20 @@ mod tests {
         let mut handle = stdout.lock();
         handle.write_all(b"\nHTML output:\n").unwrap();
         md_writer::write_text(&mut handle, parser).unwrap();
+    }
+
+    #[test]
+    fn should_parse_footnote() {
+        let list = "footnote[^1]
+
+[^1]: My reference.
+";
+        let parser = Parser::new_ext(list, Options::ENABLE_FOOTNOTES);
+
+        let stdout = std::io::stdout();
+        let mut handle = stdout.lock();
+        handle.write_all(b"\nHTML output:\n").unwrap();
+        md_writer::write_text(&mut handle, parser).unwrap();
+        // html::write_html(&mut handle, parser).unwrap();
     }
 }
