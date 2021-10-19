@@ -94,13 +94,11 @@ impl<'a, I, W> TextWriter<'a, I, W>
                     self.end_tag(tag)?;
                 }
                 Text(text) => {
-                    // escape_html(&mut self.writer, &text)?;
                     write!(&mut self.writer, "{}", &text)?;
                     self.end_newline = text.ends_with('\n');
                 }
                 Code(text) => {
                     self.write("`")?;
-                    // escape_html(&mut self.writer, &text)?;
                     write!(&mut self.writer, "{}", &text)?;
                     self.write("`")?;
                 }
@@ -123,7 +121,6 @@ impl<'a, I, W> TextWriter<'a, I, W>
                 FootnoteReference(name) => {
                     let len = self.numbers.len() + 1;
                     self.write("<sup class=\"footnote-reference\"><a href=\"#")?;
-                    // escape_html(&mut self.writer, &name)?;
                     self.write("\">")?;
                     let number = *self.numbers.entry(name).or_insert(len);
                     write!(&mut self.writer, "{}", number)?;
@@ -215,9 +212,9 @@ impl<'a, I, W> TextWriter<'a, I, W>
                     self.write("")
                 }
             }
-            Tag::Emphasis => self.write("<em>"),
+            Tag::Emphasis => self.write("*"),
             Tag::Strong => self.write("**"),
-            Tag::Strikethrough => self.write("~"),
+            Tag::Strikethrough => self.write("~~"),
             Tag::Link(LinkType::Email, dest, title) => {
                 self.write("<a href=\"mailto:")?;
                 // escape_href(&mut self.writer, &dest)?;
@@ -287,26 +284,26 @@ impl<'a, I, W> TextWriter<'a, I, W>
             }
             Tag::List(Some(1)) => {
                 self.list_index = 0;
-                self.write("\n\n")?;
+                self.write("\n")?;
             }
             Tag::List(Some(_start)) => {
                 self.list_index = 0;
                 self.write("\n")?;
             }
             Tag::List(None) => {
-                self.write("</ul>\n")?;
+                self.write("\n\n")?;
             }
             Tag::Item => {
                 self.write("\n")?;
             }
             Tag::Emphasis => {
-                self.write("</em>")?;
+                self.write("*")?;
             }
             Tag::Strong => {
-                self.write("</strong>")?;
+                self.write("**")?;
             }
             Tag::Strikethrough => {
-                self.write("</del>")?;
+                self.write("~~")?;
             }
             Tag::Link(_link_type, dest, _title) => {
                 self.write("](")?;
@@ -350,18 +347,13 @@ mod tests {
 
     #[test]
     fn should_parse_line() {
-        let list = "1. aa
-2. blabla
+        let list = "1. normal
+2. **strong**
+3. ~~delete~~
+4. *Italic*
+5. ***BoldAndItalic***
 ";
-        let parser = Parser::new_ext(list, Options::empty())
-            .map(|event| match event {
-                Event::Text(text) => Event::Text(text.replace("Peter", "John").into()),
-                _ => event,
-            })
-            .filter(|event| match event {
-                Event::Start(Tag::Image(..)) | Event::End(Tag::Image(..)) => false,
-                _ => true,
-            });
+        let parser = Parser::new(list);
 
         let stdout = std::io::stdout();
         let mut handle = stdout.lock();
