@@ -59,23 +59,38 @@ impl Writing {
 #[cfg(test)]
 mod tests {
     use std::io::Write;
-    use pulldown_cmark::{Event, Options, Parser, Tag};
+    use pulldown_cmark::{Options, Parser};
     use super::*;
 
     #[test]
     fn should_parse_line() {
-        // let result = Writing::process_file("README.md");
         let string = String::from_utf8_lossy(&fs::read("README.md").unwrap()).to_string();
 
-        let parser = Parser::new_ext(&*string, Options::empty())
-            .map(|event| match event {
-                Event::Text(text) => Event::Text(text.replace("Peter", "John").into()),
-                _ => event,
-            })
-            .filter(|event| match event {
-                Event::Start(Tag::Image(..)) | Event::End(Tag::Image(..)) => false,
-                _ => true,
-            });
+        let parser = Parser::new_ext(&*string, Options::empty());
+
+        let stdout = std::io::stdout();
+        let mut handle = stdout.lock();
+        handle.write_all(b"\nHTML output:\n").unwrap();
+        md_writer::write_text(&mut handle, parser).unwrap();
+    }
+
+    #[test]
+    fn should_convert_text() {
+        let string = "
+233333
+
+```rust
+// doc-code: file(\"src/lib.rs\").line()[2, 4]
+// doc-code: file(\"src/lib.rs\").line()[4, 5]
+```
+
+[a link](dx.phodal.com)
+
+
+demo
+";
+
+        let parser = Parser::new_ext(&*string, Options::empty());
 
         let stdout = std::io::stdout();
         let mut handle = stdout.lock();

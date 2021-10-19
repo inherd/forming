@@ -20,16 +20,48 @@
 
 //! HTML renderer that takes an iterator of events as input.
 
+use std::borrow::Cow;
 use std::collections::HashMap;
 use std::io::{self, Write};
 
 use pulldown_cmark::escape::{StrWrite, WriteWrapper};
 use pulldown_cmark::Event::*;
 use pulldown_cmark::{Alignment, CodeBlockKind, CowStr, Event, LinkType, Tag};
+use crate::parser::parser;
+use crate::wreader::WReader;
 
 enum TableState {
     Head,
     Body,
+}
+
+enum Line<'a> {
+    Hidden(&'a str),
+    Shown(Cow<'a, str>),
+}
+
+impl<'a> Line<'a> {
+    fn for_code(self) -> Cow<'a, str> {
+        match self {
+            Line::Shown(l) => l,
+            Line::Hidden(l) => Cow::Borrowed(l),
+        }
+    }
+}
+
+fn map_line(s: &str) -> Line<'_> {
+    let trimmed = s.trim();
+    if trimmed.starts_with("##") {
+        Line::Shown(Cow::Owned(s.replacen("##", "#", 1)))
+    } else if let Some(stripped) = trimmed.strip_prefix("# ") {
+        // # text
+        Line::Hidden(&stripped)
+    } else if trimmed == "#" {
+        // We cannot handle '#text' because it could be #[attr].
+        Line::Hidden("")
+    } else {
+        Line::Shown(Cow::Borrowed(s))
+    }
 }
 
 struct TextWriter<'a, I, W> {
@@ -174,14 +206,38 @@ impl<'a, I, W> TextWriter<'a, I, W>
                     CodeBlockKind::Fenced(info) => {
                         let lang = info.split(' ').next().unwrap();
                         if lang.is_empty() {
-                            self.write("\n```")
+                            return self.write("\n```")
                         } else {
                             write!(&mut self.writer, "```{}", lang)?;
-                            self.write("\n")
+                            self.write("\n")?;
                         }
                     }
-                    CodeBlockKind::Indented => self.write("```"),
+                    CodeBlockKind::Indented => {
+                        return self.write("```")
+                    }
                 }
+
+                let mut test_s = String::new();
+
+                if let Some(Event::Text(s)) = self.iter.next() {
+                    test_s.push_str(&s);
+                }
+
+                let str = test_s
+                    .lines()
+                    .map(|l| map_line(l).for_code())
+                    .collect::<Vec<Cow<'_, str>>>();
+
+                if str[0].starts_with("// doc-") {
+                    for line in str {
+                        let writing = parser::parse(line.replace("//", "").as_str());
+
+                        for code in WReader::read_doc_code(writing.code_docs[0].clone()) {
+                            write!(&mut self.writer, "{}\n", code)?;
+                        }
+                    }
+                }
+                Ok(())
             }
             Tag::List(Some(1)) => {
                 self.list_index = 1;
