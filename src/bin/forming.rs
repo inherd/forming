@@ -1,7 +1,7 @@
-use clap::{AppSettings, Clap};
+use clap::Parser;
 
-#[derive(Clap)]
-#[clap(setting = AppSettings::ColoredHelp)]
+#[derive(Parser)]
+#[clap(version = "0.1", author = "Inherd <forming@inherd.org>")]
 struct Opts {
     #[clap(short, long, default_value = "forming")]
     input: String,
