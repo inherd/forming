@@ -13,7 +13,6 @@ use crate::md_reader::CodeReader;
 
 pub mod parser;
 pub mod md_reader;
-pub mod md_writer;
 
 #[derive(Error, Debug)]
 pub enum WritingError {
@@ -80,24 +79,5 @@ impl Writing {
 
 #[cfg(test)]
 mod tests {
-    use std::fs;
-    use std::io::Write;
 
-    use pulldown_cmark::{Options, Parser};
-
-    use super::*;
-
-    // doc-start: section1
-    #[test]
-    fn should_parse_line() {
-        let string = String::from_utf8_lossy(&fs::read("README.md").unwrap()).to_string();
-
-        let parser = Parser::new_ext(&*string, Options::empty());
-
-        let stdout = std::io::stdout();
-        let mut handle = stdout.lock();
-        handle.write_all(b"\nHTML output:\n").unwrap();
-        md_writer::write_text(&mut handle, parser).unwrap();
-    }
-    // doc-end: section1
 }
