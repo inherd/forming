@@ -48,7 +48,7 @@ struct TextWriter<'a, I, W> {
     table_state: TableState,
     table_alignments: Vec<Alignment>,
     table_cell_index: usize,
-    list_index: usize,
+    item_index: usize,
     #[allow(dead_code)]
     numbers: HashMap<CowStr<'a>, usize>,
 }
@@ -66,7 +66,7 @@ impl<'a, I, W> TextWriter<'a, I, W>
             table_state: TableState::Head,
             table_alignments: vec![],
             table_cell_index: 0,
-            list_index: 0,
+            item_index: 0,
             numbers: HashMap::new(),
         }
     }
@@ -204,20 +204,20 @@ impl<'a, I, W> TextWriter<'a, I, W>
                 Ok(())
             }
             Tag::List(Some(1)) => {
-                self.list_index = 1;
+                self.item_index = 1;
                 Ok(())
             }
             Tag::List(Some(start)) => {
-                self.list_index = start as usize;
+                self.item_index = start as usize;
                 Ok(())
             }
             Tag::List(None) => {
                 self.write("")
             }
             Tag::Item => {
-                if self.list_index > 0 {
-                    write!(&mut self.writer, "{}. ", self.list_index)?;
-                    self.list_index = self.list_index + 1;
+                if self.item_index > 0 {
+                    write!(&mut self.writer, "{}. ", self.item_index)?;
+                    self.item_index = self.item_index + 1;
                     Ok(())
                 } else {
                     self.write("- ")
@@ -273,11 +273,11 @@ impl<'a, I, W> TextWriter<'a, I, W>
                 self.write("```\n\n")?;
             }
             Tag::List(Some(1)) => {
-                self.list_index = 0;
+                self.item_index = 0;
                 self.write("\n")?;
             }
             Tag::List(Some(_start)) => {
-                self.list_index = 0;
+                self.item_index = 0;
                 self.write("\n")?;
             }
             Tag::List(None) => {
