@@ -139,7 +139,7 @@ impl<'a, I, W> TextWriter<'a, I, W>
     fn start_tag(&mut self, tag: Tag<'a>) -> io::Result<()> {
         match tag {
             Tag::Paragraph => {
-                self.write("")
+                Ok(())
             }
             Tag::Heading(level) => {
                 write!(&mut self.writer, "{} ", "#".repeat(level as usize).as_str())
@@ -158,15 +158,7 @@ impl<'a, I, W> TextWriter<'a, I, W>
                 Ok(())
             }
             Tag::TableCell => {
-                match self.table_state {
-                    TableState::Head => {
-                        self.write("|")?;
-                    }
-                    TableState::Body => {
-                        self.write("|")?;
-                    }
-                }
-                Ok(())
+                self.write("|")?
             }
             Tag::BlockQuote => {
                 self.write("> ")
@@ -188,7 +180,6 @@ impl<'a, I, W> TextWriter<'a, I, W>
                 }
 
                 let mut code_text = String::new();
-
                 if let Some(Event::Text(s)) = self.iter.next() {
                     code_text.push_str(&s);
                 }
