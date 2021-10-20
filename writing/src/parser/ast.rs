@@ -28,8 +28,8 @@ impl CodeSource {
     pub fn new() -> CodeSource {
         CodeSource {
             file: "".to_string(),
-            start_line: 0,
-            end_line: 0
+            start_line: 1,
+            end_line: usize::MAX
         }
     }
 }

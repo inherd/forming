@@ -14,19 +14,19 @@
 by Lines
 
 ```writing
-doc-code: file("src/lib.rs").line()[2, 5]
+// doc-code: file("src/lib.rs").line()[1, 5]
 ```
 
-by Section
+by Section (Todo)
 
 ```writing
-doc-section: file("src/lib.rs").section("section1")
+// doc-section: file("src/lib.rs").section("section1")
 ```
 
-by Function (todo)
+by Function (Todo)
 
 ```writing
-doc-func: file("src/lib.rs").func()["it_works"]
+// doc-func: file("src/lib.rs").func()["it_works"]
 ```
 
 ## Documents

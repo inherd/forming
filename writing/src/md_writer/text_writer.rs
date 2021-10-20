@@ -23,11 +23,12 @@
 use std::collections::HashMap;
 use std::io::{self, Write};
 
+use pulldown_cmark::{Alignment, CodeBlockKind, CowStr, Event, LinkType, Tag};
 use pulldown_cmark::escape::{StrWrite, WriteWrapper};
 use pulldown_cmark::Event::*;
-use pulldown_cmark::{Alignment, CodeBlockKind, CowStr, Event, LinkType, Tag};
+
+use crate::md_reader::code_reader::CodeReader;
 use crate::parser::parser;
-use crate::wreader::WReader;
 
 enum TableState {
     Head,
@@ -70,12 +71,6 @@ impl<'a, I, W> TextWriter<'a, I, W>
         }
     }
 
-    /// Writes a new line.
-    fn write_newline(&mut self) -> io::Result<()> {
-        self.end_newline = true;
-        self.writer.write_str("\n")
-    }
-
     /// Writes a buffer, and tracks whether or not a newline was written.
     #[inline]
     fn write(&mut self, s: &str) -> io::Result<()> {
@@ -109,7 +104,7 @@ impl<'a, I, W> TextWriter<'a, I, W>
                     self.write(&html)?;
                 }
                 SoftBreak => {
-                    self.write_newline()?;
+                    self.write("\n")?;
                 }
                 HardBreak => {
                     self.write("\n")?;
@@ -158,7 +153,7 @@ impl<'a, I, W> TextWriter<'a, I, W>
                 Ok(())
             }
             Tag::TableCell => {
-                self.write("|")?
+                self.write("|")
             }
             Tag::BlockQuote => {
                 self.write("> ")
@@ -188,8 +183,16 @@ impl<'a, I, W> TextWriter<'a, I, W>
                     if line.starts_with("// doc-") {
                         let writing = parser::parse(line.replace("//", "").as_str());
 
-                        for code in WReader::read_doc_code(writing.code_docs[0].clone()) {
-                            write!(&mut self.writer, "{}\n", code)?;
+                        if writing.code_docs.len() > 0 {
+                            for code in CodeReader::read_doc_code(&writing.code_docs[0]) {
+                                write!(&mut self.writer, "{}\n", code)?;
+                            }
+                        } else if writing.code_sections.len() > 0 {
+                            for code in CodeReader::read_doc_section(&writing.code_sections[0]) {
+                                write!(&mut self.writer, "{}\n", code)?;
+                            }
+                        } else {
+                            write!(&mut self.writer, "{}\n", line)?;
                         }
                     } else {
                         write!(&mut self.writer, "{}\n", line)?;
@@ -208,7 +211,7 @@ impl<'a, I, W> TextWriter<'a, I, W>
                 Ok(())
             }
             Tag::List(None) => {
-                self.write("- \n")
+                self.write("")
             }
             Tag::Item => {
                 if self.list_index > 0 {
@@ -216,7 +219,7 @@ impl<'a, I, W> TextWriter<'a, I, W>
                     self.list_index = self.list_index + 1;
                     Ok(())
                 } else {
-                    self.write("")
+                    self.write("- ")
                 }
             }
             Tag::Emphasis => self.write("*"),
@@ -277,7 +280,7 @@ impl<'a, I, W> TextWriter<'a, I, W>
                 self.write("\n")?;
             }
             Tag::List(None) => {
-                self.write("\n\n")?;
+                self.write("\n")?;
             }
             Tag::Item => {
                 self.write("\n")?;
@@ -308,9 +311,7 @@ impl<'a, I, W> TextWriter<'a, I, W>
                 write!(&mut self.writer, "{}", dest)?;
                 self.write(")")?;
             }
-            Tag::FootnoteDefinition(_) => {
-                self.write("\n")?;
-            }
+            Tag::FootnoteDefinition(_) => {}
         }
         Ok(())
     }
@@ -335,49 +336,67 @@ pub fn write_text<'a, I, W>(writer: W, iter: I) -> io::Result<()>
 #[cfg(test)]
 mod tests {
     use std::io::Write;
+
     use pulldown_cmark::{Options, Parser};
+
     use crate::md_writer;
 
     #[test]
-    fn should_parse_list() {
-        let list = "1. normal
+    fn should_parse_ol_list() {
+        let input = "1. normal
 2. **strong**
 3. ~~delete~~
 4. *Italic*
 5. ***BoldAndItalic***
-";
-        let parser = Parser::new(list);
 
-        let stdout = std::io::stdout();
-        let mut handle = stdout.lock();
-        handle.write_all(b"\nHTML output:\n").unwrap();
-        md_writer::write_text(&mut handle, parser).unwrap();
+";
+        let parser = Parser::new(input);
+
+        let mut result: String = String::from("");
+        md_writer::push_text(&mut result, parser);
+        assert_eq!(input, result);
+    }
+
+    #[test]
+    fn should_parse_normal_list() {
+        let input = "- normal
+- **strong**
+- ~~delete~~
+- *Italic*
+- ***BoldAndItalic***
+
+";
+        let parser = Parser::new(input);
+
+        let mut result: String = String::from("");
+        md_writer::push_text(&mut result, parser);
+        assert_eq!(input, result);
     }
 
     #[test]
     fn should_parse_footnote() {
-        let list = "footnote[^1]
+        let input = "footnote[^1]
 
 [^1]: My reference.
-";
-        let parser = Parser::new_ext(list, Options::ENABLE_FOOTNOTES);
 
-        let stdout = std::io::stdout();
-        let mut handle = stdout.lock();
-        handle.write_all(b"\nHTML output:\n").unwrap();
-        md_writer::write_text(&mut handle, parser).unwrap();
+";
+        let parser = Parser::new_ext(input, Options::all());
+
+        let mut result: String = String::from("");
+        md_writer::push_text(&mut result, parser);
+        assert_eq!(input, result);
     }
 
     #[test]
     fn should_build_email() {
-        let list = "<fake@example.com>
-";
-        let parser = Parser::new_ext(list, Options::ENABLE_TASKLISTS);
+        let input = "a <fake@example.com> a
 
-        let stdout = std::io::stdout();
-        let mut handle = stdout.lock();
-        handle.write_all(b"\nHTML output:\n").unwrap();
-        md_writer::write_text(&mut handle, parser).unwrap();
+";
+        let parser = Parser::new_ext(input, Options::all());
+
+        let mut result: String = String::from("");
+        md_writer::push_text(&mut result, parser);
+        assert_eq!(input, result);
     }
 
     #[test]
@@ -388,7 +407,7 @@ mod tests {
 | Header      | Title       |
 | Paragraph   | Text        |
 ";
-        let parser = Parser::new_ext(list, Options::ENABLE_TABLES);
+        let parser = Parser::new_ext(list, Options::all());
 
         let stdout = std::io::stdout();
         let mut handle = stdout.lock();

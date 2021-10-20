@@ -31,6 +31,8 @@ pest_derive = "2.1.0"
 
 thiserror = "1.0"
 
-[lib]
+clap = "3.0.0-beta.5"
+
+[[bin]]
 name = "writing"
-crate-type = ["lib"]
+path = "src/bin/writing.rs"

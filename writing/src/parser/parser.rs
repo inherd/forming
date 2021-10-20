@@ -1,6 +1,7 @@
-use pest::Parser;
 use pest::iterators::Pair;
-use crate::parser::ast::{CodeSource, Writing, CodeDep, CodeSection, CodeBlock, CodeFunc};
+use pest::Parser;
+
+use crate::parser::ast::{CodeBlock, CodeDep, CodeFunc, CodeSection, CodeSource, Writing};
 
 #[derive(Parser)]
 #[grammar = "parser/writing.pest"]
@@ -89,9 +90,7 @@ fn parse_code_func(decl: Pair<Rule>) -> CodeFunc {
             Rule::func_name => {
                 func.funcs.push(String::from(pair.as_str()))
             }
-            _ => {
-
-            }
+            _ => {}
         }
     }
     func
