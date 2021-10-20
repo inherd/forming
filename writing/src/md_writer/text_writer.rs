@@ -84,6 +84,7 @@ impl<'a, I, W> TextWriter<'a, I, W>
 
     fn run(mut self) -> io::Result<()> {
         while let Some(event) = self.iter.next() {
+            println!("{:?}", event);
             match event {
                 Start(tag) => {
                     self.start_tag(tag)?;
@@ -120,10 +121,10 @@ impl<'a, I, W> TextWriter<'a, I, W>
                     write!(&mut self.writer, "[^{}]", name)?;
                 }
                 TaskListMarker(true) => {
-                    self.write("[x]")?;
+                    self.write("[x] ")?;
                 }
                 TaskListMarker(false) => {
-                    self.write("[ ]")?;
+                    self.write("[ ] ")?;
                 }
             }
         }
@@ -413,5 +414,21 @@ mod tests {
         let mut handle = stdout.lock();
         handle.write_all(b"\nHTML output:\n").unwrap();
         md_writer::write_text(&mut handle, parser).unwrap();
+    }
+
+    #[test]
+    fn should_build_todo() {
+        let list = "
+- [ ] workflow design
+   - [ ] collaboration style
+   - [ ] associate patterns
+- [ ] core driven style
+";
+        let parser = Parser::new_ext(list, Options::all());
+
+        let mut result: String = String::from("");
+        md_writer::push_text(&mut result, parser);
+        // assert_eq!(input, result);
+        println!("{}", result);
     }
 }
