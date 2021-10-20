@@ -1,6 +1,6 @@
 # Forming
 
-> Forming, is a lightweight architecture design language. 
+> Forming, is a lightweight architecture as code language. 轻量级架构即代码语言 
 
 Architecture 3.0 based frameworks.
 
