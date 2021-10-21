@@ -9,10 +9,10 @@ use std::path::{Path, PathBuf};
 
 use thiserror::Error;
 
-use crate::md_reader::CodeReader;
+use crate::code_reader::CodeReader;
 
 pub mod parser;
-pub mod md_reader;
+pub mod code_reader;
 
 #[derive(Error, Debug)]
 pub enum WritingError {
