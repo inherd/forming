@@ -2,11 +2,6 @@
 
 > a document-code sync tools for setup.
 
-Todo
-
- - [ ] support for todo
- - [ ] support for multiple level list
-
 ## process
 
 1. read markdown file
