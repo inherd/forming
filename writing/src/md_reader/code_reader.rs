@@ -23,15 +23,17 @@ impl CodeReader {
         let block = &doc.blocks[0];
         let file = File::open(&block.file).expect("cannot read file");
         let reader = BufReader::new(file);
+        let start_text = format!("doc-start: {}", block.name);
+        let end_text = format!("doc-end: {}", block.name);
 
         let mut is_during = false;
         let mut str: Vec<String> = reader.lines()
             .map(|l| l.expect("cannot parse"))
             .filter(|text| {
-                if text.ends_with("doc-start: section1") {
+                if text.ends_with(&start_text) {
                     is_during = true;
                 }
-                if text.ends_with("doc-end: section1") {
+                if text.ends_with(&end_text) {
                     is_during = false;
                 }
 
