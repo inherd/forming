@@ -50,6 +50,8 @@ impl Writing {
             if line.starts_with("```") {
                 is_lang = !is_lang
             }
+
+            // todo: add remove backspace & tab, before check??
             if is_lang && line.starts_with("// doc-") {
                 let writing = parser::parse(line.replace("//", "").as_str());
 

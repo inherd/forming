@@ -23,6 +23,7 @@ impl CodeReader {
         let block = &doc.blocks[0];
         let file = File::open(&block.file).expect("cannot read file");
         let reader = BufReader::new(file);
+
         let start_text = format!("doc-start: {}", block.name);
         let end_text = format!("doc-end: {}", block.name);
 
