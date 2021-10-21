@@ -42,11 +42,15 @@ impl Writing {
     fn write_it(path: PathBuf) -> Vec<String> {
         let file = File::open(path).expect("cannot open file");
         let reader = BufReader::new(file);
+        let mut is_lang = false;
 
         let mut results =  vec![] ;
         for res in reader.lines() {
             let line = res.expect("cannot parse line");
-            if line.starts_with("// doc-") {
+            if line.starts_with("```") {
+                is_lang = !is_lang
+            }
+            if is_lang && line.starts_with("// doc-") {
                 let writing = parser::parse(line.replace("//", "").as_str());
 
                 if writing.code_docs.len() > 0 {
@@ -64,6 +68,7 @@ impl Writing {
         results
     }
 
+// doc-start: section1
     fn pre_process_file(path: &PathBuf) -> Result<(), WritingError> {
         if path.is_dir() {
             return Err(WritingError::IOError(format!("path: {:?} is a dir", path)));
@@ -75,6 +80,7 @@ impl Writing {
 
         Ok(())
     }
+// doc-end: section1
 }
 
 #[cfg(test)]

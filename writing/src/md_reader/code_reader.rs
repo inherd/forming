@@ -20,7 +20,8 @@ impl CodeReader {
     }
 
     pub fn read_doc_section(doc: &CodeSection) -> Vec<String> {
-        let file = File::open(&doc.blocks[0].file).expect("cannot read file");
+        let block = &doc.blocks[0];
+        let file = File::open(&block.file).expect("cannot read file");
         let reader = BufReader::new(file);
 
         let mut is_during = false;
@@ -38,7 +39,9 @@ impl CodeReader {
             })
             .collect();
 
-        str.remove(0);
+        if str.len() > 0 {
+            str.remove(0);
+        }
 
         str
     }
