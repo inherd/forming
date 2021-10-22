@@ -88,7 +88,7 @@ fn parse_code_func(decl: Pair<Rule>) -> CodeFunc {
                 func.file = parse_string(pair.as_str());
             }
             Rule::func_name => {
-                func.funcs.push(String::from(pair.as_str()))
+                func.funcs.push(parse_string(pair.as_str()))
             }
             _ => {}
         }

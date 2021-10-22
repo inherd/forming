@@ -26,7 +26,7 @@ by Section (Todo)
 by Function (Todo)
 
 ```writing
-// doc-func: file("src/lib.rs").func()["it_works"]
+// doc-func: file("src/lib.rs").func()["pre_process_file", "process_file"]
 ```
 
 ## Documents

@@ -1,22 +1,86 @@
 use std::fs::File;
+use std::io;
 use std::io::{BufRead, BufReader};
+use std::path::Path;
+use guarding_core::domain::code_file::CodeFile;
+use guarding_core::domain::code_function::CodeFunction;
+use guarding_ident::ModelBuilder;
 
-use crate::parser::ast::{CodeSection, CodeSource};
+use crate::ast::{CodeFunc, CodeSection, CodeSource};
 
 pub struct CodeReader {}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct Point {
+    start: usize,
+    end: usize,
+}
 
 impl CodeReader {
     pub fn read_doc_code(doc: &CodeSource) -> Vec<String> {
         let file = File::open(&doc.file).expect("cannot read file");
-        let reader = BufReader::new(file);
+        let start = doc.start_line;
+        let end = doc.end_line;
 
-        reader.lines()
+        // let lines = CodeReader::read_lines(&doc.file);
+        CodeReader::read_by_position(&file, start, end)
+    }
+
+    fn read_by_position(file: &File, start: usize, end: usize) -> Vec<String> {
+        let lines = BufReader::new(file).lines();
+        lines
             .enumerate()
             .filter(|(i, _l)| {
-                i >= &(doc.start_line - 1) && i < &doc.end_line
+                i >= &(start - 1) && i < &end
             })
             .map(|(_i, l)| l.expect("cannot parse"))
             .collect()
+    }
+
+
+    fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
+        where P: AsRef<Path>, {
+        let file = File::open(filename)?;
+        Ok(io::BufReader::new(file).lines())
+    }
+
+    pub fn read_code_func(doc: &CodeFunc) -> Vec<String> {
+        let mut str: Vec<String> = vec![];
+
+        let mut models: Vec<CodeFile> = vec![];
+        ModelBuilder::build_model_by_file(&mut models, doc.file.as_ref());
+        let mut points = vec![];
+        for model in &models {
+            for clz in &model.classes {
+                let funcs = &clz.functions;
+                CodeReader::filter_by_func(&doc, &mut points, funcs);
+            }
+
+            let funcs = &model.functions;
+            CodeReader::filter_by_func(&doc, &mut points, funcs);
+        }
+
+        let file = File::open(&doc.file).expect("cannot read file");
+        // let lines = CodeReader::read_lines(&doc.file).expect("cannot read file");
+        for point in &points {
+            let mut text = CodeReader::read_by_position(&file, point.start, point.end);
+            str.append(&mut text);
+        }
+
+        str
+    }
+
+    fn filter_by_func(doc: &&CodeFunc, points: &mut Vec<Point>, funcs: &Vec<CodeFunction>) {
+        for func in funcs {
+            for exp in &doc.funcs {
+                if &func.name == exp {
+                    points.push(Point {
+                        start: func.start.row + 1,
+                        end: func.end.row + 1,
+                    })
+                }
+            }
+        }
     }
 
     pub fn read_doc_section(doc: &CodeSection) -> Vec<String> {

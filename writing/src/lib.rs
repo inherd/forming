@@ -14,6 +14,8 @@ use crate::code_reader::CodeReader;
 pub mod parser;
 pub mod code_reader;
 
+pub use parser::*;
+
 #[derive(Error, Debug)]
 pub enum WritingError {
     #[error("io error: `{0}` ")]
@@ -44,7 +46,7 @@ impl Writing {
         let reader = BufReader::new(file);
         let mut is_lang = false;
 
-        let mut results =  vec![] ;
+        let mut results = vec![];
         for res in reader.lines() {
             let line = res.expect("cannot parse line");
             if line.starts_with("```") {
@@ -59,6 +61,8 @@ impl Writing {
                     results.append(&mut CodeReader::read_doc_code(&writing.code_docs[0]));
                 } else if writing.code_sections.len() > 0 {
                     results.append(&mut CodeReader::read_doc_section(&writing.code_sections[0]));
+                } else if writing.code_funcs.len() > 0 {
+                    results.append(&mut CodeReader::read_code_func(&writing.code_funcs[0]));
                 } else {
                     results.push(String::from(line));
                 };
@@ -70,7 +74,7 @@ impl Writing {
         results
     }
 
-// doc-start: section1
+    // doc-start: section1
     fn pre_process_file(path: &PathBuf) -> Result<(), WritingError> {
         if path.is_dir() {
             return Err(WritingError::IOError(format!("path: {:?} is a dir", path)));
@@ -86,6 +90,4 @@ impl Writing {
 }
 
 #[cfg(test)]
-mod tests {
-
-}
+mod tests {}
