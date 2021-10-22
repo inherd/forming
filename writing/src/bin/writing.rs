@@ -1,4 +1,7 @@
+use std::fs;
+
 use clap::Parser;
+
 use writing::Writing;
 
 #[derive(Parser)]
@@ -6,17 +9,27 @@ use writing::Writing;
 struct Opts {
     #[clap(short, long, default_value = "README.md")]
     path: String,
+    #[clap(short, long, default_value = "out.md")]
+    output: String,
 }
 
 fn main() {
     let opts: Opts = Opts::parse();
 
-    match Writing::process_file(opts.path) {
-        Ok(some) => {
-            println!("{}", some);
+
+    let result = match Writing::process_file(opts.path) {
+        Ok(s) => s,
+        Err(e) => {
+            println!("{:?}", e);
+            return;
         }
-        Err(error) => {
-            println!("{:?}", error)
+    };
+
+    match fs::write(opts.output, result) {
+        Ok(_) => {},
+        Err(e) => {
+            println!("{:?}", e);
+            return;
         }
     }
 }
