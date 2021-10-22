@@ -22,7 +22,6 @@ impl CodeReader {
         let start = doc.start_line;
         let end = doc.end_line;
 
-        // let lines = CodeReader::read_lines(&doc.file);
         CodeReader::read_by_position(&file, start, end)
     }
 
@@ -35,13 +34,6 @@ impl CodeReader {
             })
             .map(|(_i, l)| l.expect("cannot parse"))
             .collect()
-    }
-
-
-    fn read_lines<P>(filename: P) -> io::Result<io::Lines<io::BufReader<File>>>
-        where P: AsRef<Path>, {
-        let file = File::open(filename)?;
-        Ok(io::BufReader::new(file).lines())
     }
 
     pub fn read_code_func(doc: &CodeFunc) -> Vec<String> {
