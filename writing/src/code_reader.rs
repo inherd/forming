@@ -1,7 +1,6 @@
 use std::fs::File;
-use std::io;
 use std::io::{BufRead, BufReader};
-use std::path::Path;
+
 use guarding_core::domain::code_file::CodeFile;
 use guarding_core::domain::code_function::CodeFunction;
 use guarding_ident::ModelBuilder;
@@ -18,21 +17,21 @@ pub struct Point {
 
 impl CodeReader {
     pub fn read_doc_code(doc: &CodeSource) -> Vec<String> {
-        let file = File::open(&doc.file).expect("cannot read file");
         let start = doc.start_line;
         let end = doc.end_line;
 
-        CodeReader::read_by_position(&file, start, end)
+        let lines = CodeReader::file_to_lines(&doc.file);
+        CodeReader::read_by_position(&lines, start, end)
     }
 
-    fn read_by_position(file: &File, start: usize, end: usize) -> Vec<String> {
-        let lines = BufReader::new(file).lines();
+    fn read_by_position(lines: &Vec<String>, start: usize, end: usize) -> Vec<String> {
         lines
+            .into_iter()
             .enumerate()
             .filter(|(i, _l)| {
                 i >= &(start - 1) && i < &end
             })
-            .map(|(_i, l)| l.expect("cannot parse"))
+            .map(|(_i, l)| l.to_string())
             .collect()
     }
 
@@ -52,14 +51,25 @@ impl CodeReader {
             CodeReader::filter_by_func(&doc, &mut points, funcs);
         }
 
-        let file = File::open(&doc.file).expect("cannot read file");
-        // let lines = CodeReader::read_lines(&doc.file).expect("cannot read file");
+        let path = &doc.file;
+        let lines = CodeReader::file_to_lines(path);
+
         for point in &points {
-            let mut text = CodeReader::read_by_position(&file, point.start, point.end);
+            let mut text = CodeReader::read_by_position(&lines, point.start, point.end);
             str.append(&mut text);
         }
 
         str
+    }
+
+    pub fn file_to_lines(path: &String) -> Vec<String> {
+        let file = File::open(path).expect("cannot read file");
+        let lines: Vec<String> = BufReader::new(file)
+            .lines()
+            .map(|l| l.expect("Could not parse line"))
+            .collect();
+
+        lines
     }
 
     fn filter_by_func(doc: &&CodeFunc, points: &mut Vec<Point>, funcs: &Vec<CodeFunction>) {

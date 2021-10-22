@@ -9,12 +9,12 @@ use std::path::{Path, PathBuf};
 
 use thiserror::Error;
 
+pub use parser::*;
+
 use crate::code_reader::CodeReader;
 
 pub mod parser;
 pub mod code_reader;
-
-pub use parser::*;
 
 #[derive(Error, Debug)]
 pub enum WritingError {
@@ -74,7 +74,7 @@ impl Writing {
         results
     }
 
-    // doc-start: section1
+// doc-start: section1
     fn pre_process_file(path: &PathBuf) -> Result<(), WritingError> {
         if path.is_dir() {
             return Err(WritingError::IOError(format!("path: {:?} is a dir", path)));
@@ -90,4 +90,42 @@ impl Writing {
 }
 
 #[cfg(test)]
-mod tests {}
+mod tests {
+    use std::path::PathBuf;
+
+    use crate::Writing;
+
+    #[test]
+    fn should_convert_doc_code() {
+        let path = PathBuf::from("samples").join("doc-code.md");
+        let content = Writing::process_file(path);
+
+        assert_eq!("```writing
+extern crate pest;
+#[macro_use]
+extern crate pest_derive;
+
+use std::fs;
+```", content.expect(""));
+    }
+
+    #[test]
+    fn should_convert_doc_section() {
+        let path = PathBuf::from("samples").join("doc-section.md");
+        let content = Writing::process_file(path);
+
+        assert_eq!("```writing
+    fn pre_process_file(path: &PathBuf) -> Result<(), WritingError> {
+        if path.is_dir() {
+            return Err(WritingError::IOError(format!(\"path: {:?} is a dir\", path)));
+        }
+
+        if let Err(e) = fs::read(path) {
+            return Err(WritingError::IOError(format!(\"read file error: {:?}\", e)));
+        }
+
+        Ok(())
+    }
+```", content.expect(""));
+    }
+}
