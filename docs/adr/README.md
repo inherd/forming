@@ -15,3 +15,4 @@
 * [13. time-travel-debugging](0013-time-travel-debugging.md)
 * [14. markdown-support-for-concept](0014-markdown-support-for-concept.md)
 * [15. keyword-checking-before-generate](0015-keyword-checking-before-generate.md)
+* [16. rule-engine-for-contract](0016-rule-engine-for-contract.md)
