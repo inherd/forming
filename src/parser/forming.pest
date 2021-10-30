@@ -116,8 +116,6 @@ concepts = {
     "concepts" ~ "=" ~ ">" ~ ("file" | "dir") ~ "(" ~ string_literal ~ ")"
 }
 
-// ascii_char = @{ '\x00'..'\x7f' }
-
 string_literal = @{
     double_quoted_string |
     single_quoted_string
@@ -132,7 +130,6 @@ identifier = @{
 }
 all_chars = _{'a'..'z' | 'A'..'Z' | "_" | '0'..'9'}
 
-// empty line
 newline    = _{ "\n" | "\r\n" }
 WHITESPACE = _{ " " | "\t" | NEWLINE }
 block_comment = _{ "/*" ~ (block_comment | !"*/" ~ ANY)* ~ "*/" }

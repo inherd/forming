@@ -22,8 +22,8 @@ impl Concepts {
     }
 }
 
-// refs: https://github.com/vickenty/lang-c/blob/master/grammar.rustpeg
-// refs: https://github.com/vickenty/lang-c
+// naming refs: https://github.com/vickenty/lang-c/blob/master/grammar.rustpeg
+// naming refs: https://github.com/vickenty/lang-c
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Struct {
     identifier: String,
