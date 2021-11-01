@@ -32,9 +32,7 @@ type Description {
 type Behavior = Function
 type Animal {}
 
-type Cat(Animal) {
-
-}
+type Cat(Animal) {}
 
 concept BlogCategory {}
 concept BlogCategories {}
@@ -51,10 +49,11 @@ api /blog {
         in { title: Blog }
         out { }
         precondition {
-            "不为空": not null
+            "不为空": not null,
        // not_empty: not empty
         }
         postcondition { }
+        // sample(json): { title: "zero" }
     }
 }
 
@@ -72,4 +71,7 @@ space Blog {
 
 diagram("layer") Sample {
 
+    guarding: """
+
+"""
 }

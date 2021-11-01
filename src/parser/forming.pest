@@ -85,10 +85,49 @@ condition_lang = {
     string_literal | identifier
 }
 
-// todo: support for normal expr 
+// todo: support for normal expr
 expr = {
     "not" ~ "empty"
 }
+// semantics condition
+// extension
+
+// arithmetic
+exponent                    =  { "**" }
+multiply                    =  { "*" }
+divide                      =  { "/" }
+modulus                     =  { "%" }
+plus                        =  { "+" }
+minus                       =  { "-" }
+
+// bit
+bit_shl                     =  { "<<" }
+bit_shr                     =  { ">>" }
+bit_and                     =  { "&" }
+bit_or                      =  { "|" }
+bit_xor                     =  { "^" }
+bit_not                     =  { "~" }
+
+// todo: thinking in more assign
+assign                      =  { "=" }
+
+// comparison
+equal                       =  { "==" }
+less                        =  { "<" }
+less_equal                  =  { "<=" }
+greater                     =  { ">" }
+greater_equal               =  { ">=" }
+not_equal                   =  { "!=" }
+
+and                         =  { "and" | "&&" }
+or                          =  { "or" | "||" }
+not                         =  { "not" | "!" }
+
+bool                        =  { bool_true | bool_false }
+bool_true                   =  { "true" }
+bool_false                  =  { "false" }
+
+unary_operator              = _{ not }
 
 contract_class_decl = {
   "contract" ~ "for" ~ contract_class ~ "{" ~ "}"

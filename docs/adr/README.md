@@ -16,3 +16,4 @@
 * [14. markdown-support-for-concept](0014-markdown-support-for-concept.md)
 * [15. keyword-checking-before-generate](0015-keyword-checking-before-generate.md)
 * [16. rule-engine-for-contract](0016-rule-engine-for-contract.md)
+* [17. idea-plugin-for-highlighted-core](0017-idea-plugin-for-highlighted-core.md)
