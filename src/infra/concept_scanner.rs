@@ -1,9 +1,7 @@
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use walkdir::{WalkDir};
 
-pub struct ConceptScanner {
-
-}
+pub struct ConceptScanner {}
 
 impl ConceptScanner {
     pub fn from_dir(dir: String, suffix: &str) -> Vec<PathBuf> {
@@ -11,16 +9,14 @@ impl ConceptScanner {
         ConceptScanner::scan_by_dir(buf, suffix)
     }
 
-    fn scan_by_dir(buf: PathBuf, suffix: &str) -> Vec<PathBuf> {
+    fn scan_by_dir<P: AsRef<Path>>(buf: P, suffix: &str) -> Vec<PathBuf> {
         let walk_dir = WalkDir::new(buf);
-        let files = walk_dir.into_iter().map(|entry| entry.expect("error dir"))
+        walk_dir.into_iter().map(|entry| entry.expect("error dir"))
             .filter(|entry| {
                 entry.path().ends_with(suffix)
             })
             .map(|entry| entry.into_path())
-            .collect::<Vec<PathBuf>>();
-
-        files
+            .collect::<Vec<PathBuf>>()
     }
 
     pub fn from_files(_path: String) {}
