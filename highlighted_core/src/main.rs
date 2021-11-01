@@ -6,6 +6,7 @@ pub mod document;
 pub mod editor;
 pub mod identifier;
 pub mod concept_parser;
+pub mod concept_scanner;
 
 fn main() {
     let dir = env::current_dir().unwrap();

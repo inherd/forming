@@ -29,7 +29,7 @@ impl ConceptScanner {
 #[cfg(test)]
 mod tests {
     use std::path::PathBuf;
-    use crate::infra::concept_scanner::ConceptScanner;
+    use crate::concept_scanner::ConceptScanner;
 
     #[test]
     fn scan_by_dir() {
