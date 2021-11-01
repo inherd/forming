@@ -110,7 +110,7 @@ Using（使用车）
 
 ## Layered Architecture
 
-```
+```bash
 domain("Blog") = {
   package: "com.phodal.blog",
   // optional dir
@@ -120,16 +120,15 @@ domain("Blog") = {
 
 ## Conceptual Fluent API
 
-```
+```javascript
 domain("Blog")
   .analysis()
   .vision()
   .usecases("*.cucumber") // ?
   .design(
-    {
-        prototype(),
-        ui(),
-    }
+    parallel([
+        prototype(), ui(),
+    ])
   )
   .concepts()
   .architecture()
@@ -153,7 +152,7 @@ architecture = {
 
 Kotlin
 
-```
+```bash
 // name = "Blog"
 concept("Blog") = {
   layered {
@@ -184,7 +183,8 @@ loading from uml file: `struct = uml.file("").model("Blog")`
 loading from uml dir: `struct = uml.dir("").model("Blog")`
 
 or another form:
-```
+
+```kotlin
 ---
 File: A.context
 ---

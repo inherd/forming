@@ -2,7 +2,7 @@
 
 https://github.com/udoprog/reproto
 
-```
+```reproto
 package proto.v1;
 
 use common as c;
