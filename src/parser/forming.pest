@@ -64,7 +64,7 @@ api_root_decl = {
 
 api_body = {
     "import" ~ string_literal
-    | api_decl*
+     | api_decl*
 }
 
 api_decl = {

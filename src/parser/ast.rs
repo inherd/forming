@@ -26,9 +26,19 @@ pub struct Function {}
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ApiRoot {
-    name: String,
-    import: String,
-    apis: Vec<ApiNode>,
+    pub name: String,
+    pub import: Option<String>,
+    pub apis: Vec<ApiNode>,
+}
+
+impl ApiRoot {
+    pub fn new() -> ApiRoot {
+        ApiRoot {
+            name: "".to_string(),
+            import: None,
+            apis: vec![]
+        }
+    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]

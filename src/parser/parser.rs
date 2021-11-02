@@ -1,14 +1,16 @@
 use pest::iterators::Pair;
 use pest::Parser;
 
-use crate::parser::ast::{ApiNode, StructField};
+use crate::parser::ast::{ApiNode, ApiRoot, SourceUnit, SourceUnitPart, StructField};
 
 #[derive(Parser)]
 #[grammar = "parser/forming.pest"]
 struct IdentParser;
 
-pub fn parse(text: &str) {
+pub fn parse(text: &str) -> SourceUnit {
     let pairs = IdentParser::parse(Rule::start, text).unwrap_or_else(|e| panic!("{}", e));
+
+    let mut part = vec![];
 
     for pair in pairs {
         for decl in pair.into_inner() {
@@ -20,7 +22,7 @@ pub fn parse(text: &str) {
                     parse_concept_decl(decl)
                 }
                 Rule::api_root_decl => {
-                    parse_api_root_decl(decl)
+                    part.push(SourceUnitPart::Api(parse_api_root_decl(decl)));
                 }
                 _ => {
                     println!("Rule:    {:?}", decl.as_rule());
@@ -29,6 +31,8 @@ pub fn parse(text: &str) {
             }
         }
     }
+
+    SourceUnit(part)
 }
 
 fn parse_concept_decl(decl: Pair<Rule>) {
@@ -56,17 +60,18 @@ fn parse_concepts(decl: Pair<Rule>) {
     }
 }
 
-fn parse_api_root_decl(decl: Pair<Rule>) {
+fn parse_api_root_decl(decl: Pair<Rule>) -> ApiRoot {
+    let mut root = ApiRoot::new();
     for api_root in decl.into_inner() {
         match api_root.as_rule() {
             Rule::api_ident => {
-                println!("api_ident: {:?}", api_root.as_str());
+                root.name = String::from(api_root.as_str());
             }
             Rule::api_body => {
                 for pair in api_root.into_inner() {
                     match pair.as_rule() {
                         Rule::api_decl => {
-                            parse_api_body(pair);
+                            root.apis.push(parse_api_body(pair));
                         }
                         _ => {
                             println!("Rule:    {:?}", pair.as_rule());
@@ -81,6 +86,8 @@ fn parse_api_root_decl(decl: Pair<Rule>) {
             }
         }
     }
+
+    root
 }
 
 fn parse_struct_body(body_pair: Pair<Rule>) -> Vec<StructField> {
@@ -215,7 +222,7 @@ concept '博客' {
 
     #[test]
     fn should_parse_basic_api() {
-        parse("api for /search/?q=%E5%8D%9A%E5%AE%A2&type=blog.BlogPost {
+        let unit = parse("api for /search/?q=%E5%8D%9A%E5%AE%A2&type=blog.BlogPost {
             in { title: String, description: String }
             out { blog: Blog }
             pre_cond {
@@ -225,6 +232,8 @@ concept '博客' {
                '博客不为空': 'not empty'
             }
         } ");
+
+        assert_eq!(unit.0.len(), 1);
     }
 
     #[test]
