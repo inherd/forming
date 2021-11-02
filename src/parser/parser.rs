@@ -71,6 +71,7 @@ fn parse_api_root_decl(decl: Pair<Rule>) -> ApiRoot {
                 for pair in api_root.into_inner() {
                     match pair.as_rule() {
                         Rule::api_decl => {
+                            // todo: split api to node
                             root.apis.push(parse_api_body(pair));
                         }
                         _ => {
@@ -164,7 +165,7 @@ fn parse_api_body(api_root: Pair<Rule>) -> ApiNode {
 
 #[cfg(test)]
 mod tests {
-    use crate::parser::ast::SourceUnitPart;
+    use crate::parser::ast::{SourceUnitPart};
     use crate::parser::parser::parse;
 
     #[test]
@@ -234,10 +235,19 @@ concept '博客' {
             }
         } ");
 
-        if let SourceUnitPart::Api(api) = &unit.0[0] {
-            assert_eq!(api.name, "BlogPost");
-        } else {
-            assert!(false);
+        match &unit.0[0] {
+            SourceUnitPart::Api(api) => {
+                println!("api: {:?}", api);
+                assert_eq!(api.name, "BlogPost");
+                let first_api = &api.apis[0];
+                assert_eq!(first_api.api_in.len(), 2);
+                assert_eq!(first_api.api_in[0].identifier, "title");
+                // assert_eq!(first_api.api_out.len(), 1);
+                // assert_eq!(first_api.api_out[0].declarator, TypeSpecifier::TypeType(String::from("Blog")));
+            }
+            _ => {
+                assert!(false);
+            }
         };
     }
 
