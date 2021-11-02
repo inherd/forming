@@ -6,13 +6,51 @@ pub enum SourceUnitPart {
     Architecture(Architecture),
     StructUnit(StructUnit),
     Concept(Concept),
-    Concepts(Vec<Concept>),
+    ConceptSource(ConceptSource),
     Contract(Contract),
     Api(ApiRoot),
+    Behavior(Behavior),
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Architecture {}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct ConceptSource {
+    pub cataloging: Cataloging,
+    pub path: String,
+}
+
+impl ConceptSource {
+    pub fn new() -> ConceptSource {
+        ConceptSource {
+            cataloging: Cataloging::File,
+            path: "".to_string(),
+        }
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum Cataloging {
+    File,
+    Dir,
+}
+
+impl Cataloging {
+    pub fn from(text: String) -> Cataloging {
+        match text.as_str() {
+            "file" => {
+                Cataloging::File
+            }
+            "dir" => {
+                Cataloging::Dir
+            }
+            _ => {
+                Cataloging::File
+            }
+        }
+    }
+}
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ConceptSpace {
@@ -36,7 +74,7 @@ impl ApiRoot {
         ApiRoot {
             name: "".to_string(),
             import: None,
-            apis: vec![]
+            apis: vec![],
         }
     }
 }
@@ -63,7 +101,12 @@ impl ApiNode {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Condition {
     text: String,
-    expr: String,
+    expr: Expression,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum Expression {
+    String(String)
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]

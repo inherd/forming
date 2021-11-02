@@ -1,7 +1,7 @@
 use pest::iterators::Pair;
 use pest::Parser;
 
-use crate::parser::ast::{ApiNode, ApiRoot, SourceUnit, SourceUnitPart, StructField};
+use crate::parser::ast::{ApiNode, ApiRoot, Cataloging, ConceptSource, SourceUnit, SourceUnitPart, StructField};
 
 #[derive(Parser)]
 #[grammar = "parser/forming.pest"]
@@ -16,7 +16,7 @@ pub fn parse(text: &str) -> SourceUnit {
         for decl in pair.into_inner() {
             match decl.as_rule() {
                 Rule::concepts_decl => {
-                    parse_concepts(decl)
+                    part.push(SourceUnitPart::ConceptSource(parse_concept_list_decl(decl)));
                 }
                 Rule::concept_decl => {
                     parse_concept_decl(decl)
@@ -49,15 +49,24 @@ fn parse_concept_decl(decl: Pair<Rule>) {
     }
 }
 
-fn parse_concepts(decl: Pair<Rule>) {
+fn parse_concept_list_decl(decl: Pair<Rule>) -> ConceptSource {
+    let mut source = ConceptSource::new();
     for concepts in decl.into_inner() {
         match concepts.as_rule() {
+            Rule::source_way => {
+                source.cataloging = Cataloging::from(String::from(concepts.as_str()));
+            }
+            Rule::string_literal => {
+                source.path = String::from(concepts.as_str());
+            }
             _ => {
                 println!("Rule:    {:?}", concepts.as_rule());
                 println!("Span:    {:?}", concepts.as_span());
             }
         }
     }
+
+    source
 }
 
 fn parse_api_root_decl(decl: Pair<Rule>) -> ApiRoot {
@@ -173,7 +182,8 @@ mod tests {
 
     #[test]
     fn should_parse_file() {
-        parse("concepts => file(\"concepts.csv\")");
+        let unit = parse("concepts => file(\"concepts.csv\")");
+        println!("Unit: {:?}", unit);
     }
 
     #[test]

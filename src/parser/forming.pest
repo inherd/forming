@@ -146,7 +146,11 @@ dir = {
 }
 
 concepts_decl = {
-    "concepts" ~ "=" ~ ">" ~ ("file" | "dir") ~ "(" ~ string_literal ~ ")"
+    "concepts" ~ "=" ~ ">" ~ source_way ~ "(" ~ string_literal ~ ")"
+}
+
+source_way = {
+    "file" | "dir"
 }
 
 // semantics condition
