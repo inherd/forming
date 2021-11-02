@@ -1,17 +1,18 @@
+#[derive(Debug, PartialEq)]
+pub struct SourceUnit(pub Vec<SourceUnitPart>);
+
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub enum FormingUnit{
+pub enum SourceUnitPart {
     Architecture(Architecture),
     StructUnit(StructUnit),
     Concept(Concept),
     Concepts(Vec<Concept>),
     Contract(Contract),
-    Api(ApiRoot)
+    Api(ApiRoot),
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct Architecture {
-
-}
+pub struct Architecture {}
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ConceptSpace {
@@ -44,7 +45,7 @@ impl ApiNode {
             api_in: vec![],
             api_out: vec![],
             pre_cond: "".to_string(),
-            post_cond: "".to_string()
+            post_cond: "".to_string(),
         }
     }
 }
