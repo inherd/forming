@@ -17,11 +17,11 @@ layered_declaration = {
 }
 
 arch_decl = {
-    "architecture" | "架构"
+    "architecture" | "arch" | "架构"
 }
 
 component_declaration = {
-    "component"
+    "component" | "comp" | "组件"
 }
 
 struct_for_decl = {
@@ -74,15 +74,28 @@ during = {
 }
 
 pre_cond = {
-  "precondition" ~ "{" ~ cond_text ~ ":"  ~ expr ~ "}"
+  "precondition" ~ "{" ~ cond_text ~ ":"  ~ cond_expr ~ "}"
+}
+
+pre_cond_text = {
+  "precondition" | "pre_cond"
 }
 
 post_cond = {
-  "postcondition" ~ "{" ~ cond_text ~ ":"  ~ expr ~ "}"
+  "postcondition" ~ "{" ~ cond_text ~ ":"  ~ cond_expr ~ "}"
+}
+
+post_cond_text = {
+  "postcondition" | "post_cond"
 }
 
 cond_text = {
     string_literal | identifier
+}
+
+// todo: support for normal expr
+cond_expr = {
+    "not" ~ "empty"
 }
 
 contract_class_decl = {
@@ -111,11 +124,6 @@ concepts_decl = {
     "concepts" ~ "=" ~ ">" ~ ("file" | "dir") ~ "(" ~ string_literal ~ ")"
 }
 
-
-// todo: support for normal expr
-expr = {
-    "not" ~ "empty"
-}
 // semantics condition
 // extension
 
