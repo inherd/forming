@@ -164,6 +164,7 @@ fn parse_api_body(api_root: Pair<Rule>) -> ApiNode {
 
 #[cfg(test)]
 mod tests {
+    use crate::parser::ast::SourceUnitPart;
     use crate::parser::parser::parse;
 
     #[test]
@@ -222,7 +223,7 @@ concept '博客' {
 
     #[test]
     fn should_parse_basic_api() {
-        let unit = parse("api for /search/?q=%E5%8D%9A%E5%AE%A2&type=blog.BlogPost {
+        let unit = parse("api for BlogPost {
             in { title: String, description: String }
             out { blog: Blog }
             pre_cond {
@@ -233,7 +234,11 @@ concept '博客' {
             }
         } ");
 
-        assert_eq!(unit.0.len(), 1);
+        if let SourceUnitPart::Api(api) = &unit.0[0] {
+            assert_eq!(api.name, "BlogPost");
+        } else {
+            assert!(false);
+        };
     }
 
     #[test]
