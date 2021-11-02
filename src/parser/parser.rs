@@ -1,5 +1,6 @@
 use pest::Parser;
 use pest::iterators::Pair;
+use crate::parser::ast::{ApiNode, StructDecl};
 
 #[derive(Parser)]
 #[grammar = "parser/forming.pest"]
@@ -17,10 +18,12 @@ pub fn parse(text: &str) {
                 Rule::concept_decl => {
                     parse_concept_decl(decl)
                 }
+                Rule::api_root_decl => {
+                    parse_api_root_decl(decl)
+                }
                 _ => {
                     println!("Rule:    {:?}", decl.as_rule());
                     println!("Span:    {:?}", decl.as_span());
-                    println!("Text:    {}", decl.as_str());
                 }
             }
         }
@@ -50,6 +53,90 @@ fn parse_concepts(decl: Pair<Rule>) {
             }
         }
     }
+}
+
+fn parse_api_root_decl(decl: Pair<Rule>) {
+    for api_root in decl.into_inner() {
+        match api_root.as_rule() {
+            Rule::api_ident => {
+                println!("api_ident: {:?}", api_root.as_str());
+            }
+            Rule::api_body => {
+                for pair in api_root.into_inner() {
+                    match pair.as_rule() {
+                        Rule::api_decl => {
+                            parse_api_body(pair);
+                        }
+                        _ => {
+                            println!("Rule:    {:?}", pair.as_rule());
+                            println!("Span:    {:?}", pair.as_span());
+                        }
+                    }
+                }
+            }
+            _ => {
+                println!("Rule:    {:?}", api_root.as_rule());
+                println!("Span:    {:?}", api_root.as_span());
+            }
+        }
+    }
+}
+
+fn parse_struct(struct_pair: Pair<Rule>) -> StructDecl {
+    let mut node = StructDecl::new();
+    for pair in struct_pair.into_inner() {
+        match pair.as_rule() {
+            Rule::identifier => {
+                node.specifier = String::from(pair.as_str());
+            }
+            Rule::struct_type => {
+                node.declarator = StructDecl::parse_type(String::from(pair.as_str()));
+            }
+            _ => {
+                println!("Rule:    {:?}", pair.as_rule());
+                println!("Span:    {:?}", pair.as_span());
+            }
+        }
+    }
+
+    node
+}
+
+fn parse_api_body(api_root: Pair<Rule>) -> ApiNode {
+    let node = ApiNode::new();
+    for pair in api_root.into_inner() {
+        match pair.as_rule() {
+            Rule::api_in_decl => {
+                for in_pair in pair.into_inner() {
+                    match in_pair.as_rule() {
+                        Rule::struct_node => {
+                            let decl = parse_struct(in_pair);
+                            println!("{:?}", decl);
+                        }
+                        _ => {
+                            println!("Rule:    {:?}", in_pair.as_rule());
+                            println!("Span:    {:?}", in_pair.as_span());
+                        }
+                    }
+                }
+            }
+            Rule::api_out_decl => {
+                println!("out: {:?}", pair.as_str());
+            }
+            Rule::pre_cond => {
+                println!("pre_cond: {:?}", pair.as_str());
+            }
+            Rule::post_cond => {
+                println!("post_cond: {:?}", pair.as_str());
+            }
+            _ => {
+                println!("Rule:    {:?}", pair.as_rule());
+                println!("Span:    {:?}", pair.as_span());
+            }
+        }
+    }
+
+    node
 }
 
 #[cfg(test)]
@@ -113,7 +200,15 @@ concept '博客' {
     #[test]
     fn should_parse_basic_api() {
         parse("api for /search/?q=%E5%8D%9A%E5%AE%A2&type=blog.BlogPost {
-
+            // in { title: String, description: String }
+            in { title: String }
+            out { blog: Blog }
+            pre_cond {
+               '字符串不为空': not empty
+            }
+            pre_cond {
+               '博客不为空': 'not empty'
+            }
         } ");
     }
 

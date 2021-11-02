@@ -9,7 +9,7 @@ declaration = {
   | concept_decl
   | concepts_decl
   | contract_decl
-  | api_decl
+  | api_root_decl
 }
 
 layered_declaration = {
@@ -25,7 +25,7 @@ component_declaration = {
 }
 
 struct_for_decl = {
-    "struct" ~ "for" ~ identifier ~ "{" ~ struct_node* ~ "}"
+    "struct" ~ "for" ~ identifier ~ "{" ~ struct_body? ~ "}"
 }
 
 concept_decl = {
@@ -33,12 +33,16 @@ concept_decl = {
 }
 
 inline_struct_declaration = {
-    "struct" ~ "{" ~ struct_node* ~ "}"
+    "struct" ~ "{" ~ struct_body? ~ "}"
     | "struct" ~ "uml" ~ "::" ~ source ~ "." ~ "class" ~ "(" ~ string_literal ~ ")"
 }
 
 struct_node = {
-    identifier ~ ("," ~ identifier)* ~ ":" ~ struct_type
+    identifier ~ ("," ~ identifier)? ~ ":" ~ struct_type
+}
+
+struct_body = {
+    struct_node ~ ("," ~ struct_node)*
 }
 
 struct_type = {
@@ -54,8 +58,28 @@ contract_decl = {
     | contract_class_decl
 }
 
+api_root_decl = {
+   "api" ~ "for" ~ api_ident ~ "{" ~ api_body? ~ "}"
+}
+
+api_body = {
+    "import" ~ string_literal
+    | api_decl*
+}
+
 api_decl = {
-   "api" ~ "for" ~ api_ident ~ "{" ~ "}"
+    api_in_decl
+    | api_out_decl
+    | pre_cond
+    | post_cond
+}
+
+api_in_decl = {
+    "in" ~ "{" ~ struct_node* ~ "}"
+}
+
+api_out_decl = {
+    "out" ~ "{" ~ struct_node* ~ "}"
 }
 
 api_ident = {
@@ -74,19 +98,19 @@ during = {
 }
 
 pre_cond = {
-  "precondition" ~ "{" ~ cond_text ~ ":"  ~ cond_expr ~ "}"
+  pre_cond_text ~ "{" ~ cond_text ~ ":"  ~ cond_expr ~ "}"
 }
 
 pre_cond_text = {
-  "precondition" | "pre_cond"
+  "precondition" | "pre_cond" | "precond"
 }
 
 post_cond = {
-  "postcondition" ~ "{" ~ cond_text ~ ":"  ~ cond_expr ~ "}"
+  "post_cond_text" ~ "{" ~ cond_text ~ ":"  ~ cond_expr ~ "}"
 }
 
 post_cond_text = {
-  "postcondition" | "post_cond"
+  "postcondition" | "post_cond" | "precond"
 }
 
 cond_text = {
@@ -95,7 +119,8 @@ cond_text = {
 
 // todo: support for normal expr
 cond_expr = {
-    "not" ~ "empty"
+    unary_operator ~ identifier
+    | string_literal
 }
 
 contract_class_decl = {
