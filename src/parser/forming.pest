@@ -66,24 +66,51 @@ api_ident = {
 api_chars = _{'a'..'z' | 'A'..'Z' | "_" | "-" | "/" | ":" | "@" | "#" | "?" | "%" | "=" | "&" | "~"| "." | '0'..'9'}
 
 contract_ident_decl = {
-  "contract" ~ "for" ~ (identifier | string_literal) ~ "{" ~ precondition? ~ during? ~ postcondition? ~ "}"
+  "contract" ~ "for" ~ (identifier | string_literal) ~ "{" ~ pre_cond? ~ during? ~ post_cond? ~ "}"
 }
 
 during = {
   "during"
 }
 
-precondition = {
-  "precondition" ~ "{" ~ condition_lang ~ ":"  ~ expr ~ "}"
+pre_cond = {
+  "precondition" ~ "{" ~ cond_text ~ ":"  ~ expr ~ "}"
 }
 
-postcondition = {
-  "postcondition" ~ "{" ~ condition_lang ~ ":"  ~ expr ~ "}"
+post_cond = {
+  "postcondition" ~ "{" ~ cond_text ~ ":"  ~ expr ~ "}"
 }
 
-condition_lang = {
+cond_text = {
     string_literal | identifier
 }
+
+contract_class_decl = {
+  "contract" ~ "for" ~ contract_class ~ "{" ~ "}"
+}
+
+contract_class = {
+  identifier ~ ("(" ~ extends ~ ")")?
+}
+
+extends = {
+    identifier ~ ("," ~ identifier)*
+}
+
+source = { file | dir }
+
+file = {
+   "file" ~ "(" ~ string_literal ~ ")"
+}
+
+dir = {
+   "dir" ~ "(" ~ string_literal ~ ")"
+}
+
+concepts = {
+    "concepts" ~ "=" ~ ">" ~ ("file" | "dir") ~ "(" ~ string_literal ~ ")"
+}
+
 
 // todo: support for normal expr
 expr = {
@@ -128,32 +155,6 @@ bool_true                   =  { "true" }
 bool_false                  =  { "false" }
 
 unary_operator              = _{ not }
-
-contract_class_decl = {
-  "contract" ~ "for" ~ contract_class ~ "{" ~ "}"
-}
-
-contract_class = {
-  identifier ~ ("(" ~ extends ~ ")")?
-}
-
-extends = {
-    identifier ~ ("," ~ identifier)*
-}
-
-source = { file | dir }
-
-file = {
-   "file" ~ "(" ~ string_literal ~ ")"
-}
-
-dir = {
-   "dir" ~ "(" ~ string_literal ~ ")"
-}
-
-concepts = {
-    "concepts" ~ "=" ~ ">" ~ ("file" | "dir") ~ "(" ~ string_literal ~ ")"
-}
 
 string_literal = @{
     double_quoted_string |
