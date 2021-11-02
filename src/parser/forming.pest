@@ -75,11 +75,11 @@ api_decl = {
 }
 
 api_in_decl = {
-    "in" ~ "{" ~ struct_node* ~ "}"
+    "in" ~ "{" ~ struct_body ~ "}"
 }
 
 api_out_decl = {
-    "out" ~ "{" ~ struct_node* ~ "}"
+    "out" ~ "{" ~ struct_body ~ "}"
 }
 
 api_ident = {

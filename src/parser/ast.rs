@@ -17,8 +17,8 @@ pub struct ApiRoot {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ApiNode {
-    pub api_in: Option<StructNode>,
-    pub api_out: Option<StructNode>,
+    pub api_in: Option<StructField>,
+    pub api_out: Option<StructField>,
     pub pre_cond: String,
     pub post_cond: String,
 }
@@ -59,7 +59,7 @@ impl Concepts {
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct StructNode {
     pub identifier: String,
-    pub declarations: Vec<StructDecl>,
+    pub declarations: Vec<StructField>,
 }
 
 impl StructNode {
@@ -72,15 +72,15 @@ impl StructNode {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct StructDecl {
-    pub specifier: String,
+pub struct StructField {
+    pub identifier: String,
     pub declarator: TypeSpecifier,
 }
 
-impl StructDecl {
-    pub fn new() -> StructDecl {
-        StructDecl {
-            specifier: "".to_string(),
+impl StructField {
+    pub fn new() -> StructField {
+        StructField {
+            identifier: "".to_string(),
             declarator: TypeSpecifier::TypeType(String::from("")),
         }
     }

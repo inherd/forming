@@ -1,6 +1,7 @@
-use pest::Parser;
 use pest::iterators::Pair;
-use crate::parser::ast::{ApiNode, StructDecl};
+use pest::Parser;
+
+use crate::parser::ast::{ApiNode, StructField};
 
 #[derive(Parser)]
 #[grammar = "parser/forming.pest"]
@@ -82,15 +83,31 @@ fn parse_api_root_decl(decl: Pair<Rule>) {
     }
 }
 
-fn parse_struct(struct_pair: Pair<Rule>) -> StructDecl {
-    let mut node = StructDecl::new();
+fn parse_struct_body(body_pair: Pair<Rule>) -> Vec<StructField> {
+    let mut vec = vec![];
+    for pair in body_pair.into_inner() {
+        match pair.as_rule() {
+            Rule::struct_node => {
+                vec.push(parse_struct(pair));
+            }
+            _ => {
+                println!("Rule:    {:?}", pair.as_rule());
+                println!("Span:    {:?}", pair.as_span());
+            }
+        }
+    }
+    vec
+}
+
+fn parse_struct(struct_pair: Pair<Rule>) -> StructField {
+    let mut node = StructField::new();
     for pair in struct_pair.into_inner() {
         match pair.as_rule() {
             Rule::identifier => {
-                node.specifier = String::from(pair.as_str());
+                node.identifier = String::from(pair.as_str());
             }
             Rule::struct_type => {
-                node.declarator = StructDecl::parse_type(String::from(pair.as_str()));
+                node.declarator = StructField::parse_type(String::from(pair.as_str()));
             }
             _ => {
                 println!("Rule:    {:?}", pair.as_rule());
@@ -109,9 +126,9 @@ fn parse_api_body(api_root: Pair<Rule>) -> ApiNode {
             Rule::api_in_decl => {
                 for in_pair in pair.into_inner() {
                     match in_pair.as_rule() {
-                        Rule::struct_node => {
-                            let decl = parse_struct(in_pair);
-                            println!("{:?}", decl);
+                        Rule::struct_body => {
+                            let body = parse_struct_body(in_pair);
+                            println!("{:?}", body);
                         }
                         _ => {
                             println!("Rule:    {:?}", in_pair.as_rule());
