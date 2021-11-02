@@ -11,10 +11,10 @@ pub fn parse(text: &str) {
     for pair in pairs {
         for decl in pair.into_inner() {
             match decl.as_rule() {
-                Rule::concepts => {
+                Rule::concepts_decl => {
                     parse_concepts(decl)
                 }
-                Rule::concept_declaration => {
+                Rule::concept_decl => {
                     parse_concept_decl(decl)
                 }
                 _ => {

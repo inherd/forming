@@ -4,19 +4,19 @@ digit = { '0'..'9' }
 start = _{ SOI ~ declaration* ~ EOI}
 
 declaration = {
-    architecture_declaration
-  | concepts
-  | struct_for_declaration
-  | concept_declaration
-  | contract_declaration
-  | api_declaration
+    arch_decl
+  | struct_for_decl
+  | concept_decl
+  | concepts_decl
+  | contract_decl
+  | api_decl
 }
 
 layered_declaration = {
     "layered" | "分层"
 }
 
-architecture_declaration = {
+arch_decl = {
     "architecture" | "架构"
 }
 
@@ -24,11 +24,11 @@ component_declaration = {
     "component"
 }
 
-struct_for_declaration = {
+struct_for_decl = {
     "struct" ~ "for" ~ identifier ~ "{" ~ struct_node* ~ "}"
 }
 
-concept_declaration = {
+concept_decl = {
     "concept" ~ (identifier | string_literal) ~ "{" ~ comments? ~ ( inline_struct_declaration | behavior_declaration)* ~ "}"
 }
 
@@ -49,12 +49,12 @@ behavior_declaration = {
     "behavior" ~ "{" ~ "}"
 }
 
-contract_declaration = {
+contract_decl = {
     contract_ident_decl
     | contract_class_decl
 }
 
-api_declaration = {
+api_decl = {
    "api" ~ "for" ~ api_ident ~ "{" ~ "}"
 }
 
@@ -107,7 +107,7 @@ dir = {
    "dir" ~ "(" ~ string_literal ~ ")"
 }
 
-concepts = {
+concepts_decl = {
     "concepts" ~ "=" ~ ">" ~ ("file" | "dir") ~ "(" ~ string_literal ~ ")"
 }
 
