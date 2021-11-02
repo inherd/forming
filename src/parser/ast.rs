@@ -17,8 +17,8 @@ pub struct ApiRoot {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ApiNode {
-    pub api_in: Option<StructField>,
-    pub api_out: Option<StructField>,
+    pub api_in: Vec<StructField>,
+    pub api_out: Vec<StructField>,
     pub pre_cond: String,
     pub post_cond: String,
 }
@@ -26,8 +26,8 @@ pub struct ApiNode {
 impl ApiNode {
     pub fn new() -> ApiNode {
         ApiNode {
-            api_in: None,
-            api_out: None,
+            api_in: vec![],
+            api_out: vec![],
             pre_cond: "".to_string(),
             post_cond: "".to_string()
         }

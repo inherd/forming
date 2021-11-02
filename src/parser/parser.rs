@@ -120,25 +120,24 @@ fn parse_struct(struct_pair: Pair<Rule>) -> StructField {
 }
 
 fn parse_api_body(api_root: Pair<Rule>) -> ApiNode {
-    let node = ApiNode::new();
+    let mut node = ApiNode::new();
     for pair in api_root.into_inner() {
         match pair.as_rule() {
             Rule::api_in_decl => {
                 for in_pair in pair.into_inner() {
-                    match in_pair.as_rule() {
-                        Rule::struct_body => {
-                            let body = parse_struct_body(in_pair);
-                            println!("{:?}", body);
-                        }
-                        _ => {
-                            println!("Rule:    {:?}", in_pair.as_rule());
-                            println!("Span:    {:?}", in_pair.as_span());
-                        }
+                    if let Rule::struct_body = in_pair.as_rule() {
+                        let body = parse_struct_body(in_pair);
+                        node.api_in = body;
                     }
                 }
             }
             Rule::api_out_decl => {
-                println!("out: {:?}", pair.as_str());
+                for in_pair in pair.into_inner() {
+                    if let Rule::struct_body = in_pair.as_rule() {
+                        let body = parse_struct_body(in_pair);
+                        node.api_out = body;
+                    }
+                }
             }
             Rule::pre_cond => {
                 println!("pre_cond: {:?}", pair.as_str());
@@ -217,8 +216,7 @@ concept '博客' {
     #[test]
     fn should_parse_basic_api() {
         parse("api for /search/?q=%E5%8D%9A%E5%AE%A2&type=blog.BlogPost {
-            // in { title: String, description: String }
-            in { title: String }
+            in { title: String, description: String }
             out { blog: Blog }
             pre_cond {
                '字符串不为空': not empty
