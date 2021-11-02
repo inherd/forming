@@ -1,8 +1,23 @@
 #[derive(Clone, Debug, Eq, PartialEq)]
+pub enum FormingUnit{
+    Architecture(Architecture),
+    StructUnit(StructUnit),
+    Concept(Concept),
+    Concepts(Vec<Concept>),
+    Contract(Contract),
+    Api(ApiRoot)
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct Architecture {
+
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ConceptSpace {
     identifier: String,
     package: String,
-    concepts: Vec<Concepts>,
+    concepts: Vec<Concept>,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -41,30 +56,30 @@ pub struct Condition {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct Concepts {
+pub struct Concept {
     identifier: String,
-    structs: Vec<StructNode>,
+    structs: Vec<StructUnit>,
     behaviors: Vec<Function>,
     functions: Vec<Function>,
 }
 
-impl Concepts {
-    pub fn new(identifier: String) -> Concepts {
-        Concepts { identifier, structs: vec![], behaviors: vec![], functions: vec![] }
+impl Concept {
+    pub fn new(identifier: String) -> Concept {
+        Concept { identifier, structs: vec![], behaviors: vec![], functions: vec![] }
     }
 }
 
 // naming refs: https://github.com/vickenty/lang-c/blob/master/grammar.rustpeg
 // naming refs: https://github.com/vickenty/lang-c
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct StructNode {
+pub struct StructUnit {
     pub identifier: String,
     pub declarations: Vec<StructField>,
 }
 
-impl StructNode {
-    pub fn new() -> StructNode {
-        StructNode {
+impl StructUnit {
+    pub fn new() -> StructUnit {
+        StructUnit {
             identifier: "".to_string(),
             declarations: vec![],
         }
