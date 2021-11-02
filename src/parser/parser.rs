@@ -68,18 +68,7 @@ fn parse_api_root_decl(decl: Pair<Rule>) -> ApiRoot {
                 root.name = String::from(api_root.as_str());
             }
             Rule::api_body => {
-                for pair in api_root.into_inner() {
-                    match pair.as_rule() {
-                        Rule::api_decl => {
-                            // todo: split api to node
-                            root.apis.push(parse_api_body(pair));
-                        }
-                        _ => {
-                            println!("Rule:    {:?}", pair.as_rule());
-                            println!("Span:    {:?}", pair.as_span());
-                        }
-                    }
-                }
+                root.apis.push(parse_api_body(api_root));
             }
             _ => {
                 println!("Rule:    {:?}", api_root.as_rule());
@@ -89,6 +78,56 @@ fn parse_api_root_decl(decl: Pair<Rule>) -> ApiRoot {
     }
 
     root
+}
+
+fn parse_api_body(api_root: Pair<Rule>) -> ApiNode {
+    let mut node = ApiNode::new();
+    for pair in api_root.into_inner() {
+        match pair.as_rule() {
+            Rule::api_decl => {
+                parse_api_decl(pair, &mut node);
+            }
+            _ => {
+                println!("Rule:    {:?}", pair.as_rule());
+                println!("Span:    {:?}", pair.as_span());
+            }
+        }
+    }
+
+    node
+}
+
+fn parse_api_decl(api_root: Pair<Rule>, node: &mut ApiNode) {
+    for pair in api_root.into_inner() {
+        match pair.as_rule() {
+            Rule::api_in_decl => {
+                for in_pair in pair.into_inner() {
+                    if let Rule::struct_body = in_pair.as_rule() {
+                        let body = parse_struct_body(in_pair);
+                        node.api_in = body;
+                    }
+                }
+            }
+            Rule::api_out_decl => {
+                for in_pair in pair.into_inner() {
+                    if let Rule::struct_body = in_pair.as_rule() {
+                        let body = parse_struct_body(in_pair);
+                        node.api_out = body;
+                    }
+                }
+            }
+            Rule::pre_cond => {
+                println!("pre_cond: {:?}", pair.as_str());
+            }
+            Rule::post_cond => {
+                println!("post_cond: {:?}", pair.as_str());
+            }
+            _ => {
+                println!("Rule:    {:?}", pair.as_rule());
+                println!("Span:    {:?}", pair.as_span());
+            }
+        }
+    }
 }
 
 fn parse_struct_body(body_pair: Pair<Rule>) -> Vec<StructField> {
@@ -127,45 +166,9 @@ fn parse_struct(struct_pair: Pair<Rule>) -> StructField {
     node
 }
 
-fn parse_api_body(api_root: Pair<Rule>) -> ApiNode {
-    let mut node = ApiNode::new();
-    for pair in api_root.into_inner() {
-        match pair.as_rule() {
-            Rule::api_in_decl => {
-                for in_pair in pair.into_inner() {
-                    if let Rule::struct_body = in_pair.as_rule() {
-                        let body = parse_struct_body(in_pair);
-                        node.api_in = body;
-                    }
-                }
-            }
-            Rule::api_out_decl => {
-                for in_pair in pair.into_inner() {
-                    if let Rule::struct_body = in_pair.as_rule() {
-                        let body = parse_struct_body(in_pair);
-                        node.api_out = body;
-                    }
-                }
-            }
-            Rule::pre_cond => {
-                println!("pre_cond: {:?}", pair.as_str());
-            }
-            Rule::post_cond => {
-                println!("post_cond: {:?}", pair.as_str());
-            }
-            _ => {
-                println!("Rule:    {:?}", pair.as_rule());
-                println!("Span:    {:?}", pair.as_span());
-            }
-        }
-    }
-
-    node
-}
-
 #[cfg(test)]
 mod tests {
-    use crate::parser::ast::{SourceUnitPart};
+    use crate::parser::ast::{SourceUnitPart, TypeSpecifier};
     use crate::parser::parser::parse;
 
     #[test]
@@ -239,11 +242,13 @@ concept '博客' {
             SourceUnitPart::Api(api) => {
                 println!("api: {:?}", api);
                 assert_eq!(api.name, "BlogPost");
+
                 let first_api = &api.apis[0];
+
                 assert_eq!(first_api.api_in.len(), 2);
                 assert_eq!(first_api.api_in[0].identifier, "title");
-                // assert_eq!(first_api.api_out.len(), 1);
-                // assert_eq!(first_api.api_out[0].declarator, TypeSpecifier::TypeType(String::from("Blog")));
+                assert_eq!(first_api.api_out.len(), 1);
+                assert_eq!(first_api.api_out[0].declarator, TypeSpecifier::TypeType(String::from("Blog")));
             }
             _ => {
                 assert!(false);
