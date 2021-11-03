@@ -209,7 +209,7 @@ mod tests {
         match &dir_unit.0[0] {
             SourceUnitPart::ConceptSource(source) => {
                 assert_eq!(source.cataloging, Cataloging::Dir);
-                assert_eq!(source.path, "concepts.csv");
+                assert_eq!(source.path, "concepts/");
             }
             _ => { assert!(false); }
         };
