@@ -57,7 +57,7 @@ fn parse_concept_list_decl(decl: Pair<Rule>) -> ConceptSource {
                 source.cataloging = Cataloging::from(String::from(concepts.as_str()));
             }
             Rule::string_literal => {
-                source.path = String::from(concepts.as_str());
+                source.path = string_from_pair(concepts);
             }
             _ => {
                 println!("Rule:    {:?}", concepts.as_rule());
@@ -175,28 +175,51 @@ fn parse_struct(struct_pair: Pair<Rule>) -> StructField {
     node
 }
 
+fn string_from_pair(pair: Pair<Rule>) -> String {
+    replace_string_markers(pair.as_str())
+}
+
+pub fn replace_string_markers(input: &str) -> String {
+    match input.chars().next().unwrap() {
+        '"' => input.replace('"', ""),
+        '\'' => input.replace('\'', ""),
+        '`' => input.replace('`', ""),
+        _ => unreachable!("error: {:?}", input),
+    }
+}
+
+
 #[cfg(test)]
 mod tests {
-    use crate::parser::ast::{SourceUnitPart, TypeSpecifier};
+    use crate::parser::ast::{Cataloging, SourceUnitPart, TypeSpecifier};
     use crate::parser::parser::parse;
 
     #[test]
     fn should_parse_file() {
-        let unit = parse("concepts => file(\"concepts.csv\")");
-        println!("Unit: {:?}", unit);
-    }
+        let file_unit = parse("concepts => file(\"concepts.csv\")");
+        match &file_unit.0[0] {
+            SourceUnitPart::ConceptSource(source) => {
+                assert_eq!(source.cataloging, Cataloging::File);
+                assert_eq!(source.path, "concepts.csv");
+            }
+            _ => { assert!(false); }
+        };
 
-    #[test]
-    fn should_parse_dir() {
-        parse("concepts => dir(\"concepts/\")");
+        let dir_unit = parse("concepts => dir(\"concepts/\")");
+        match &dir_unit.0[0] {
+            SourceUnitPart::ConceptSource(source) => {
+                assert_eq!(source.cataloging, Cataloging::Dir);
+                assert_eq!(source.path, "concepts.csv");
+            }
+            _ => { assert!(false); }
+        };
     }
 
     #[test]
     fn should_parse_basic_concept() {
         parse("
-// normal quote
 concept '博客' {
- --  显示博客的相关信息
+ -- 显示博客的相关信息
             behavior { }
             struct { }
         }");
@@ -260,9 +283,7 @@ concept '博客' {
                 assert_eq!(first_api.api_out.len(), 1);
                 assert_eq!(first_api.api_out[0].declarator, TypeSpecifier::TypeType(String::from("Blog")));
             }
-            _ => {
-                assert!(false);
-            }
+            _ => { assert!(false); }
         };
     }
 
