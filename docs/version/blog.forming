@@ -24,16 +24,6 @@ struct for Blog {
   title: String;
 }
 
-// simple type-system?
-type Description {
-
-}
-// type alias
-type Behavior = Function
-type Animal {}
-
-type Cat(Animal) {}
-
 concept BlogCategory {}
 concept BlogCategories {}
 concept BlogRelatedPosts {}
@@ -68,9 +58,21 @@ space Blog {
    items: { Blog, BlogCategory, BlogCategories, BlogRelatedPosts, Comments }
 }
 
-diagram("layer") Sample {
+diagram "Sample" {
+  group office {
+    // `row` or `column`
+    // `left` or `right` or `center`
+    // position { direction: row, align: left }
 
-    guarding: """
+    bank("手机银行")
+    internet_bank("网银")
 
-"""
+    group bff {
+      backend
+    }
+  }
+  group backend {
+    paas
+    iaas
+  }
 }
