@@ -4,26 +4,26 @@ pub struct SourceUnit(pub Vec<SourceUnitPart>);
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum SourceUnitPart {
     Architecture(Architecture),
-    StructUnit(StructUnit),
-    Concept(Concept),
-    ConceptSource(ConceptSource),
-    Contract(Contract),
-    Api(ApiRoot),
-    Behavior(Behavior),
+    ConceptUnit(ConceptUnit),
+    ContractUnit(ContractUnit),
+    ApiUnit(ApiUnit),
+    ConceptBy(ConceptBy),
+    StructFor(StructFor),
+    BehaviorFor(BehaviorFor),
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Architecture {}
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct ConceptSource {
+pub struct ConceptBy {
     pub cataloging: Cataloging,
     pub path: String,
 }
 
-impl ConceptSource {
-    pub fn new() -> ConceptSource {
-        ConceptSource {
+impl ConceptBy {
+    pub fn new() -> ConceptBy {
+        ConceptBy {
             cataloging: Cataloging::File,
             path: "".to_string(),
         }
@@ -56,22 +56,22 @@ impl Cataloging {
 pub struct ConceptSpace {
     identifier: String,
     package: String,
-    concepts: Vec<Concept>,
+    concepts: Vec<ConceptUnit>,
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Function {}
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct ApiRoot {
+pub struct ApiUnit {
     pub name: String,
     pub import: Option<String>,
     pub apis: Vec<ApiNode>,
 }
 
-impl ApiRoot {
-    pub fn new() -> ApiRoot {
-        ApiRoot {
+impl ApiUnit {
+    pub fn new() -> ApiUnit {
+        ApiUnit {
             name: "".to_string(),
             import: None,
             apis: vec![],
@@ -110,30 +110,31 @@ pub enum Expression {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct Concept {
-    identifier: String,
-    structs: Vec<StructUnit>,
-    behaviors: Vec<Function>,
-    functions: Vec<Function>,
+pub struct ConceptUnit {
+    pub description: String,
+    pub identifier: String,
+    pub extends: Vec<String>,
+    pub structs: Vec<StructField>,
+    pub behaviors: Vec<Interface>,
 }
 
-impl Concept {
-    pub fn new(identifier: String) -> Concept {
-        Concept { identifier, structs: vec![], behaviors: vec![], functions: vec![] }
+impl ConceptUnit {
+    pub fn new() -> ConceptUnit {
+        ConceptUnit { description: "".to_string(), identifier: "".to_string(), extends: vec![], structs: vec![], behaviors: vec![] }
     }
 }
 
 // naming refs: https://github.com/vickenty/lang-c/blob/master/grammar.rustpeg
 // naming refs: https://github.com/vickenty/lang-c
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct StructUnit {
+pub struct StructFor {
     pub identifier: String,
     pub declarations: Vec<StructField>,
 }
 
-impl StructUnit {
-    pub fn new() -> StructUnit {
-        StructUnit {
+impl StructFor {
+    pub fn new() -> StructFor {
+        StructFor {
             identifier: "".to_string(),
             declarations: vec![],
         }
@@ -153,7 +154,49 @@ impl StructField {
             declarator: TypeSpecifier::TypeType(String::from("")),
         }
     }
-    pub fn parse_type(text: String) -> TypeSpecifier {
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct BehaviorFor {
+    identifier: String,
+    functions: Vec<Interface>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct Interface {
+    pub identifier: String,
+    pub params: Vec<Parameter>,
+    pub return_type: TypeSpecifier,
+}
+
+impl Interface {
+    pub fn new() -> Interface {
+        Interface {
+            identifier: "".to_string(),
+            params: vec![],
+            return_type: TypeSpecifier::None,
+        }
+    }
+}
+
+/// auto insert/update comment to code
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct HighlightCore {}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub enum TypeSpecifier {
+    /// no return or empty
+    None,
+    Int,
+    Float,
+    Double,
+    String,
+    Array,
+    TypeType(String),
+}
+
+impl TypeSpecifier {
+    pub fn from(text: String) -> TypeSpecifier {
         match text.to_lowercase().as_str() {
             "int" => {
                 TypeSpecifier::Int
@@ -178,33 +221,6 @@ impl StructField {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct Behavior {
-    identifier: String,
-    functions: Vec<Interface>,
-}
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct Interface {
-    identifier: String,
-    params: Vec<Parameter>,
-    return_type: TypeSpecifier,
-}
-
-/// auto insert/update comment to code
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct HighlightCore {}
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub enum TypeSpecifier {
-    Int,
-    Float,
-    Double,
-    String,
-    Array,
-    TypeType(String),
-}
-
-#[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ApiResource {
     identifier: String,
     base_url: String,
@@ -222,12 +238,21 @@ pub struct ApiDecl {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Parameter {
-    identifier: String,
-    specifier: TypeSpecifier,
+    pub identifier: String,
+    pub specifier: TypeSpecifier,
+}
+
+impl Parameter {
+    pub fn new() -> Parameter {
+        Parameter {
+            identifier: "".to_string(),
+            specifier: TypeSpecifier::None
+        }
+    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct Contract {
+pub struct ContractUnit {
     name: String,
     during: String,
     pre_condition: String,

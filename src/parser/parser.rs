@@ -1,7 +1,7 @@
 use pest::iterators::Pair;
 use pest::Parser;
 
-use crate::parser::ast::{ApiNode, ApiRoot, Cataloging, ConceptSource, SourceUnit, SourceUnitPart, StructField};
+use crate::parser::ast::{ApiNode, ApiUnit, Cataloging, ConceptBy, ConceptUnit, Interface, Parameter, SourceUnit, SourceUnitPart, StructField, TypeSpecifier};
 
 #[derive(Parser)]
 #[grammar = "parser/forming.pest"]
@@ -16,13 +16,13 @@ pub fn parse(text: &str) -> SourceUnit {
         for decl in pair.into_inner() {
             match decl.as_rule() {
                 Rule::concepts_decl => {
-                    part.push(SourceUnitPart::ConceptSource(parse_concept_list_decl(decl)));
+                    part.push(SourceUnitPart::ConceptBy(parse_concept_list_decl(decl)));
                 }
                 Rule::concept_decl => {
-                    parse_concept_decl(decl)
+                    part.push(SourceUnitPart::ConceptUnit(parse_concept_decl(decl)));
                 }
                 Rule::api_root_decl => {
-                    part.push(SourceUnitPart::Api(parse_api_root_decl(decl)));
+                    part.push(SourceUnitPart::ApiUnit(parse_api_root_decl(decl)));
                 }
                 _ => {
                     println!("Rule:    {:?}", decl.as_rule());
@@ -35,25 +35,127 @@ pub fn parse(text: &str) -> SourceUnit {
     SourceUnit(part)
 }
 
-fn parse_concept_decl(decl: Pair<Rule>) {
+fn parse_concept_decl(decl: Pair<Rule>) -> ConceptUnit {
+    let mut unit = ConceptUnit::new();
     for concepts in decl.into_inner() {
         match concepts.as_rule() {
-            Rule::comments => {
-                println!("COMMENT:    {:?}", concepts.tokens());
+            Rule::COMMENT => {
+                let comments = process_comments(concepts);
+                if comments.len() > 0 {
+                    unit.description = format!("{}{}\n", unit.description, comments);
+                }
             }
+            Rule::identifier => {
+                unit.identifier = String::from(concepts.as_str());
+            }
+            Rule::concept_extends => {
+                unit.extends = parse_concept_extends(concepts);
+            }
+            Rule::string_literal => {
+                unit.identifier = string_from_pair(concepts);
+            }
+            Rule::inner_struct_decl => {
+                unit.structs = parse_inner_struct_decl(concepts);
+            }
+            Rule::inner_behavior_decl => {
+                unit.behaviors = parse_inner_behavior_decl(concepts);
+            }
+            Rule::comments => {}
             _ => {
                 println!("Rule:    {:?}", concepts.as_rule());
                 println!("Span:    {:?}", concepts.as_span());
             }
         }
     }
+
+    unit
 }
 
-fn parse_concept_list_decl(decl: Pair<Rule>) -> ConceptSource {
-    let mut source = ConceptSource::new();
+fn process_comments(concepts: Pair<Rule>) -> String {
+    concepts.as_str()
+        .replace("-- ", "")
+        .replace("--", "")
+}
+
+fn parse_concept_extends(decl: Pair<Rule>) -> Vec<String> {
+    let mut source: Vec<String> = vec![];
+    for pair in decl.into_inner() {
+        if let Rule::identifier = pair.as_rule() {
+            source.push(String::from(pair.as_str()))
+        }
+    }
+
+    source
+}
+
+fn parse_inner_behavior_decl(decl: Pair<Rule>) -> Vec<Interface> {
+    let mut vec = vec![];
+    for in_pair in decl.into_inner() {
+        if let Rule::interface_decl = in_pair.as_rule() {
+            let mut interface = Interface::new();
+            for inter in in_pair.into_inner() {
+                match inter.as_rule() {
+                    Rule::identifier => {
+                        interface.identifier = String::from(inter.as_str());
+                    }
+                    Rule::return_type => {
+                        interface.return_type = TypeSpecifier::from(String::from(inter.as_str()));
+                    }
+                    Rule::params => {
+                        interface.params = parse_params(inter);
+                    }
+                    _ => {
+                        println!("Rule:    {:?}", inter.as_rule());
+                        println!("Span:    {:?}", inter.as_span());
+                    }
+                }
+            }
+
+            vec.push(interface);
+        }
+    }
+
+    vec
+}
+
+fn parse_params(decl: Pair<Rule>) -> Vec<Parameter> {
+    let mut vec = vec![];
+    for concepts in decl.into_inner() {
+        if let Rule::parameter = concepts.as_rule() {
+            let mut parameter = Parameter::new();
+            for pair in concepts.into_inner() {
+                match pair.as_rule() {
+                    Rule::identifier => {
+                        parameter.identifier = String::from(pair.as_str());
+                    }
+                    Rule::param_type => {
+                        parameter.specifier = TypeSpecifier::from(String::from(pair.as_str()));
+                    }
+                    _ => {}
+                }
+            }
+            vec.push(parameter);
+        }
+    }
+    vec
+}
+
+fn parse_inner_struct_decl(decl: Pair<Rule>) -> Vec<StructField> {
+    let mut vec = vec![];
+    for in_pair in decl.into_inner() {
+        if let Rule::struct_body = in_pair.as_rule() {
+            vec = parse_struct_body(in_pair);
+        }
+    }
+
+    vec
+}
+
+fn parse_concept_list_decl(decl: Pair<Rule>) -> ConceptBy {
+    let mut source = ConceptBy::new();
     for concepts in decl.into_inner() {
         match concepts.as_rule() {
-            Rule::source_way => {
+            Rule::cataloging => {
                 source.cataloging = Cataloging::from(String::from(concepts.as_str()));
             }
             Rule::string_literal => {
@@ -69,8 +171,8 @@ fn parse_concept_list_decl(decl: Pair<Rule>) -> ConceptSource {
     source
 }
 
-fn parse_api_root_decl(decl: Pair<Rule>) -> ApiRoot {
-    let mut root = ApiRoot::new();
+fn parse_api_root_decl(decl: Pair<Rule>) -> ApiUnit {
+    let mut root = ApiUnit::new();
     for api_root in decl.into_inner() {
         match api_root.as_rule() {
             Rule::api_ident => {
@@ -131,10 +233,7 @@ fn parse_api_decl(api_root: Pair<Rule>, node: &mut ApiNode) {
             Rule::post_cond => {
                 println!("post_cond: {:?}", pair.as_str());
             }
-            _ => {
-                println!("Rule:    {:?}", pair.as_rule());
-                println!("Span:    {:?}", pair.as_span());
-            }
+            _ => { println!("Rule:    {:?}", pair.as_rule()); }
         }
     }
 }
@@ -144,7 +243,36 @@ fn parse_struct_body(body_pair: Pair<Rule>) -> Vec<StructField> {
     for pair in body_pair.into_inner() {
         match pair.as_rule() {
             Rule::struct_node => {
-                vec.push(parse_struct(pair));
+                vec.push(parse_struct_field(pair));
+            }
+            Rule::one_line_struct => {
+                vec.append(&mut parse_one_line_struct(pair));
+            }
+            _ => { println!("Rule:    {:?}", pair.as_rule()); }
+        }
+    }
+    vec
+}
+
+fn parse_one_line_struct(struct_pair: Pair<Rule>) -> Vec<StructField> {
+    let mut vec = vec![];
+    let mut identifiers = vec![];
+
+    for pair in struct_pair.into_inner() {
+        match pair.as_rule() {
+            Rule::identifier => {
+                identifiers.push(String::from(pair.as_str()));
+            }
+            Rule::struct_type => {
+                let type_spec = TypeSpecifier::from(String::from(pair.as_str()));
+                let mut fields = identifiers.clone().into_iter()
+                    .map(|ident| {
+                        StructField { identifier: ident.clone(), declarator: type_spec.clone() }
+                    })
+                    .collect::<Vec<StructField>>();
+
+                identifiers.clear();
+                vec.append(&mut fields);
             }
             _ => {
                 println!("Rule:    {:?}", pair.as_rule());
@@ -152,10 +280,11 @@ fn parse_struct_body(body_pair: Pair<Rule>) -> Vec<StructField> {
             }
         }
     }
+
     vec
 }
 
-fn parse_struct(struct_pair: Pair<Rule>) -> StructField {
+fn parse_struct_field(struct_pair: Pair<Rule>) -> StructField {
     let mut node = StructField::new();
     for pair in struct_pair.into_inner() {
         match pair.as_rule() {
@@ -163,7 +292,7 @@ fn parse_struct(struct_pair: Pair<Rule>) -> StructField {
                 node.identifier = String::from(pair.as_str());
             }
             Rule::struct_type => {
-                node.declarator = StructField::parse_type(String::from(pair.as_str()));
+                node.declarator = TypeSpecifier::from(String::from(pair.as_str()));
             }
             _ => {
                 println!("Rule:    {:?}", pair.as_rule());
@@ -195,10 +324,10 @@ mod tests {
     use crate::parser::parser::parse;
 
     #[test]
-    fn should_parse_file() {
+    fn concept_by_file() {
         let file_unit = parse("concepts => file(\"concepts.csv\")");
         match &file_unit.0[0] {
-            SourceUnitPart::ConceptSource(source) => {
+            SourceUnitPart::ConceptBy(source) => {
                 assert_eq!(source.cataloging, Cataloging::File);
                 assert_eq!(source.path, "concepts.csv");
             }
@@ -207,7 +336,7 @@ mod tests {
 
         let dir_unit = parse("concepts => dir(\"concepts/\")");
         match &dir_unit.0[0] {
-            SourceUnitPart::ConceptSource(source) => {
+            SourceUnitPart::ConceptBy(source) => {
                 assert_eq!(source.cataloging, Cataloging::Dir);
                 assert_eq!(source.path, "concepts/");
             }
@@ -216,22 +345,64 @@ mod tests {
     }
 
     #[test]
-    fn should_parse_basic_concept() {
-        parse("
-concept '博客' {
- -- 显示博客的相关信息
-            behavior { }
-            struct { }
+    fn basic_concept() {
+        let unit = parse("
+        concept '博客' {
+                -- 显示博客的
+                -- 相关信息
+            behavior {
+              get_absolute_url(): String;
+              validate_unique();
+              publish_date_since(): datetime;
+            }
+            struct { title: String, description: String }
         }");
 
-        parse("concept  Blog {
-            behavior { }
-            struct { }
-        }");
+        println!("{:?}", unit);
+        match &unit.0[0] {
+            SourceUnitPart::ConceptUnit(unit) => {
+                assert_eq!(unit.identifier, "博客");
+                assert_eq!(unit.description, "显示博客的\n相关信息\n");
+                assert_eq!(unit.structs.len(), 2);
+                assert_eq!(unit.behaviors.len(), 3);
+            }
+            _ => { assert!(false); }
+        };
     }
 
     #[test]
-    fn should_parse_concept_from_source() {
+    fn full_concept_example() {
+        let unit = parse("
+concept Blog(Displayable, Ownable) {
+    struct {
+        title, slug, description, gen_description, content, featured_image: String;
+        id, user_id, site_id: Integer;
+        created, updated: datetime;
+    }
+    behavior {
+        get_absolute_url(): String;
+        validate_unique();
+        publish_date_since(): datetime;
+        published(): Integer;
+        save(blog: Blog);
+        delete(id: Integer);
+    }
+}
+");
+
+        println!("{:?}", unit);
+        match &unit.0[0] {
+            SourceUnitPart::ConceptUnit(unit) => {
+                assert_eq!(unit.extends.len(), 2);
+                assert_eq!(unit.behaviors.len(), 6);
+                assert_eq!(unit.structs.len(), 11);
+            }
+            _ => { assert!(false); }
+        };
+    }
+
+    #[test]
+    fn concept_from_source() {
         parse("concept  Blog {
             behavior { }
             struct uml::dir('').class('Blog')
@@ -244,7 +415,7 @@ concept '博客' {
     }
 
     #[test]
-    fn should_parse_basic_contract() {
+    fn basic_contract() {
         parse("contract for Blog {
             precondition {
                '博客不为空': not empty
@@ -259,7 +430,7 @@ concept '博客' {
     }
 
     #[test]
-    fn should_parse_basic_api() {
+    fn basic_api() {
         let unit = parse("api for BlogPost {
             in { title: String, description: String }
             out { blog: Blog }
@@ -272,7 +443,7 @@ concept '博客' {
         } ");
 
         match &unit.0[0] {
-            SourceUnitPart::Api(api) => {
+            SourceUnitPart::ApiUnit(api) => {
                 println!("api: {:?}", api);
                 assert_eq!(api.name, "BlogPost");
 
@@ -288,7 +459,7 @@ concept '博客' {
     }
 
     #[test]
-    fn should_parse_basic_struct() {
+    fn basic_struct() {
         parse("concept  Blog {
             struct {
                 name: String

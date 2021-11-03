@@ -29,12 +29,19 @@ struct_for_decl = {
 }
 
 concept_decl = {
-    "concept" ~ (identifier | string_literal) ~ "{" ~ comments? ~ ( inline_struct_declaration | behavior_declaration)* ~ "}"
+    "concept" ~ (identifier | string_literal)  ~ concept_extends? ~ "{" ~ comments? ~ ( inner_struct_decl | inner_struct_import | inner_behavior_decl)* ~ "}"
 }
 
-inline_struct_declaration = {
+concept_extends = {
+    "(" ~ identifier ~ ("," ~ identifier)* ~ ")"
+}
+
+inner_struct_decl = {
     "struct" ~ "{" ~ struct_body? ~ "}"
-    | "struct" ~ "uml" ~ "::" ~ source ~ "." ~ "class" ~ "(" ~ string_literal ~ ")"
+}
+
+inner_struct_import = {
+    "struct" ~ "uml" ~ "::" ~ source ~ "." ~ "class" ~ "(" ~ string_literal ~ ")"
 }
 
 struct_node = {
@@ -43,15 +50,35 @@ struct_node = {
 
 struct_body = {
     struct_node ~ ("," ~ struct_node)*
+    | one_line_struct*
+}
+
+one_line_struct = {
+    identifier ~ ("," ~ identifier)* ~ ":" ~ struct_type ~ ";"
 }
 
 struct_type = {
     identifier
 }
 
-behavior_declaration = {
-    "behavior" ~ "{" ~ "}"
+inner_behavior_decl = {
+    "behavior" ~ "{" ~ interface_decl* ~ "}"
 }
+
+interface_decl = {
+    identifier ~ "(" ~ params? ~ ")" ~ (":" ~ return_type)? ~ ";"
+}
+
+params = {
+    parameter ~ ("," ~ parameter)*
+}
+
+parameter = {
+    identifier ~ ":" ~ param_type
+}
+
+param_type = { identifier }
+return_type = { identifier }
 
 contract_decl = {
     contract_ident_decl
@@ -146,10 +173,10 @@ dir = {
 }
 
 concepts_decl = {
-    "concepts" ~ "=" ~ ">" ~ source_way ~ "(" ~ string_literal ~ ")"
+    "concepts" ~ "=" ~ ">" ~ cataloging ~ "(" ~ string_literal ~ ")"
 }
 
-source_way = {
+cataloging = {
     "file" | "dir"
 }
 
