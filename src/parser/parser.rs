@@ -523,12 +523,16 @@ concept Blog(Displayable, Ownable) {
                'title_not_empty': not empty,
                'test for string expr': 'not empty';
             }
+            post_cond {
+                'test for string expr': 'not empty'
+            }
         } ");
 
         match &unit.0[0] {
             SourceUnitPart::ContractUnit(contract) => {
                 assert_eq!(contract.identifier, "Blog");
-                assert_eq!(contract.pre_condition.len(), 3)
+                assert_eq!(contract.pre_condition.len(), 3);
+                assert_eq!(contract.post_condition.len(), 1);
             }
             _ => { assert!(false); }
         }
@@ -563,15 +567,16 @@ concept Blog(Displayable, Ownable) {
     }
 
     #[test]
-    fn struct_for_some() {
+    fn struct_for_one() {
         let unit = parse("struct for Blog {
-    name: String
+    name: String,
+    title: String
 }");
 
         match &unit.0[0] {
             SourceUnitPart::StructFor(node) => {
                 assert_eq!(node.identifier, "Blog");
-                assert_eq!(node.declarations.len(), 1);
+                assert_eq!(node.declarations.len(), 2);
 
                 let field = &node.declarations[0];
 
