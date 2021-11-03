@@ -8,31 +8,54 @@ declaration = {
   | struct_for_decl
   | concept_decl
   | concepts_decl
-  | contract_decl
+  | contract_for_decl
   | api_root_decl
+  | concept_space_decl
 }
 
-layered_declaration = {
-    "layered" | "分层"
+concept_space_decl = {
+    space_text ~ identifier ~ "{" ~ space_body? ~ "}"
 }
 
-arch_decl = {
-    "architecture" | "arch" | "架构"
+space_body = {
+    space_node ~ (","? ~ space_node)* ~ ";"?
 }
 
-component_declaration = {
-    "component" | "comp" | "组件"
+space_node = {
+    space_package_decl
+   | space_concepts_decl
+}
+
+space_package_decl = {
+    "package" ~ ":" ~ string_literal
+}
+
+space_concepts_decl = {
+    "items" ~ ":" ~ "{" ~ identifier ~ ("," ~ identifier)* ~ "}"
+}
+
+space_text = {
+    "space"
 }
 
 struct_for_decl = {
     "struct" ~ "for" ~ identifier ~ "{" ~ struct_body? ~ "}"
 }
 
-concept_decl = {
-    "concept" ~ (identifier | string_literal)  ~ concept_extends? ~ "{" ~ comments? ~ ( inner_struct_decl | inner_struct_import | inner_behavior_decl)* ~ "}"
+contract_for_decl = {
+  "contract" ~ "for" ~ (identifier | string_literal) ~ "{" ~ contract_body* ~ "}"
 }
 
-concept_extends = {
+contract_body = {
+    pre_cond
+    | post_cond
+}
+
+concept_decl = {
+    "concept" ~ (identifier | string_literal)  ~ extends? ~ "{" ~ comments? ~ ( inner_struct_decl | struct_import_decl | inner_behavior_decl)* ~ "}"
+}
+
+extends = {
     "(" ~ identifier ~ ("," ~ identifier)* ~ ")"
 }
 
@@ -40,7 +63,7 @@ inner_struct_decl = {
     "struct" ~ "{" ~ struct_body? ~ "}"
 }
 
-inner_struct_import = {
+struct_import_decl = {
     "struct" ~ "uml" ~ "::" ~ source ~ "." ~ "class" ~ "(" ~ string_literal ~ ")"
 }
 
@@ -80,11 +103,6 @@ parameter = {
 param_type = { identifier }
 return_type = { identifier }
 
-contract_decl = {
-    contract_ident_decl
-    | contract_class_decl
-}
-
 api_root_decl = {
    "api" ~ "for" ~ api_ident ~ "{" ~ api_body? ~ "}"
 }
@@ -95,17 +113,17 @@ api_body = {
 }
 
 api_decl = {
-    api_in_decl
-    | api_out_decl
+    inbound
+    | outbound
     | pre_cond
     | post_cond
 }
 
-api_in_decl = {
+inbound = {
     "in" ~ "{" ~ struct_body ~ "}"
 }
 
-api_out_decl = {
+outbound = {
     "out" ~ "{" ~ struct_body ~ "}"
 }
 
@@ -116,16 +134,12 @@ api_ident = {
 
 api_chars = _{'a'..'z' | 'A'..'Z' | "_" | "-" | "/" | ":" | "@" | "#" | "?" | "%" | "=" | "&" | "~"| "." | '0'..'9'}
 
-contract_ident_decl = {
-  "contract" ~ "for" ~ (identifier | string_literal) ~ "{" ~ pre_cond? ~ during? ~ post_cond? ~ "}"
-}
-
 during = {
   "during"
 }
 
 pre_cond = {
-  pre_cond_text ~ "{" ~ cond_text ~ ":"  ~ cond_expr ~ "}"
+  pre_cond_text ~ "{" ~ condition ~ ((";" | ",") ~ condition)* ~ "}"
 }
 
 pre_cond_text = {
@@ -133,7 +147,11 @@ pre_cond_text = {
 }
 
 post_cond = {
-  "post_cond_text" ~ "{" ~ cond_text ~ ":"  ~ cond_expr ~ "}"
+  post_cond_text ~ "{" ~ condition ~ ((";" | ",") ~ condition)* ~ "}"
+}
+
+condition = {
+    cond_text ~ ":"  ~ cond_expr ~ ";"?
 }
 
 post_cond_text = {
@@ -148,18 +166,6 @@ cond_text = {
 cond_expr = {
     unary_operator ~ identifier
     | string_literal
-}
-
-contract_class_decl = {
-  "contract" ~ "for" ~ contract_class ~ "{" ~ "}"
-}
-
-contract_class = {
-  identifier ~ ("(" ~ extends ~ ")")?
-}
-
-extends = {
-    identifier ~ ("," ~ identifier)*
 }
 
 source = { file | dir }
@@ -219,6 +225,18 @@ bool_true                   =  { "true" }
 bool_false                  =  { "false" }
 
 unary_operator              = _{ not }
+
+layered_declaration = {
+    "layered" | "分层"
+}
+
+arch_decl = {
+    "architecture" | "arch" | "架构"
+}
+
+component_declaration = {
+    "component" | "comp" | "组件"
+}
 
 string_literal = @{
     double_quoted_string |

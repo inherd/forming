@@ -59,15 +59,14 @@ api /blog {
 
 // or namespaces ?
 space Page {
-    concepts: Page, Link, RichTextPage
+    items: { Page, Link, RichTextPage }
 }
 
 space Blog {
-   name: "${name.lower()}_${item.upper()}",
+   // name: "${name.lower()}_${item.upper()}",
    package: "com.phodal.blog", // or path
-   concepts: Blog, BlogCategory, BlogCategories, BlogRelatedPosts, Comments
+   items: { Blog, BlogCategory, BlogCategories, BlogRelatedPosts, Comments }
 }
-
 
 diagram("layer") Sample {
 

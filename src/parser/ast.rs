@@ -10,6 +10,7 @@ pub enum SourceUnitPart {
     ConceptBy(ConceptBy),
     StructFor(StructFor),
     BehaviorFor(BehaviorFor),
+    ConceptSpace(ConceptSpace),
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -54,13 +55,20 @@ impl Cataloging {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ConceptSpace {
-    identifier: String,
-    package: String,
-    concepts: Vec<ConceptUnit>,
+    pub identifier: String,
+    pub package: String,
+    pub concepts: Vec<String>,
 }
 
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct Function {}
+impl ConceptSpace {
+    pub fn new() -> ConceptSpace {
+        ConceptSpace {
+            identifier: "".to_string(),
+            package: "".to_string(),
+            concepts: vec![],
+        }
+    }
+}
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ApiUnit {
@@ -81,27 +89,36 @@ impl ApiUnit {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ApiNode {
-    pub api_in: Vec<StructField>,
-    pub api_out: Vec<StructField>,
-    pub pre_cond: String,
-    pub post_cond: String,
+    pub inbound: Vec<StructField>,
+    pub outbound: Vec<StructField>,
+    pub pre_cond: Vec<Condition>,
+    pub post_cond: Vec<Condition>,
 }
 
 impl ApiNode {
     pub fn new() -> ApiNode {
         ApiNode {
-            api_in: vec![],
-            api_out: vec![],
-            pre_cond: "".to_string(),
-            post_cond: "".to_string(),
+            inbound: vec![],
+            outbound: vec![],
+            pre_cond: vec![],
+            post_cond: vec![],
         }
     }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Condition {
-    text: String,
-    expr: Expression,
+    pub text: String,
+    pub expr: Expression,
+}
+
+impl Condition {
+    pub fn new() -> Condition {
+        Condition {
+            text: "".to_string(),
+            expr: Expression::String(String::from("")),
+        }
+    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -246,15 +263,27 @@ impl Parameter {
     pub fn new() -> Parameter {
         Parameter {
             identifier: "".to_string(),
-            specifier: TypeSpecifier::None
+            specifier: TypeSpecifier::None,
         }
     }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ContractUnit {
-    name: String,
-    during: String,
-    pre_condition: String,
-    post_condition: String,
+    pub identifier: String,
+    pub during: String,
+    pub pre_condition: Vec<Condition>,
+    pub post_condition: Vec<Condition>,
 }
+
+impl ContractUnit {
+    pub fn new() -> ContractUnit {
+        ContractUnit {
+            identifier: "".to_string(),
+            during: "".to_string(),
+            pre_condition: vec![],
+            post_condition: vec![],
+        }
+    }
+}
+
