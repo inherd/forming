@@ -10,7 +10,7 @@ concept Blog(Displayable, Ownable) {
         validate_unique();
         publish_date_since(): datetime;
         published(): Integer;
-        save(Blog);
+        save(blog: Blog);
         delete(id: Integer);
     }
 }
@@ -77,8 +77,3 @@ diagram "Sample" {
   }
 }
 
-// factum: event, evidence,schema, usecase
-// aggregate: by event, by evidence, by schema, usecase
-// process:
-// map-filter:
-// context:

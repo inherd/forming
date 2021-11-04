@@ -1,7 +1,7 @@
 use pest::iterators::Pair;
 use pest::Parser;
 
-use crate::parser::ast::{ApiNode, ApiUnit, Cataloging, ConceptBy, ConceptSpace, ConceptUnit, Condition, ContractUnit, Expression, Interface, Parameter, SourceUnit, SourceUnitPart, StructField, StructFor, TypeSpecifier};
+use crate::parser::ast::{ApiNode, ApiUnit, BehaviorFor, Cataloging, ConceptBy, ConceptSpace, ConceptUnit, Condition, ContractUnit, Expression, Interface, Parameter, SourceUnit, SourceUnitPart, StructField, StructFor, TypeSpecifier};
 
 #[derive(Parser)]
 #[grammar = "parser/forming.pest"]
@@ -10,34 +10,37 @@ struct IdentParser;
 pub fn parse(text: &str) -> SourceUnit {
     let pairs = IdentParser::parse(Rule::start, text).unwrap_or_else(|e| panic!("{}", e));
 
-    let mut part = vec![];
+    let mut parts = vec![];
     for pair in pairs {
         for decl in pair.into_inner() {
             match decl.as_rule() {
                 Rule::concepts_decl => {
-                    part.push(SourceUnitPart::ConceptBy(parse_concept_list_decl(decl)));
+                    parts.push(SourceUnitPart::ConceptBy(parse_concept_list_decl(decl)));
                 }
                 Rule::concept_decl => {
-                    part.push(SourceUnitPart::ConceptUnit(parse_concept_decl(decl)));
+                    parts.push(SourceUnitPart::ConceptUnit(parse_concept_decl(decl)));
                 }
                 Rule::api_root_decl => {
-                    part.push(SourceUnitPart::ApiUnit(parse_api_root_decl(decl)));
-                }
-                Rule::struct_for_decl => {
-                    part.push(SourceUnitPart::StructFor(parse_struct_for(decl)));
-                }
-                Rule::contract_for_decl => {
-                    part.push(SourceUnitPart::ContractUnit(parse_contract_for(decl)));
+                    parts.push(SourceUnitPart::ApiUnit(parse_api_root_decl(decl)));
                 }
                 Rule::concept_space_decl => {
-                    part.push(SourceUnitPart::ConceptSpace(parse_concept_space(decl)));
+                    parts.push(SourceUnitPart::ConceptSpace(parse_concept_space(decl)));
+                }
+                Rule::struct_for_decl => {
+                    parts.push(SourceUnitPart::StructFor(parse_struct_for(decl)));
+                }
+                Rule::contract_for_decl => {
+                    parts.push(SourceUnitPart::ContractUnit(parse_contract_for(decl)));
+                }
+                Rule::behavior_for_decl => {
+                    parts.push(SourceUnitPart::BehaviorFor(parse_behavior_for(decl)));
                 }
                 _ => { show_rule(decl); }
             }
         }
     }
 
-    SourceUnit(part)
+    SourceUnit(parts)
 }
 
 fn parse_concept_space(decl: Pair<Rule>) -> ConceptSpace {
@@ -105,6 +108,22 @@ fn parse_struct_for(decl: Pair<Rule>) -> StructFor {
         }
     }
     unit
+}
+
+fn parse_behavior_for(decl: Pair<Rule>) -> BehaviorFor {
+    let mut behavior_for = BehaviorFor::new();
+    for pair in decl.into_inner() {
+        match pair.as_rule() {
+            Rule::identifier => {
+                behavior_for.identifier = String::from(pair.as_str());
+            }
+            Rule::interface_decl => {
+                behavior_for.behaviors.push(parse_interface(pair));
+            }
+            _ => { show_rule(pair); }
+        }
+    }
+    behavior_for
 }
 
 fn parse_contract_for(decl: Pair<Rule>) -> ContractUnit {
@@ -198,7 +217,7 @@ fn parse_concept_decl(decl: Pair<Rule>) -> ConceptUnit {
                 unit.extends = parse_extends(pair);
             }
             Rule::inner_struct_decl => {
-                unit.strut_fields = parse_inner_struct_decl(pair);
+                unit.struct_fields = parse_inner_struct_decl(pair);
             }
             Rule::struct_import_decl => {
                 // todo: add import struct support
@@ -240,27 +259,30 @@ fn parse_inner_behavior_decl(decl: Pair<Rule>) -> Vec<Interface> {
     let mut vec = vec![];
     for in_pair in decl.into_inner() {
         if let Rule::interface_decl = in_pair.as_rule() {
-            let mut interface = Interface::new();
-            for inter in in_pair.into_inner() {
-                match inter.as_rule() {
-                    Rule::identifier => {
-                        interface.identifier = String::from(inter.as_str());
-                    }
-                    Rule::return_type => {
-                        interface.return_type = TypeSpecifier::from(String::from(inter.as_str()));
-                    }
-                    Rule::params => {
-                        interface.params = parse_params(inter);
-                    }
-                    _ => { show_rule(inter); }
-                }
-            }
-
-            vec.push(interface);
+            vec.push(parse_interface(in_pair));
         }
     }
 
     vec
+}
+
+fn parse_interface(in_pair: Pair<Rule>) -> Interface {
+    let mut interface = Interface::new();
+    for inter in in_pair.into_inner() {
+        match inter.as_rule() {
+            Rule::identifier => {
+                interface.identifier = String::from(inter.as_str());
+            }
+            Rule::return_type => {
+                interface.return_type = TypeSpecifier::from(String::from(inter.as_str()));
+            }
+            Rule::params => {
+                interface.params = parse_params(inter);
+            }
+            _ => { show_rule(inter); }
+        }
+    }
+    interface
 }
 
 fn parse_params(decl: Pair<Rule>) -> Vec<Parameter> {
@@ -426,7 +448,6 @@ fn show_rule(pair: Pair<Rule>) {
                 println!("Rule:    {:?}", pair.as_rule());
                 println!("Span:    {:?}", pair.as_span());
             }
-
         }
     }
 }
@@ -506,7 +527,7 @@ mod tests {
             SourceUnitPart::ConceptUnit(unit) => {
                 assert_eq!(unit.identifier, "博客");
                 assert_eq!(unit.description, "显示博客的\n相关信息");
-                assert_eq!(unit.strut_fields.len(), 2);
+                assert_eq!(unit.struct_fields.len(), 2);
                 assert_eq!(unit.behaviors.len(), 3);
             }
             _ => { assert!(false); }
@@ -537,7 +558,7 @@ concept Blog(Displayable, Ownable) {
             SourceUnitPart::ConceptUnit(unit) => {
                 assert_eq!(unit.extends.len(), 2);
                 assert_eq!(unit.behaviors.len(), 6);
-                assert_eq!(unit.strut_fields.len(), 11);
+                assert_eq!(unit.struct_fields.len(), 11);
             }
             _ => { assert!(false); }
         };
@@ -658,6 +679,21 @@ concept Blog(Displayable, Ownable) {
                 assert_eq!(node.identifier, "Blog");
                 assert_eq!(node.package, "");
                 assert_eq!(node.concepts.len(), 5);
+            }
+            _ => { assert!(false); }
+        };
+    }
+
+    #[test]
+    fn behavior_for() {
+        let unit = parse("behavior for Blog {
+  delete(id: Integer);
+}");
+
+        match &unit.0[0] {
+            SourceUnitPart::BehaviorFor(node) => {
+                assert_eq!(node.identifier, "Blog");
+                assert_eq!(node.behaviors.len(), 1);
             }
             _ => { assert!(false); }
         };

@@ -5,12 +5,13 @@ start = _{ SOI ~ declaration* ~ EOI}
 
 declaration = {
     arch_decl
-  | struct_for_decl
   | concept_decl
   | concepts_decl
-  | contract_for_decl
   | api_root_decl
   | concept_space_decl
+  | contract_for_decl
+  | struct_for_decl
+  | behavior_for_decl
 }
 
 concept_space_decl = {
@@ -81,7 +82,15 @@ struct_type = {
 }
 
 inner_behavior_decl = {
-    "behavior" ~ "{" ~ interface_decl* ~ "}"
+    behavior_text ~ "{" ~ interface_decl* ~ "}"
+}
+
+behavior_for_decl = {
+    behavior_text ~ "for" ~ identifier ~ "{" ~ interface_decl* ~ "}"
+}
+
+behavior_text = {
+    "behavior" | "trait"
 }
 
 interface_decl = {

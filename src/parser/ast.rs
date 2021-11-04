@@ -4,13 +4,13 @@ pub struct SourceUnit(pub Vec<SourceUnitPart>);
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum SourceUnitPart {
     Architecture(Architecture),
-    ConceptUnit(ConceptUnit),
-    ContractUnit(ContractUnit),
     ApiUnit(ApiUnit),
+    ContractUnit(ContractUnit),
+    ConceptUnit(ConceptUnit),
+    ConceptSpace(ConceptSpace),
     ConceptBy(ConceptBy),
     StructFor(StructFor),
     BehaviorFor(BehaviorFor),
-    ConceptSpace(ConceptSpace),
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
@@ -132,29 +132,29 @@ pub struct ConceptUnit {
     pub identifier: String,
     pub extends: Vec<String>,
     pub behaviors: Vec<Interface>,
-    pub strut_fields: Vec<StructField>,
+    pub struct_fields: Vec<StructField>,
     pub struct_source: StructSource
 }
 
 impl ConceptUnit {
     pub fn new() -> ConceptUnit {
-        ConceptUnit { description: "".to_string(), identifier: "".to_string(), extends: vec![], strut_fields: vec![], behaviors: vec![], struct_source: Default::default() }
+        ConceptUnit { description: "".to_string(), identifier: "".to_string(), extends: vec![], struct_fields: vec![], behaviors: vec![], struct_source: Default::default() }
     }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct StructSource {
-    type_type: String,
     path: String,
     source: String,
+    type_type: String,
 }
 
 impl Default for StructSource {
     fn default() -> Self {
         StructSource {
-            type_type: "".to_string(),
             path: "".to_string(),
-            source: "".to_string()
+            source: "".to_string(),
+            type_type: "".to_string(),
         }
     }
 }
@@ -193,22 +193,31 @@ impl StructField {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct BehaviorFor {
-    identifier: String,
-    functions: Vec<Interface>,
+    pub identifier: String,
+    pub behaviors: Vec<Interface>,
+}
+
+impl BehaviorFor {
+    pub fn new() -> BehaviorFor {
+        BehaviorFor {
+            identifier: "".to_string(),
+            behaviors: vec![]
+        }
+    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Interface {
-    pub identifier: String,
     pub params: Vec<Parameter>,
+    pub identifier: String,
     pub return_type: TypeSpecifier,
 }
 
 impl Interface {
     pub fn new() -> Interface {
         Interface {
-            identifier: "".to_string(),
             params: vec![],
+            identifier: "".to_string(),
             return_type: TypeSpecifier::None,
         }
     }
