@@ -76,3 +76,6 @@ diagram "Sample" {
     iaas
   }
 }
+
+// factum: event, evidence,schema, usecase
+// aggregate by event, by evidence, by schema, usecase

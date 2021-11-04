@@ -1,0 +1,3 @@
+name,alias name,code name,domain,description,notes
+BlogPost,BlogEntry | Blog, blog_post,Blog,"a blog is a article entry","some thing, as"
+Tag,标签,tag,Comment,,
