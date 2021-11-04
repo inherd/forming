@@ -1,5 +1,5 @@
 [package]
-name = "guarding-translator"
+name = "forming-translator"
 version = "0.1.0"
 authors = [ "Phodal Huang <h@inherd.org>"]
 edition = "2018"
