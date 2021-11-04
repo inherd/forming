@@ -5,10 +5,11 @@
 
 // # facts {}
 //
-// factum: event, evidence, schema, usecase,
+// factum: event/command, evidence, schema, usecase,
 // aggregate: by event, by evidence, by schema, usecase
+// aggregate_by: aggregate, contract, database, usecase
 // process(flow(流)):
-// identify(change(变化), disambiguate(消除歧义)):
+// identify(change(变化), capture(捕获), disambiguate(消除歧义)):
 // element(or entry, or entity):
 // context(or boundary):
 
