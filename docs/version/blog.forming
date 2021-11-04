@@ -78,4 +78,7 @@ diagram "Sample" {
 }
 
 // factum: event, evidence,schema, usecase
-// aggregate by event, by evidence, by schema, usecase
+// aggregate: by event, by evidence, by schema, usecase
+// process:
+// map-filter:
+// context:
