@@ -640,7 +640,6 @@ concept Blog(Displayable, Ownable) {
    items: { Blog, BlogCategory, BlogCategories, BlogRelatedPosts, Comments }
 }
 ");
-        println!("space: {:?}", unit);
 
         match &unit.0[0] {
             SourceUnitPart::ConceptSpace(node) => {
