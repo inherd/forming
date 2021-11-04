@@ -48,13 +48,54 @@ fn parse_concept_space(decl: Pair<Rule>) -> ConceptSpace {
                 space.identifier = String::from(pair.as_str());
             }
             Rule::space_body => {
-                show_rule(pair);
+                let body = parse_space_body(pair);
+                space.package = body.0;
+                space.concepts = body.1;
             }
+            Rule::space_text => {}
             _ => { show_rule(pair); }
         }
     }
 
     space
+}
+
+fn parse_space_body(decl: Pair<Rule>) -> (String, Vec<String>) {
+    let mut package: String = String::from("");
+    let mut items: Vec<String> = vec![];
+
+    for space in decl.into_inner() {
+        if let Rule::space_node = space.as_rule() {
+            for pair in space.into_inner() {
+                match pair.as_rule() {
+                    Rule::space_package_decl => {
+                        for inner in pair.into_inner() {
+                            match inner.as_rule() {
+                                Rule::string_literal => {
+                                    package = string_from_pair(inner);
+                                }
+                                _ => { show_rule(inner); }
+                            }
+                        }
+                    }
+                    Rule::space_concepts_decl => {
+                        for inner in pair.into_inner() {
+                            match inner.as_rule() {
+                                Rule::identifier => {
+                                    items.push(String::from(inner.as_str()));
+                                }
+                                _ => { show_rule(inner); }
+                            }
+                        }
+                    }
+                    Rule::COMMENT => {}
+                    _ => { show_rule(pair); }
+                }
+            }
+        }
+    }
+
+    (package, items)
 }
 
 fn parse_struct_for(decl: Pair<Rule>) -> StructFor {
@@ -386,8 +427,13 @@ fn parse_one_line_struct(struct_pair: Pair<Rule>) -> Vec<StructField> {
 }
 
 fn show_rule(pair: Pair<Rule>) {
-    println!("Rule:    {:?}", pair.as_rule());
-    println!("Span:    {:?}", pair.as_span());
+    match pair.as_rule() {
+        Rule::COMMENT => {}
+        _ => {
+            println!("Rule:    {:?}", pair.as_rule());
+            println!("Span:    {:?}", pair.as_span());
+        }
+    }
 }
 
 fn parse_struct_field(struct_pair: Pair<Rule>) -> StructField {
@@ -595,5 +641,14 @@ concept Blog(Displayable, Ownable) {
 }
 ");
         println!("space: {:?}", unit);
+
+        match &unit.0[0] {
+            SourceUnitPart::ConceptSpace(node) => {
+                assert_eq!(node.identifier, "Blog");
+                assert_eq!(node.package, "com.phodal.blog");
+                assert_eq!(node.concepts.len(), 5);
+            }
+            _ => { assert!(false); }
+        };
     }
 }
