@@ -17,3 +17,4 @@
 * [15. keyword-checking-before-generate](0015-keyword-checking-before-generate.md)
 * [16. rule-engine-for-contract](0016-rule-engine-for-contract.md)
 * [17. idea-plugin-for-highlighted-core](0017-idea-plugin-for-highlighted-core.md)
+* [18. thinking-in-usecase-driven](0018-thinking-in-usecase-driven.md)
