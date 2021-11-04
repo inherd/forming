@@ -131,14 +131,14 @@ pub struct ConceptUnit {
     pub description: String,
     pub identifier: String,
     pub extends: Vec<String>,
-    pub structs: Vec<StructField>,
     pub behaviors: Vec<Interface>,
+    pub strut_fields: Vec<StructField>,
     pub struct_source: StructSource
 }
 
 impl ConceptUnit {
     pub fn new() -> ConceptUnit {
-        ConceptUnit { description: "".to_string(), identifier: "".to_string(), extends: vec![], structs: vec![], behaviors: vec![], struct_source: Default::default() }
+        ConceptUnit { description: "".to_string(), identifier: "".to_string(), extends: vec![], strut_fields: vec![], behaviors: vec![], struct_source: Default::default() }
     }
 }
 

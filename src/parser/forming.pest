@@ -14,7 +14,7 @@ declaration = {
 }
 
 concept_space_decl = {
-    space_text ~ identifier ~ "{" ~ space_body? ~ "}"
+    "space" ~ identifier ~ "{" ~ space_body? ~ "}"
 }
 
 space_body = {
@@ -32,10 +32,6 @@ space_package_decl = {
 
 space_concepts_decl = {
     "items" ~ ":" ~ "{" ~ identifier ~ ("," ~ identifier)* ~ "}"
-}
-
-space_text = {
-    "space"
 }
 
 struct_for_decl = {
@@ -151,14 +147,14 @@ post_cond = {
 }
 
 condition = {
-    cond_text ~ ":"  ~ cond_expr ~ ";"?
+    cond_description ~ ":"  ~ cond_expr ~ ";"?
 }
 
 post_cond_text = {
   "postcondition" | "post_cond" | "precond"
 }
 
-cond_text = {
+cond_description = {
     string_literal | identifier
 }
 

@@ -52,7 +52,6 @@ fn parse_concept_space(decl: Pair<Rule>) -> ConceptSpace {
                 space.package = body.0;
                 space.concepts = body.1;
             }
-            Rule::space_text => {}
             _ => { show_rule(pair); }
         }
     }
@@ -69,14 +68,9 @@ fn parse_space_body(decl: Pair<Rule>) -> (String, Vec<String>) {
             for pair in space.into_inner() {
                 match pair.as_rule() {
                     Rule::space_package_decl => {
-                        for inner in pair.into_inner() {
-                            match inner.as_rule() {
-                                Rule::string_literal => {
-                                    package = string_from_pair(inner);
-                                }
-                                _ => { show_rule(inner); }
-                            }
-                        }
+                        let inner = pair.into_inner();
+                        // todo: check item
+                        package = string_from_pair(inner.peek().unwrap());
                     }
                     Rule::space_concepts_decl => {
                         for inner in pair.into_inner() {
@@ -88,7 +82,6 @@ fn parse_space_body(decl: Pair<Rule>) -> (String, Vec<String>) {
                             }
                         }
                     }
-                    Rule::COMMENT => {}
                     _ => { show_rule(pair); }
                 }
             }
@@ -158,8 +151,6 @@ fn parse_all_condition(decl: Pair<Rule>) -> Vec<Condition> {
     let mut vec = vec![];
     for pair in decl.into_inner() {
         match pair.as_rule() {
-            Rule::pre_cond_text => {}
-            Rule::post_cond_text => {}
             Rule::condition => {
                 vec.push(parse_condition(pair));
             }
@@ -174,7 +165,7 @@ fn parse_condition(decl: Pair<Rule>) -> Condition {
     let mut condition = Condition::new();
     for pair in decl.into_inner() {
         match pair.as_rule() {
-            Rule::cond_text => {
+            Rule::cond_description => {
                 condition.text = string_from_pair(pair);
             }
             Rule::cond_expr => {
@@ -207,7 +198,7 @@ fn parse_concept_decl(decl: Pair<Rule>) -> ConceptUnit {
                 unit.extends = parse_extends(pair);
             }
             Rule::inner_struct_decl => {
-                unit.structs = parse_inner_struct_decl(pair);
+                unit.strut_fields = parse_inner_struct_decl(pair);
             }
             Rule::struct_import_decl => {
                 // todo: add import struct support
@@ -430,8 +421,12 @@ fn show_rule(pair: Pair<Rule>) {
     match pair.as_rule() {
         Rule::COMMENT => {}
         _ => {
-            println!("Rule:    {:?}", pair.as_rule());
-            println!("Span:    {:?}", pair.as_span());
+            let rule = format!("{:?}", pair.as_rule());
+            if !rule.ends_with("_text") {
+                println!("Rule:    {:?}", pair.as_rule());
+                println!("Span:    {:?}", pair.as_span());
+            }
+
         }
     }
 }
@@ -511,7 +506,7 @@ mod tests {
             SourceUnitPart::ConceptUnit(unit) => {
                 assert_eq!(unit.identifier, "博客");
                 assert_eq!(unit.description, "显示博客的\n相关信息");
-                assert_eq!(unit.structs.len(), 2);
+                assert_eq!(unit.strut_fields.len(), 2);
                 assert_eq!(unit.behaviors.len(), 3);
             }
             _ => { assert!(false); }
@@ -542,7 +537,7 @@ concept Blog(Displayable, Ownable) {
             SourceUnitPart::ConceptUnit(unit) => {
                 assert_eq!(unit.extends.len(), 2);
                 assert_eq!(unit.behaviors.len(), 6);
-                assert_eq!(unit.structs.len(), 11);
+                assert_eq!(unit.strut_fields.len(), 11);
             }
             _ => { assert!(false); }
         };
@@ -645,6 +640,23 @@ concept Blog(Displayable, Ownable) {
             SourceUnitPart::ConceptSpace(node) => {
                 assert_eq!(node.identifier, "Blog");
                 assert_eq!(node.package, "com.phodal.blog");
+                assert_eq!(node.concepts.len(), 5);
+            }
+            _ => { assert!(false); }
+        };
+    }
+
+    #[test]
+    fn concept_space_not_package() {
+        let unit = parse("space Blog {
+   items: { Blog, BlogCategory, BlogCategories, BlogRelatedPosts, Comments }
+}
+");
+
+        match &unit.0[0] {
+            SourceUnitPart::ConceptSpace(node) => {
+                assert_eq!(node.identifier, "Blog");
+                assert_eq!(node.package, "");
                 assert_eq!(node.concepts.len(), 5);
             }
             _ => { assert!(false); }
