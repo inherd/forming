@@ -6,6 +6,10 @@ Date: 2021-03-29
 
 2021-03-29 proposed
 
+2021-11-04 accepted
+
+2021-11-04 done
+
 ## Context
 
  - 协作风格（组织）

@@ -6,6 +6,8 @@ Date: 2021-09-07
 
 2021-09-07 proposed
 
+2021-11-04 deprecated
+
 ## Context
 
 See in:

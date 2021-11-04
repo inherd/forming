@@ -6,6 +6,8 @@ Date: 2021-11-01
 
 2021-11-01 proposed
 
+2021-11-04 accepted
+
 ## Context
 
 Highlighted core is a concept in live coding, which will parse concepts and display in idea with realtime.
