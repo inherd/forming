@@ -4,18 +4,17 @@
 
 Architecture 3.0 based frameworks.
 
-- [ ] DSL Design
 - [ ] 架构描述
-- [ ] 架构布局
-   - [ ] Diagrams as code
-   - [ ] Ascii Doctor
+- ~~[ ] 架构布局~~
+   - [ ] ~~Diagrams as code~~
+   - [ ] ~~Ascii Doctor~~
 - [ ] 模型声明
-   - [ ] DDD Styles
+   - [x] DDD Styles
 - [ ] 模型代码生成 
-- [ ] Highlighted Core Documents
-   - [ ]  auto documentation
+- [ ] ~~Highlighted Core Documents~~
+   - [ ]  ~~auto documentation~~
 
-Todo:
+TBD:
 
 - [ ] workflow design
    - [ ] collaboration style
@@ -28,12 +27,11 @@ Todo:
    - [ ] collaboration driven
 - [ ] forming visualization
    - [ ] web page
-   - [ ] common architecture patterns
-   - [ ] in svg
+   - [ ] common architecture patterns in svg
 - [ ] Integration (in ext model)
   - [ ] UML parser for modeling
   - [ ] Swagger to API in/out
-  - [ ] Cucumber parser
+  - [ ] ~~Cucumber parser~~
 - [ ] codegen
    - [ ] java code gen
    - [ ] code gen protocol
