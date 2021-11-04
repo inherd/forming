@@ -133,11 +133,29 @@ pub struct ConceptUnit {
     pub extends: Vec<String>,
     pub structs: Vec<StructField>,
     pub behaviors: Vec<Interface>,
+    pub struct_source: StructSource
 }
 
 impl ConceptUnit {
     pub fn new() -> ConceptUnit {
-        ConceptUnit { description: "".to_string(), identifier: "".to_string(), extends: vec![], structs: vec![], behaviors: vec![] }
+        ConceptUnit { description: "".to_string(), identifier: "".to_string(), extends: vec![], structs: vec![], behaviors: vec![], struct_source: Default::default() }
+    }
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct StructSource {
+    type_type: String,
+    path: String,
+    source: String,
+}
+
+impl Default for StructSource {
+    fn default() -> Self {
+        StructSource {
+            type_type: "".to_string(),
+            path: "".to_string(),
+            source: "".to_string()
+        }
     }
 }
 
