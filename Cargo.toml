@@ -38,6 +38,7 @@ clap = "3.0.0-beta.5"
 
 [workspace]
 members = [
-    'highlighted_core',
+#    'highlighted_core',
     'translator',
+    'codegen/forming_java',
 ]
