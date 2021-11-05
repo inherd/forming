@@ -1,0 +1,48 @@
+start = _{ SOI ~ start_tag ~ element* ~ end_tag ~ EOI}
+
+start_tag =  { "@startuml" }
+end_tag = { "@enduml" }
+
+element = {
+    relationship
+//   | together
+//   | group
+//   | note
+//   | class
+//   | interface
+//   | enum
+//   | component
+//   | usecase
+//   | skinparam
+}
+
+relationship = {
+    "relationship"
+}
+
+arrow_head = {
+    "<|" | "|>" | "*" | "o" | "<" | ">" | "#" | "x" | "}" | "{" | "+" | "^" | "()" | "(" | ")"
+}
+
+arrow_body = {"-"
+    | "--"
+    | "---"
+    | "-" ~ direction ~ "-"
+    | "."
+    | ".."
+    | "." ~ direction ~ "."
+}
+
+accessor = {
+    "+" | "-" | "#"
+}
+
+direction = {
+    "left" | "up" | "right" | "down"
+}
+
+newline    = _{ "\n" | "\r\n" }
+WHITESPACE = _{ " " | "\t" | NEWLINE }
+block_comment = _{ "/'" ~ (block_comment | !"'/" ~ ANY)* ~ "'/" }
+comments = { COMMENT* }
+COMMENT    = {  block_comment | ("'" ~ (!NEWLINE ~ ANY)*) }
