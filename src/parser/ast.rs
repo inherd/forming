@@ -3,28 +3,28 @@ pub struct SourceUnit(pub Vec<SourceUnitPart>);
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum SourceUnitPart {
-    Architecture(Architecture),
-    ApiUnit(ApiUnit),
-    ContractUnit(ContractUnit),
-    ConceptUnit(ConceptUnit),
-    ConceptSpace(ConceptSpace),
-    ConceptBy(ConceptBy),
-    StructFor(StructFor),
-    BehaviorFor(BehaviorFor),
+    Architecture(ArchitectureDecl),
+    ApiUnit(ApiDecl),
+    Contract(ContractDecl),
+    Concept(ConceptDecl),
+    ConceptSpace(ConceptSpaceDecl),
+    ConceptBy(ConceptByDecl),
+    StructFor(StructForDecl),
+    BehaviorFor(BehaviorForDecl),
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct Architecture {}
+pub struct ArchitectureDecl {}
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct ConceptBy {
+pub struct ConceptByDecl {
     pub cataloging: Cataloging,
     pub path: String,
 }
 
-impl ConceptBy {
-    pub fn new() -> ConceptBy {
-        ConceptBy {
+impl ConceptByDecl {
+    pub fn new() -> ConceptByDecl {
+        ConceptByDecl {
             cataloging: Cataloging::File,
             path: "".to_string(),
         }
@@ -40,46 +40,42 @@ pub enum Cataloging {
 impl Cataloging {
     pub fn from(text: String) -> Cataloging {
         match text.as_str() {
-            "file" => {
-                Cataloging::File
-            }
-            "dir" => {
-                Cataloging::Dir
-            }
-            _ => {
-                Cataloging::File
-            }
+            "file" => Cataloging::File,
+            "dir" => Cataloging::Dir,
+            _ => Cataloging::File
         }
     }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct ConceptSpace {
+pub struct ConceptSpaceDecl {
     pub identifier: String,
     pub package: String,
+    pub type_type: String,
     pub concepts: Vec<String>,
 }
 
-impl ConceptSpace {
-    pub fn new() -> ConceptSpace {
-        ConceptSpace {
+impl ConceptSpaceDecl {
+    pub fn new() -> ConceptSpaceDecl {
+        ConceptSpaceDecl {
             identifier: "".to_string(),
             package: "".to_string(),
+            type_type: "".to_string(),
             concepts: vec![],
         }
     }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct ApiUnit {
+pub struct ApiDecl {
     pub name: String,
     pub import: Option<String>,
     pub apis: Vec<ApiNode>,
 }
 
-impl ApiUnit {
-    pub fn new() -> ApiUnit {
-        ApiUnit {
+impl ApiDecl {
+    pub fn new() -> ApiDecl {
+        ApiDecl {
             name: "".to_string(),
             import: None,
             apis: vec![],
@@ -91,8 +87,8 @@ impl ApiUnit {
 pub struct ApiNode {
     pub inbound: Vec<StructField>,
     pub outbound: Vec<StructField>,
-    pub pre_cond: Vec<Condition>,
-    pub post_cond: Vec<Condition>,
+    pub pre_cond: Vec<ConditionDecl>,
+    pub post_cond: Vec<ConditionDecl>,
 }
 
 impl ApiNode {
@@ -107,14 +103,14 @@ impl ApiNode {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct Condition {
+pub struct ConditionDecl {
     pub text: String,
     pub expr: Expression,
 }
 
-impl Condition {
-    pub fn new() -> Condition {
-        Condition {
+impl ConditionDecl {
+    pub fn new() -> ConditionDecl {
+        ConditionDecl {
             text: "".to_string(),
             expr: Expression::String(String::from("")),
         }
@@ -127,18 +123,18 @@ pub enum Expression {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct ConceptUnit {
+pub struct ConceptDecl {
     pub description: String,
     pub identifier: String,
     pub extends: Vec<String>,
-    pub behaviors: Vec<Interface>,
+    pub behaviors: Vec<Behavior>,
     pub struct_fields: Vec<StructField>,
-    pub struct_source: StructSource
+    pub struct_source: StructSource,
 }
 
-impl ConceptUnit {
-    pub fn new() -> ConceptUnit {
-        ConceptUnit { description: "".to_string(), identifier: "".to_string(), extends: vec![], struct_fields: vec![], behaviors: vec![], struct_source: Default::default() }
+impl ConceptDecl {
+    pub fn new() -> ConceptDecl {
+        ConceptDecl { description: "".to_string(), identifier: "".to_string(), extends: vec![], struct_fields: vec![], behaviors: vec![], struct_source: Default::default() }
     }
 }
 
@@ -162,14 +158,14 @@ impl Default for StructSource {
 // naming refs: https://github.com/vickenty/lang-c/blob/master/grammar.rustpeg
 // naming refs: https://github.com/vickenty/lang-c
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct StructFor {
+pub struct StructForDecl {
     pub identifier: String,
     pub declarations: Vec<StructField>,
 }
 
-impl StructFor {
-    pub fn new() -> StructFor {
-        StructFor {
+impl StructForDecl {
+    pub fn new() -> StructForDecl {
+        StructForDecl {
             identifier: "".to_string(),
             declarations: vec![],
         }
@@ -192,40 +188,36 @@ impl StructField {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct BehaviorFor {
+pub struct BehaviorForDecl {
     pub identifier: String,
-    pub behaviors: Vec<Interface>,
+    pub behaviors: Vec<Behavior>,
 }
 
-impl BehaviorFor {
-    pub fn new() -> BehaviorFor {
-        BehaviorFor {
+impl BehaviorForDecl {
+    pub fn new() -> BehaviorForDecl {
+        BehaviorForDecl {
             identifier: "".to_string(),
-            behaviors: vec![]
+            behaviors: vec![],
         }
     }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct Interface {
+pub struct Behavior {
     pub params: Vec<Parameter>,
     pub identifier: String,
     pub return_type: TypeSpecifier,
 }
 
-impl Interface {
-    pub fn new() -> Interface {
-        Interface {
+impl Behavior {
+    pub fn new() -> Behavior {
+        Behavior {
             params: vec![],
             identifier: "".to_string(),
             return_type: TypeSpecifier::None,
         }
     }
 }
-
-/// auto insert/update comment to code
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct HighlightCore {}
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub enum TypeSpecifier {
@@ -242,43 +234,23 @@ pub enum TypeSpecifier {
 impl TypeSpecifier {
     pub fn from(text: String) -> TypeSpecifier {
         match text.to_lowercase().as_str() {
-            "int" => {
-                TypeSpecifier::Int
-            }
-            "float" => {
-                TypeSpecifier::Float
-            }
-            "double" => {
-                TypeSpecifier::Double
-            }
-            "string" => {
-                TypeSpecifier::String
-            }
-            "array" => {
-                TypeSpecifier::Array
-            }
-            _ => {
-                TypeSpecifier::TypeType(text)
-            }
+            "int" => TypeSpecifier::Int,
+            "float" => TypeSpecifier::Float,
+            "double" => TypeSpecifier::Double,
+            "string" => TypeSpecifier::String,
+            "array" => TypeSpecifier::Array,
+            _ => TypeSpecifier::TypeType(text)
         }
     }
 }
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct ApiResource {
-    identifier: String,
-    base_url: String,
-    source: String,
-    api: Vec<ApiDecl>,
-}
-
-#[derive(Clone, Debug, Eq, PartialEq)]
-pub struct ApiDecl {
-    inbound: Vec<Parameter>,
-    outbound: Vec<Parameter>,
-    pre_condition: String,
-    post_condition: String,
-}
+//
+// #[derive(Clone, Debug, Eq, PartialEq)]
+// pub struct ApiDecl {
+//     inbound: Vec<Parameter>,
+//     outbound: Vec<Parameter>,
+//     pre_condition: String,
+//     post_condition: String,
+// }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct Parameter {
@@ -296,16 +268,16 @@ impl Parameter {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub struct ContractUnit {
+pub struct ContractDecl {
     pub identifier: String,
     pub during: String,
-    pub pre_condition: Vec<Condition>,
-    pub post_condition: Vec<Condition>,
+    pub pre_condition: Vec<ConditionDecl>,
+    pub post_condition: Vec<ConditionDecl>,
 }
 
-impl ContractUnit {
-    pub fn new() -> ContractUnit {
-        ContractUnit {
+impl ContractDecl {
+    pub fn new() -> ContractDecl {
+        ContractDecl {
             identifier: "".to_string(),
             during: "".to_string(),
             pre_condition: vec![],

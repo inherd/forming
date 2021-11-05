@@ -1,14 +1,15 @@
 use pest::iterators::Pair;
 use pest::Parser;
 
-use crate::parser::ast::{ApiNode, ApiUnit, BehaviorFor, Cataloging, ConceptBy, ConceptSpace, ConceptUnit, Condition, ContractUnit, Expression, Interface, Parameter, SourceUnit, SourceUnitPart, StructField, StructFor, TypeSpecifier};
+use crate::parser::ast::{ApiNode, ApiDecl, BehaviorForDecl, Cataloging, ConceptByDecl, ConceptSpaceDecl, ConceptDecl, ConditionDecl, ContractDecl, Expression, Behavior, Parameter, SourceUnit, SourceUnitPart, StructField, StructForDecl, TypeSpecifier};
 
 #[derive(Parser)]
 #[grammar = "parser/forming.pest"]
-struct IdentParser;
+struct FormingParser;
 
 pub fn parse(text: &str) -> SourceUnit {
-    let pairs = IdentParser::parse(Rule::start, text).unwrap_or_else(|e| panic!("{}", e));
+    // todo: catch pest error
+    let pairs = FormingParser::parse(Rule::start, text).unwrap_or_else(|e| panic!("{}", e));
 
     let mut parts = vec![];
     for pair in pairs {
@@ -18,7 +19,7 @@ pub fn parse(text: &str) -> SourceUnit {
                     parts.push(SourceUnitPart::ConceptBy(parse_concept_list_decl(decl)));
                 }
                 Rule::concept_decl => {
-                    parts.push(SourceUnitPart::ConceptUnit(parse_concept_decl(decl)));
+                    parts.push(SourceUnitPart::Concept(parse_concept_decl(decl)));
                 }
                 Rule::api_root_decl => {
                     parts.push(SourceUnitPart::ApiUnit(parse_api_root_decl(decl)));
@@ -30,7 +31,7 @@ pub fn parse(text: &str) -> SourceUnit {
                     parts.push(SourceUnitPart::StructFor(parse_struct_for(decl)));
                 }
                 Rule::contract_for_decl => {
-                    parts.push(SourceUnitPart::ContractUnit(parse_contract_for(decl)));
+                    parts.push(SourceUnitPart::Contract(parse_contract_for(decl)));
                 }
                 Rule::behavior_for_decl => {
                     parts.push(SourceUnitPart::BehaviorFor(parse_behavior_for(decl)));
@@ -43,12 +44,15 @@ pub fn parse(text: &str) -> SourceUnit {
     SourceUnit(parts)
 }
 
-fn parse_concept_space(decl: Pair<Rule>) -> ConceptSpace {
-    let mut space = ConceptSpace::new();
+fn parse_concept_space(decl: Pair<Rule>) -> ConceptSpaceDecl {
+    let mut space = ConceptSpaceDecl::new();
     for pair in decl.into_inner() {
         match pair.as_rule() {
             Rule::identifier => {
                 space.identifier = String::from(pair.as_str());
+            }
+            Rule::space_type => {
+                space.type_type = String::from(pair.as_str());
             }
             Rule::space_body => {
                 let body = parse_space_body(pair);
@@ -94,8 +98,8 @@ fn parse_space_body(decl: Pair<Rule>) -> (String, Vec<String>) {
     (package, items)
 }
 
-fn parse_struct_for(decl: Pair<Rule>) -> StructFor {
-    let mut unit = StructFor::new();
+fn parse_struct_for(decl: Pair<Rule>) -> StructForDecl {
+    let mut unit = StructForDecl::new();
     for pair in decl.into_inner() {
         match pair.as_rule() {
             Rule::struct_body => {
@@ -110,8 +114,8 @@ fn parse_struct_for(decl: Pair<Rule>) -> StructFor {
     unit
 }
 
-fn parse_behavior_for(decl: Pair<Rule>) -> BehaviorFor {
-    let mut behavior_for = BehaviorFor::new();
+fn parse_behavior_for(decl: Pair<Rule>) -> BehaviorForDecl {
+    let mut behavior_for = BehaviorForDecl::new();
     for pair in decl.into_inner() {
         match pair.as_rule() {
             Rule::identifier => {
@@ -126,8 +130,8 @@ fn parse_behavior_for(decl: Pair<Rule>) -> BehaviorFor {
     behavior_for
 }
 
-fn parse_contract_for(decl: Pair<Rule>) -> ContractUnit {
-    let mut unit = ContractUnit::new();
+fn parse_contract_for(decl: Pair<Rule>) -> ContractDecl {
+    let mut unit = ContractDecl::new();
     for pair in decl.into_inner() {
         match pair.as_rule() {
             Rule::contract_body => {
@@ -147,7 +151,7 @@ fn parse_contract_for(decl: Pair<Rule>) -> ContractUnit {
     unit
 }
 
-fn parse_contract_body(decl: Pair<Rule>) -> (Vec<Condition>, Vec<Condition>) {
+fn parse_contract_body(decl: Pair<Rule>) -> (Vec<ConditionDecl>, Vec<ConditionDecl>) {
     let mut pre_conds = vec![];
     let mut post_conds = vec![];
 
@@ -166,7 +170,7 @@ fn parse_contract_body(decl: Pair<Rule>) -> (Vec<Condition>, Vec<Condition>) {
     (pre_conds, post_conds)
 }
 
-fn parse_all_condition(decl: Pair<Rule>) -> Vec<Condition> {
+fn parse_all_condition(decl: Pair<Rule>) -> Vec<ConditionDecl> {
     let mut vec = vec![];
     for pair in decl.into_inner() {
         match pair.as_rule() {
@@ -180,8 +184,8 @@ fn parse_all_condition(decl: Pair<Rule>) -> Vec<Condition> {
     vec
 }
 
-fn parse_condition(decl: Pair<Rule>) -> Condition {
-    let mut condition = Condition::new();
+fn parse_condition(decl: Pair<Rule>) -> ConditionDecl {
+    let mut condition = ConditionDecl::new();
     for pair in decl.into_inner() {
         match pair.as_rule() {
             Rule::cond_description => {
@@ -197,8 +201,8 @@ fn parse_condition(decl: Pair<Rule>) -> Condition {
     condition
 }
 
-fn parse_concept_decl(decl: Pair<Rule>) -> ConceptUnit {
-    let mut unit = ConceptUnit::new();
+fn parse_concept_decl(decl: Pair<Rule>) -> ConceptDecl {
+    let mut unit = ConceptDecl::new();
     for pair in decl.into_inner() {
         match pair.as_rule() {
             Rule::COMMENT => {
@@ -234,7 +238,7 @@ fn parse_concept_decl(decl: Pair<Rule>) -> ConceptUnit {
     unit
 }
 
-fn pop_last_new_line(unit: &mut ConceptUnit) {
+fn pop_last_new_line(unit: &mut ConceptDecl) {
     unit.description.pop();
 }
 
@@ -255,7 +259,7 @@ fn parse_extends(decl: Pair<Rule>) -> Vec<String> {
     source
 }
 
-fn parse_inner_behavior_decl(decl: Pair<Rule>) -> Vec<Interface> {
+fn parse_inner_behavior_decl(decl: Pair<Rule>) -> Vec<Behavior> {
     let mut vec = vec![];
     for in_pair in decl.into_inner() {
         if let Rule::interface_decl = in_pair.as_rule() {
@@ -266,8 +270,8 @@ fn parse_inner_behavior_decl(decl: Pair<Rule>) -> Vec<Interface> {
     vec
 }
 
-fn parse_interface(in_pair: Pair<Rule>) -> Interface {
-    let mut interface = Interface::new();
+fn parse_interface(in_pair: Pair<Rule>) -> Behavior {
+    let mut interface = Behavior::new();
     for inter in in_pair.into_inner() {
         match inter.as_rule() {
             Rule::identifier => {
@@ -318,8 +322,8 @@ fn parse_inner_struct_decl(decl: Pair<Rule>) -> Vec<StructField> {
     vec
 }
 
-fn parse_concept_list_decl(decl: Pair<Rule>) -> ConceptBy {
-    let mut source = ConceptBy::new();
+fn parse_concept_list_decl(decl: Pair<Rule>) -> ConceptByDecl {
+    let mut source = ConceptByDecl::new();
     for pair in decl.into_inner() {
         match pair.as_rule() {
             Rule::cataloging => {
@@ -335,8 +339,8 @@ fn parse_concept_list_decl(decl: Pair<Rule>) -> ConceptBy {
     source
 }
 
-fn parse_api_root_decl(decl: Pair<Rule>) -> ApiUnit {
-    let mut root = ApiUnit::new();
+fn parse_api_root_decl(decl: Pair<Rule>) -> ApiDecl {
+    let mut root = ApiDecl::new();
     for pair in decl.into_inner() {
         match pair.as_rule() {
             Rule::api_ident => {
@@ -524,7 +528,7 @@ mod tests {
         }");
 
         match &unit.0[0] {
-            SourceUnitPart::ConceptUnit(unit) => {
+            SourceUnitPart::Concept(unit) => {
                 assert_eq!(unit.identifier, "博客");
                 assert_eq!(unit.description, "显示博客的\n相关信息");
                 assert_eq!(unit.struct_fields.len(), 2);
@@ -555,7 +559,7 @@ concept Blog(Displayable, Ownable) {
 ");
 
         match &unit.0[0] {
-            SourceUnitPart::ConceptUnit(unit) => {
+            SourceUnitPart::Concept(unit) => {
                 assert_eq!(unit.extends.len(), 2);
                 assert_eq!(unit.behaviors.len(), 6);
                 assert_eq!(unit.struct_fields.len(), 11);
@@ -591,7 +595,7 @@ concept Blog(Displayable, Ownable) {
         } ");
 
         match &unit.0[0] {
-            SourceUnitPart::ContractUnit(contract) => {
+            SourceUnitPart::Contract(contract) => {
                 assert_eq!(contract.identifier, "Blog");
                 assert_eq!(contract.pre_condition.len(), 3);
                 assert_eq!(contract.post_condition.len(), 1);
@@ -653,6 +657,7 @@ concept Blog(Displayable, Ownable) {
     fn concept_space() {
         let unit = parse("space Blog {
    package: 'com.phodal.blog', // or path
+   type: 'Entity',
    items: { Blog, BlogCategory, BlogCategories, BlogRelatedPosts, Comments }
 }
 ");
@@ -661,6 +666,7 @@ concept Blog(Displayable, Ownable) {
             SourceUnitPart::ConceptSpace(node) => {
                 assert_eq!(node.identifier, "Blog");
                 assert_eq!(node.package, "com.phodal.blog");
+                // assert_eq!(node.type_type, "Entity");
                 assert_eq!(node.concepts.len(), 5);
             }
             _ => { assert!(false); }

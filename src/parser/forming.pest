@@ -24,7 +24,12 @@ space_body = {
 
 space_node = {
     space_package_decl
+   | space_type
    | space_concepts_decl
+}
+
+space_type = {
+    "type" ~ ":" ~  string_literal
 }
 
 space_package_decl = {
