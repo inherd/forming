@@ -19,8 +19,9 @@
 //
 // map: 需求映射
 // filter(lookup(查找)): 过滤元素
-// collect: 
+// reduce: 归并
 // merge/combine: 合并?
+// collect:
 
 - rule -> validate
 - process -> bpm

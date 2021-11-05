@@ -55,6 +55,7 @@ space Page {
 space Blog {
    // name: "${name.lower()}_${item.upper()}",
    package: "com.phodal.blog", // or path
+   type: "Entity",
    items: { Blog, BlogCategory, BlogCategories, BlogRelatedPosts, Comments }
 }
 
