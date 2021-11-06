@@ -8,11 +8,25 @@ use crate::parser::ast::{ApiNode, ApiDecl, BehaviorForDecl, Cataloging, ConceptB
 struct FormingParser;
 
 pub fn parse(text: &str) -> SourceUnit {
-    // todo: catch pest error
-    let pairs = FormingParser::parse(Rule::start, text).unwrap_or_else(|e| panic!("{}", e));
+    let pairs = match FormingParser::parse(Rule::start, text) {
+        Ok(p) => { Some(p) },
+        Err(e) => {
+            // todo: mapping to pest errors
+            let fancy_e = e.renamed_rules(|rule| {
+                match *rule {
+                    _ => {
+                        "".to_string()
+                    }
+                }
+            });
+
+            println!("{:?}", fancy_e);
+            None
+        }
+    };
 
     let mut parts = vec![];
-    for pair in pairs {
+    for pair in pairs.unwrap() {
         for decl in pair.into_inner() {
             match decl.as_rule() {
                 Rule::concepts_decl => {
@@ -51,13 +65,11 @@ fn parse_concept_space(decl: Pair<Rule>) -> ConceptSpaceDecl {
             Rule::identifier => {
                 space.identifier = String::from(pair.as_str());
             }
-            Rule::space_type => {
-                space.type_type = String::from(pair.as_str());
-            }
             Rule::space_body => {
                 let body = parse_space_body(pair);
                 space.package = body.0;
                 space.concepts = body.1;
+                space.type_type = body.2;
             }
             _ => { show_rule(pair); }
         }
@@ -66,9 +78,10 @@ fn parse_concept_space(decl: Pair<Rule>) -> ConceptSpaceDecl {
     space
 }
 
-fn parse_space_body(decl: Pair<Rule>) -> (String, Vec<String>) {
+fn parse_space_body(decl: Pair<Rule>) -> (String, Vec<String>, String) {
     let mut package: String = String::from("");
     let mut items: Vec<String> = vec![];
+    let mut type_type: String = String::from("");
 
     for space in decl.into_inner() {
         if let Rule::space_node = space.as_rule() {
@@ -76,8 +89,11 @@ fn parse_space_body(decl: Pair<Rule>) -> (String, Vec<String>) {
                 match pair.as_rule() {
                     Rule::space_package_decl => {
                         let inner = pair.into_inner();
-                        // todo: check item
                         package = string_from_pair(inner.peek().unwrap());
+                    }
+                    Rule::space_type => {
+                        let inner = pair.into_inner();
+                        type_type = string_from_pair(inner.peek().unwrap());
                     }
                     Rule::space_concepts_decl => {
                         for inner in pair.into_inner() {
@@ -95,7 +111,7 @@ fn parse_space_body(decl: Pair<Rule>) -> (String, Vec<String>) {
         }
     }
 
-    (package, items)
+    (package, items, type_type)
 }
 
 fn parse_struct_for(decl: Pair<Rule>) -> StructForDecl {
@@ -666,7 +682,7 @@ concept Blog(Displayable, Ownable) {
             SourceUnitPart::ConceptSpace(node) => {
                 assert_eq!(node.identifier, "Blog");
                 assert_eq!(node.package, "com.phodal.blog");
-                // assert_eq!(node.type_type, "Entity");
+                assert_eq!(node.type_type, "Entity");
                 assert_eq!(node.concepts.len(), 5);
             }
             _ => { assert!(false); }

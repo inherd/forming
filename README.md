@@ -11,6 +11,8 @@ Architecture 3.0 based frameworks.
 - [ ] 模型声明
    - [x] DDD Styles
 - [ ] 模型代码生成 
+   - [ ] spike [codeviz](https://github.com/udoprog/codeviz)
+   - [ ] spike [genco](https://github.com/udoprog/genco)
 - [ ] ~~Highlighted Core Documents~~
    - [ ]  ~~auto documentation~~
 
