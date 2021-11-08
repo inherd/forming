@@ -8,25 +8,27 @@ use crate::parser::ast::{ApiNode, ApiDecl, BehaviorForDecl, Cataloging, ConceptB
 struct FormingParser;
 
 pub fn parse(text: &str) -> SourceUnit {
-    let pairs = match FormingParser::parse(Rule::start, text) {
-        Ok(p) => { Some(p) },
-        Err(e) => {
-            // todo: mapping to pest errors
-            let fancy_e = e.renamed_rules(|rule| {
-                match *rule {
-                    _ => {
-                        "".to_string()
-                    }
-                }
-            });
+    // let pairs = match FormingParser::parse(Rule::start, text) {
+    //     Ok(p) => { Some(p) }
+    //     Err(e) => {
+    //         // todo: mapping to pest errors
+    //         let fancy_e = e.renamed_rules(|rule| {
+    //             match *rule {
+    //                 _ => {
+    //                     "".to_string()
+    //                 }
+    //             }
+    //         });
+    //
+    //         println!("{:?}", fancy_e);
+    //         None
+    //     }
+    // };
 
-            println!("{:?}", fancy_e);
-            None
-        }
-    };
+    let pairs = FormingParser::parse(Rule::start, text).unwrap_or_else(|e| panic!("{}", e));
 
     let mut parts = vec![];
-    for pair in pairs.unwrap() {
+    for pair in pairs {
         for decl in pair.into_inner() {
             match decl.as_rule() {
                 Rule::concepts_decl => {
@@ -360,7 +362,10 @@ fn parse_api_root_decl(decl: Pair<Rule>) -> ApiDecl {
     for pair in decl.into_inner() {
         match pair.as_rule() {
             Rule::api_ident => {
-                root.name = String::from(pair.as_str());
+                root.url = String::from(pair.as_str());
+            }
+            Rule::identifier => {
+                root.identify = String::from(pair.as_str());
             }
             Rule::api_body => {
                 root.apis.push(parse_api_body(pair));
@@ -376,6 +381,9 @@ fn parse_api_body(api_root: Pair<Rule>) -> ApiNode {
     let mut node = ApiNode::new();
     for pair in api_root.into_inner() {
         match pair.as_rule() {
+            Rule::api_ident => {
+                node.identify = String::from(pair.as_str());
+            }
             Rule::api_decl => {
                 parse_api_decl(pair, &mut node);
             }
@@ -622,23 +630,26 @@ concept Blog(Displayable, Ownable) {
 
     #[test]
     fn basic_api() {
-        let unit = parse("api for BlogPost {
-            in { title: String, description: String }
-            out { blog: Blog }
-            pre_cond {
-               '字符串不为空': not empty
-            }
-            pre_cond {
-               '博客不为空': 'not empty'
+        let unit = parse("api for BlogPost(/blog) {
+            /create {
+                in { title: String, description: String }
+                out { blog: Blog }
+                pre_cond {
+                   '字符串不为空': not empty
+                }
+                pre_cond {
+                   '博客不为空': 'not empty'
+                }
             }
         } ");
 
         match &unit.0[0] {
             SourceUnitPart::ApiUnit(api) => {
-                assert_eq!(api.name, "BlogPost");
+                assert_eq!(api.identify, "BlogPost");
 
                 let first_api = &api.apis[0];
 
+                assert_eq!(first_api.identify, "/create");
                 assert_eq!(first_api.inbound.len(), 2);
                 assert_eq!(first_api.inbound[0].identifier, "title");
                 assert_eq!(first_api.outbound.len(), 1);
@@ -719,5 +730,30 @@ concept Blog(Displayable, Ownable) {
             }
             _ => { assert!(false); }
         };
+    }
+
+    #[test]
+    fn basic_diagram() {
+        let unit = parse("diagram Sample {
+  group office {
+    bank('手机银行');
+    internet_bank('网银');
+  }
+  group backend {
+    paas;
+    iaas;
+    group bff {
+        something;
+    }
+  }
+}");
+
+        println!("{:?}", unit);
+        // match &unit.0[0] {
+        //     SourceUnitPart::BehaviorFor(node) => {
+        //
+        //     }
+        //     _ => { assert!(false); }
+        // };
     }
 }

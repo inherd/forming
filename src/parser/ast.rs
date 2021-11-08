@@ -11,10 +11,29 @@ pub enum SourceUnitPart {
     ConceptBy(ConceptByDecl),
     StructFor(StructForDecl),
     BehaviorFor(BehaviorForDecl),
+    Diagram(Diagram),
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ArchitectureDecl {}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct Diagram {
+    pub identify: String,
+    pub groups: Vec<DiagramGroup>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct DiagramGroup {
+    pub items: Vec<DiagramItem>,
+    pub subs: Vec<DiagramGroup>,
+}
+
+#[derive(Clone, Debug, Eq, PartialEq)]
+pub struct DiagramItem {
+    pub identify: String,
+    pub description: String,
+}
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ConceptByDecl {
@@ -68,7 +87,8 @@ impl ConceptSpaceDecl {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ApiDecl {
-    pub name: String,
+    pub identify: String,
+    pub url: String,
     pub import: Option<String>,
     pub apis: Vec<ApiNode>,
 }
@@ -76,7 +96,8 @@ pub struct ApiDecl {
 impl ApiDecl {
     pub fn new() -> ApiDecl {
         ApiDecl {
-            name: "".to_string(),
+            identify: "".to_string(),
+            url: "".to_string(),
             import: None,
             apis: vec![],
         }
@@ -85,6 +106,7 @@ impl ApiDecl {
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct ApiNode {
+    pub identify: String,
     pub inbound: Vec<StructField>,
     pub outbound: Vec<StructField>,
     pub pre_cond: Vec<ConditionDecl>,
@@ -94,6 +116,7 @@ pub struct ApiNode {
 impl ApiNode {
     pub fn new() -> ApiNode {
         ApiNode {
+            identify: "".to_string(),
             inbound: vec![],
             outbound: vec![],
             pre_cond: vec![],

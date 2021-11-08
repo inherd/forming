@@ -21,7 +21,7 @@ behavior for Blog {
 }
 
 struct for Blog {
-  title: String;
+  title: String
 }
 
 concept BlogCategory {}
@@ -33,14 +33,13 @@ concept Page {}
 concept Link {}
 concept RichTextPage {}
 
-api /blog {
-    import "swagger.yml"
+api Blog {
     /create {
         in { title: Blog }
         out { }
         precondition {
-            "不为空": not null,
-       // not_empty: not empty
+            "不为空": not null
+            // not_empty: not empty
         }
         postcondition { }
         // sample(json): { title: "zero" }
@@ -59,22 +58,18 @@ space Blog {
    items: { Blog, BlogCategory, BlogCategories, BlogRelatedPosts, Comments }
 }
 
-diagram "Sample" {
+diagram Sample {
   group office {
-    // `row` or `column`
-    // `left` or `right` or `center`
-    // position { direction: row, align: left }
-
-    bank("手机银行")
-    internet_bank("网银")
+    bank('手机银行');
+    internet_bank('网银');
 
     group bff {
-      backend
+      backend;
     }
   }
   group backend {
-    paas
-    iaas
+    paas;
+    iaas;
   }
 }
 

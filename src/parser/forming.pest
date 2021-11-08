@@ -12,6 +12,7 @@ declaration = {
   | contract_for_decl
   | struct_for_decl
   | behavior_for_decl
+  | diagram_decl
 }
 
 concept_space_decl = {
@@ -114,12 +115,12 @@ param_type = { identifier }
 return_type = { identifier }
 
 api_root_decl = {
-   "api" ~ "for" ~ api_ident ~ "{" ~ api_body? ~ "}"
+   "api" ~ "for"? ~ identifier ~  ("(" ~ api_ident ~ ")")? ~ "{" ~ api_body? ~ "}"
 }
 
 api_body = {
     "import" ~ string_literal
-     | api_decl*
+     | api_ident? ~ "{" ~ api_decl* ~ "}"
 }
 
 api_decl = {
@@ -149,7 +150,7 @@ during = {
 }
 
 pre_cond = {
-  pre_cond_text ~ "{" ~ condition ~ ((";" | ",") ~ condition)* ~ "}"
+  pre_cond_text ~ "{" ~ (condition ~ ((";" | ",") ~ condition)*)? ~ "}"
 }
 
 pre_cond_text = {
@@ -157,7 +158,7 @@ pre_cond_text = {
 }
 
 post_cond = {
-  post_cond_text ~ "{" ~ condition ~ ((";" | ",") ~ condition)* ~ "}"
+  post_cond_text ~ "{" ~ (condition ~ ((";" | ",") ~ condition)*)? ~ "}"
 }
 
 condition = {
@@ -194,6 +195,18 @@ concepts_decl = {
 
 cataloging = {
     "file" | "dir"
+}
+
+diagram_decl = {
+    "diagram" ~ group_item ~ "{" ~ diagram_group_decl* ~ "}"
+}
+
+diagram_group_decl = {
+    "group" ~ group_item ~ "{" ~ (group_item ~ ";" | diagram_group_decl)* ~ "}"
+}
+
+group_item = {
+    identifier ~ ("(" ~ string_literal ~ ")")?
 }
 
 // semantics condition
