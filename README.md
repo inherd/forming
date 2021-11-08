@@ -55,6 +55,17 @@ space Blog {
 }
 ```
 
+4. from CSV, uml and swagger (todo)
+
+```
+concepts => file(\"concepts.csv\")
+
+concept  Blog {
+    behavior { }
+    struct uml::dir('').class('Blog')
+}
+```
+
 ## Todo
 
 - [ ] 架构描述
