@@ -4,6 +4,59 @@
 
 Architecture 3.0 based frameworks.
 
+## Usage
+
+// todo
+
+## Samples
+
+1. concept declare with struct & behavior
+
+```
+concept Blog(Displayable, Ownable) {
+    struct {
+        title, slug, description, gen_description, content, featured_image: String;
+        id, user_id, site_id: Integer;
+        created, updated: datetime;
+    }
+    behavior {
+        get_absolute_url(): String;
+        validate_unique();
+        publish_date_since(): datetime;
+        published(): Integer;
+        save(blog: Blog);
+        delete(id: Integer);
+    }
+}
+```
+
+2. api declare
+
+```
+api for BlogPost {
+    in { title: String, description: String }
+    out { blog: Blog }
+    pre_cond {
+       '字符串不为空': not empty
+    }
+    pre_cond {
+       '博客不为空': 'not empty'
+    }
+} 
+```
+
+3. concept space
+
+```
+space Blog {
+   package: 'com.phodal.blog', // or path
+   type: 'Entity',
+   items: { Blog, BlogCategory, BlogCategories, BlogRelatedPosts, Comments }
+}
+```
+
+## Todo
+
 - [ ] 架构描述
 - ~~[ ] 架构布局~~
    - [ ] ~~Diagrams as code~~
