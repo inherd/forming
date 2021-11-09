@@ -1,7 +1,7 @@
 use pest::iterators::Pair;
 use pest::Parser;
 
-use crate::parser::ast::{ApiNode, ApiDecl, BehaviorForDecl, Cataloging, ConceptByDecl, ConceptSpaceDecl, ConceptDecl, ConditionDecl, ContractDecl, Expression, Behavior, Parameter, SourceUnit, SourceUnitPart, StructField, StructForDecl, TypeSpecifier};
+use crate::parser::ast::{ApiNode, ApiDecl, BehaviorForDecl, Cataloging, ConceptByDecl, ConceptSpaceDecl, ConceptDecl, ConditionDecl, ContractDecl, Expression, Behavior, Parameter, SourceUnit, SourceUnitPart, StructField, StructForDecl, TypeSpecifier, Diagram, DiagramGroup, DiagramItem};
 
 #[derive(Parser)]
 #[grammar = "parser/forming.pest"]
@@ -52,12 +52,66 @@ pub fn parse(text: &str) -> SourceUnit {
                 Rule::behavior_for_decl => {
                     parts.push(SourceUnitPart::BehaviorFor(parse_behavior_for(decl)));
                 }
+                Rule::diagram_decl => {
+                    parts.push(SourceUnitPart::Diagram(parse_diagram_decl(decl)));
+                }
                 _ => { show_rule(decl); }
             }
         }
     }
 
     SourceUnit(parts)
+}
+
+fn parse_diagram_decl(decl: Pair<Rule>) -> Diagram {
+    let mut diagram = Diagram::default();
+    for pair in decl.into_inner() {
+        match pair.as_rule() {
+            Rule::identifier => {
+                diagram.identify = String::from(pair.as_str());
+            }
+            Rule::diagram_group_decl => {
+                diagram.groups.push(parse_diagram_group_decl(pair));
+            }
+            _ => { show_rule(pair) }
+        }
+    }
+    diagram
+}
+
+fn parse_diagram_group_decl(decl: Pair<Rule>) -> DiagramGroup {
+    let mut group = DiagramGroup::default();
+    for pair in decl.into_inner() {
+        match pair.as_rule() {
+            Rule::group_ident => {
+                group.identify = String::from(pair.as_str());
+            }
+            Rule::group_item => {
+                group.items.push(parse_diagram_item(pair));
+            }
+            Rule::diagram_group_decl => {
+                group.childrens.push(parse_diagram_group_decl(pair));
+            }
+            _ => { show_rule(pair) }
+        }
+    }
+    group
+}
+
+fn parse_diagram_item(decl: Pair<Rule>) -> DiagramItem {
+    let mut item = DiagramItem::default();
+    for pair in decl.into_inner() {
+        match pair.as_rule() {
+            Rule::identifier => {
+                item.identify = String::from(pair.as_str());
+            }
+            Rule::string_literal => {
+                item.description = string_from_pair(pair);
+            }
+            _ => { show_rule(pair) }
+        }
+    }
+    item
 }
 
 fn parse_concept_space(decl: Pair<Rule>) -> ConceptSpaceDecl {
@@ -748,12 +802,22 @@ concept Blog(Displayable, Ownable) {
   }
 }");
 
-        println!("{:?}", unit);
-        // match &unit.0[0] {
-        //     SourceUnitPart::BehaviorFor(node) => {
-        //
-        //     }
-        //     _ => { assert!(false); }
-        // };
+        match &unit.0[0] {
+            SourceUnitPart::Diagram(node) => {
+                assert_eq!("Sample", node.identify);
+                assert_eq!(2, node.groups.len());
+                let first = &node.groups[0];
+                assert_eq!("office", first.identify);
+
+                assert_eq!("bank", first.items[0].identify);
+                assert_eq!("手机银行", first.items[0].description);
+
+                assert_eq!("internet_bank", first.items[1].identify);
+                assert_eq!("网银", first.items[1].description);
+
+                assert_eq!(1, node.groups[1].childrens.len())
+            }
+            _ => { assert!(false); }
+        };
     }
 }

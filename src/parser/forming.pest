@@ -50,8 +50,7 @@ contract_for_decl = {
 }
 
 contract_body = {
-    pre_cond
-    | post_cond
+    pre_cond | post_cond
 }
 
 concept_decl = {
@@ -198,12 +197,14 @@ cataloging = {
 }
 
 diagram_decl = {
-    "diagram" ~ group_item ~ "{" ~ diagram_group_decl* ~ "}"
+    "diagram" ~ identifier ~ "{" ~ diagram_group_decl* ~ "}"
 }
 
 diagram_group_decl = {
-    "group" ~ group_item ~ "{" ~ (group_item ~ ";" | diagram_group_decl)* ~ "}"
+    "group" ~ group_ident ~ "{" ~ (group_item ~ ";" | diagram_group_decl)* ~ "}"
 }
+
+group_ident = { identifier }
 
 group_item = {
     identifier ~ ("(" ~ string_literal ~ ")")?

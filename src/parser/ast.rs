@@ -23,16 +23,45 @@ pub struct Diagram {
     pub groups: Vec<DiagramGroup>,
 }
 
+impl Default for Diagram {
+    fn default() -> Self {
+        Diagram {
+            identify: "".to_string(),
+            groups: vec![],
+        }
+    }
+}
+
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct DiagramGroup {
+    pub identify: String,
     pub items: Vec<DiagramItem>,
-    pub subs: Vec<DiagramGroup>,
+    pub childrens: Vec<DiagramGroup>,
+}
+
+impl Default for DiagramGroup {
+    fn default() -> Self {
+        DiagramGroup {
+            identify: "".to_string(),
+            items: vec![],
+            childrens: vec![],
+        }
+    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
 pub struct DiagramItem {
     pub identify: String,
     pub description: String,
+}
+
+impl Default for DiagramItem {
+    fn default() -> Self {
+        DiagramItem {
+            identify: "".to_string(),
+            description: "".to_string(),
+        }
+    }
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
