@@ -1,17 +1,20 @@
 use pest::iterators::Pair;
 use pest::Parser;
 
-use crate::parser::ast::{ApiNode, ApiDecl, BehaviorForDecl, Cataloging, ConceptByDecl, ConceptSpaceDecl, ConceptDecl, ConditionDecl, ContractDecl, Expression, Behavior, Parameter, SourceUnit, SourceUnitPart, StructField, StructForDecl, TypeSpecifier, Diagram, DiagramGroup, DiagramItem};
+use crate::parser::ast::{ApiDecl, ApiNode, Behavior, BehaviorForDecl, Cataloging,
+                         ConceptByDecl, ConceptDecl, ConceptSpaceDecl, ConditionDecl, ContractDecl,
+                         Diagram, DiagramGroup, DiagramItem, Expression, Parameter, SourceUnit,
+                         SourceUnitPart, StructField, StructForDecl, TypeSpecifier};
 
 #[derive(Parser)]
 #[grammar = "parser/forming.pest"]
 struct FormingParser;
 
 pub fn parse(text: &str) -> SourceUnit {
+    // todo: mapping to pest errors
     // let pairs = match FormingParser::parse(Rule::start, text) {
     //     Ok(p) => { Some(p) }
     //     Err(e) => {
-    //         // todo: mapping to pest errors
     //         let fancy_e = e.renamed_rules(|rule| {
     //             match *rule {
     //                 _ => {
