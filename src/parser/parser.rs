@@ -567,7 +567,6 @@ pub fn replace_string_markers(input: &str) -> String {
     }
 }
 
-
 #[cfg(test)]
 mod tests {
     use crate::parser::ast::{Cataloging, SourceUnitPart, TypeSpecifier};
@@ -801,6 +800,10 @@ concept Blog(Displayable, Ownable) {
     iaas;
     group bff {
         something;
+
+        group bff {
+            something;
+        }
     }
   }
 }");
